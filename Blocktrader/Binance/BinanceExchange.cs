@@ -18,6 +18,17 @@ namespace Blocktrader.Binance
         private IEnumerable<Order> bids = new List<Order>();
 
         private IEnumerable<Order> asks = new List<Order>();
+        
+        private Dictionary<Ticket, string> tickets = new Dictionary<Ticket, string>
+        {
+            {Ticket.BtcUsd, "BTCUSDT"},
+            {Ticket.EthUsd, "ETHUSDT"},
+            {Ticket.EthBtc, "ETHBTC"},
+            {Ticket.XrpBtc, "XRPBTC"},
+            {Ticket.XrpUsd, "XRPUSDT"}
+        };
+
+        public Ticket Ticket { get; set; }
 
         public ExchangeInfo GetInfo()
         {
@@ -26,6 +37,12 @@ namespace Blocktrader.Binance
                 Bids = bids,
                 Asks = asks,
             };
+        }
+
+        public void ForceUpdate()
+        {
+            SetBindsAndAsks();
+            OnUpdate?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler OnUpdate;
@@ -38,7 +55,9 @@ namespace Blocktrader.Binance
 
         private void SetBindsAndAsks()
         {
-            var response = GetOrderBook("BTCUSDT", 100);
+            if (!tickets.TryGetValue(Ticket, out var symbol))
+                return;
+            var response = GetOrderBook(symbol, 100);
             bids = response.Bids.Select(ParseOrder);
             asks = response.Asks.Select(ParseOrder);
         }
@@ -56,8 +75,7 @@ namespace Blocktrader.Binance
         {
             while (true)
             {
-                SetBindsAndAsks();
-                OnUpdate?.Invoke(this, EventArgs.Empty);
+                ForceUpdate();
                 Thread.Sleep(updatePeriod);
             }
         }

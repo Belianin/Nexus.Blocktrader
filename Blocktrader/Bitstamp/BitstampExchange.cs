@@ -19,14 +19,22 @@ namespace Blocktrader.Bitstamp
         private IEnumerable<Order> bids = new List<Order>();
 
         private IEnumerable<Order> asks = new List<Order>();
-
-        public ExchangeInfo GetInfo()
+        
+        private Dictionary<Ticket, string> tickets = new Dictionary<Ticket, string>
         {
-            return new ExchangeInfo
-            {
-                Asks = asks,
-                Bids = bids
-            };
+            {Ticket.BtcUsd, "btcusd"},
+            {Ticket.EthUsd, "ethusd"},
+            {Ticket.EthBtc, "ethbtc"},
+            {Ticket.XrpBtc, "xrpbtc"},
+            {Ticket.XrpUsd, "xrpusd"}
+        };
+
+        public Ticket Ticket { get; set; }
+
+        public void ForceUpdate()
+        {
+            SetBindsAndAsks();
+            OnUpdate?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler OnUpdate;
@@ -37,9 +45,20 @@ namespace Blocktrader.Bitstamp
             Task.Run(Update);
         }
 
+        public ExchangeInfo GetInfo()
+        {
+            return new ExchangeInfo
+            {
+                Asks = asks,
+                Bids = bids
+            };
+        }
+
         private void SetBindsAndAsks()
         {
-            var response = GetOrderBook("btcusd");
+            if (!tickets.TryGetValue(Ticket, out var symbol))
+                return;
+            var response = GetOrderBook(symbol);
             bids = response.Bids.Select(ParseOrder);
             asks = response.Asks.Select(ParseOrder);
         }
@@ -57,8 +76,7 @@ namespace Blocktrader.Bitstamp
         {
             while (true)
             {
-                SetBindsAndAsks();
-                OnUpdate?.Invoke(this, EventArgs.Empty);
+                ForceUpdate();
                 Thread.Sleep(updatePeriod);
             }
         }

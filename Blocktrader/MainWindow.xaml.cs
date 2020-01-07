@@ -48,7 +48,14 @@ namespace Blocktrader
             bitfinex.OnUpdate += (s, e) => UpdateBitfinex();
             bitstamp.OnUpdate += (s, e) => UpdateBitstamp();
 
-            Task.Run(Update);
+            TicketPicker.ItemsSource = new[]
+            {
+                Ticket.BtcUsd,
+                Ticket.EthUsd,
+                Ticket.EthBtc,
+                Ticket.XrpUsd,
+                Ticket.XrpBtc
+            };
         }
 
         public void Filter(object sender, RoutedEventArgs routedEventArgs)
@@ -56,7 +63,7 @@ namespace Blocktrader
             if (decimal.TryParse(OrderSizeInput.Text, out var value))
             {
                 filterSettings.MinSize = value;
-                Update();
+                ForceUpdate();
             }
 
             OrderSizeInput.Text = filterSettings.MinSize.ToString(CultureInfo.CurrentCulture);
@@ -90,16 +97,27 @@ namespace Blocktrader
                 BitstampAsksGrid.ItemsSource = info.Asks.Where(IsOk));
         }
 
-        private void Update()
+        private void ForceUpdate()
         {
-            UpdateBinance();
-            UpdateBitfinex();
-            UpdateBitstamp();
+            binance.ForceUpdate();
+            bitfinex.ForceUpdate();
+            bitstamp.ForceUpdate();
         }
 
         private bool IsOk(Order order)
         {
             return order.Amount >= filterSettings.MinSize;
+        }
+        
+        
+        private void TicketPicker_OnSelected(object sender, RoutedEventArgs e)
+        {
+            var ticket = (Ticket) TicketPicker.SelectedItem;
+            binance.Ticket = ticket;
+            bitfinex.Ticket = ticket;
+            bitstamp.Ticket = ticket;
+            
+            ForceUpdate();
         }
     }
 

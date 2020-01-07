@@ -92,5 +92,11 @@
             Content="GO"
             Click="Filter"
             Grid.Row="3" Grid.Column="0"/>
+        <ComboBox
+            Grid.Row="3" Grid.Column="0"
+            x:Name="TicketPicker"
+            Height="32"
+            SelectionChanged="TicketPicker_OnSelected"
+            ></ComboBox>
     </Grid>
 </Window>

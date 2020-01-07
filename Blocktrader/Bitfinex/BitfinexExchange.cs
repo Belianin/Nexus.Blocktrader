@@ -20,6 +20,17 @@ namespace Blocktrader.Bitfinex
         private IEnumerable<OrderWithCount> bids = new List<OrderWithCount>();
         
         private IEnumerable<OrderWithCount> asks = new List<OrderWithCount>();
+        
+        private Dictionary<Ticket, string> tickets = new Dictionary<Ticket, string>
+        {
+            {Ticket.BtcUsd, "tBTCUSD"},
+            {Ticket.EthUsd, "tETHUSD"},
+            {Ticket.EthBtc, "tETHBTC"},
+            {Ticket.XrpBtc, "tXRPBTC"},
+            {Ticket.XrpUsd, "tXRPUSD"}
+        };
+
+        public Ticket Ticket { get; set; }
 
         public ExchangeInfo GetInfo()
         {
@@ -28,6 +39,12 @@ namespace Blocktrader.Bitfinex
                 Bids = bids,
                 Asks = asks
             };
+        }
+
+        public void ForceUpdate()
+        {
+            SetBindsAndAsks();
+            OnUpdate?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler OnUpdate;
@@ -40,7 +57,9 @@ namespace Blocktrader.Bitfinex
 
         private void SetBindsAndAsks()
         {
-            var response = GetOrderBook("tBTCUSD", 100);
+            if (!tickets.TryGetValue(Ticket, out var symbol))
+                return;
+            var response = GetOrderBook(symbol, 100);
             var orders = response.Select(r => (OrderWithCount) r);
 
             bids = orders.Where(o => o.Amount > 0);
@@ -51,8 +70,7 @@ namespace Blocktrader.Bitfinex
         {
             while (true)
             {
-                SetBindsAndAsks();
-                OnUpdate?.Invoke(this, EventArgs.Empty);
+                ForceUpdate();
                 Thread.Sleep(updatePeriod);
             }
         }
