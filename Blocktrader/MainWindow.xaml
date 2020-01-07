@@ -35,7 +35,7 @@
             Height="256"
             VerticalAlignment="Top"
             Width="380"
-            ColumnWidth="*"
+            ColumnWidth="200"
             Grid.Row="1" Grid.Column="0"
             IsReadOnly="True"/>
         <DataGrid 
@@ -44,7 +44,7 @@
             Height="256"
             VerticalAlignment="Top"
             Width="380"
-            ColumnWidth="*"
+            ColumnWidth="200"
             Grid.Row="1" Grid.Column="1"
             IsReadOnly="True"/>
         <DataGrid 
@@ -53,7 +53,7 @@
             Height="256"
             VerticalAlignment="Top"
             Width="380"
-            ColumnWidth="*"
+            ColumnWidth="200"
             Grid.Row="2" Grid.Column="0"
             IsReadOnly="True"/>
         <DataGrid 
@@ -62,7 +62,7 @@
             Height="256"
             VerticalAlignment="Top"
             Width="380"
-            ColumnWidth="*"
+            ColumnWidth="200"
             Grid.Row="2" Grid.Column="1"
             IsReadOnly="True"/>
         <DataGrid 
@@ -71,7 +71,7 @@
             Height="256"
             VerticalAlignment="Top"
             Width="380"
-            ColumnWidth="*"
+            ColumnWidth="200"
             Grid.Row="3" Grid.Column="0"
             IsReadOnly="True"/>
         <DataGrid 
@@ -80,7 +80,7 @@
             Height="256"
             VerticalAlignment="Top"
             Width="380"
-            ColumnWidth="*"
+            ColumnWidth="200"
             Grid.Row="3" Grid.Column="1"
             IsReadOnly="True"/>
         <TextBox

@@ -29,13 +29,11 @@ namespace Blocktrader
     /// </summary>
     public partial class MainWindow : Window
     {
-        private BinanceExchange binance;
+        private readonly BinanceExchange binance;
 
-        private BitfinexExchange bitfinex;
+        private readonly BitfinexExchange bitfinex;
 
-        private BitstampExchange bitstamp;
-        
-        private TimeSpan updateFrequency = TimeSpan.FromSeconds(5);
+        private readonly BitstampExchange bitstamp;
 
         private FilterSettings filterSettings = new FilterSettings();
         
@@ -46,6 +44,10 @@ namespace Blocktrader
             bitfinex = new BitfinexExchange();
             bitstamp = new BitstampExchange();
 
+            binance.OnUpdate += (s, e) => UpdateBinance();
+            bitfinex.OnUpdate += (s, e) => UpdateBitfinex();
+            bitstamp.OnUpdate += (s, e) => UpdateBitstamp();
+
             Task.Run(Update);
         }
 
@@ -54,51 +56,43 @@ namespace Blocktrader
             if (decimal.TryParse(OrderSizeInput.Text, out var value))
             {
                 filterSettings.MinSize = value;
-                BinanceBidsGrid.ItemsSource = GetBinanceBinds();
-                BinanceAsksGrid.ItemsSource = GetBinanceBinds();
+                Update();
             }
 
             OrderSizeInput.Text = filterSettings.MinSize.ToString(CultureInfo.CurrentCulture);
         }
 
-        private IEnumerable<BinanceOrder> GetBinanceBinds()
+        private void UpdateBinance()
         {
-            return binance.Bids.Where(b => b.Size >= filterSettings.MinSize);
+            BinanceBidsGrid.Dispatcher?.Invoke(() => 
+                BinanceBidsGrid.ItemsSource = binance.Bids.Where(b => b.Size >= filterSettings.MinSize));
+            BinanceAsksGrid.Dispatcher?.Invoke(() =>
+                BinanceAsksGrid.ItemsSource = binance.Asks.Where(b => b.Size >= filterSettings.MinSize));
         }
 
-        private IEnumerable<BinanceOrder> GetBinanceAsks()
+
+        private void UpdateBitfinex()
         {
-            return binance.Asks.Where(b => b.Size >= filterSettings.MinSize);
+            var orders = bitfinex.Orders.Where(b => Math.Abs(b.Amount) >= filterSettings.MinSize);
+            BitfinexBidsGrid.Dispatcher?.Invoke(() =>
+                BitfinexBidsGrid.ItemsSource = orders.Where(o => o.Amount > 0));
+            BitfinexAsksGrid.Dispatcher?.Invoke(() =>
+                BitfinexAsksGrid.ItemsSource = orders.Where(o => o.Amount < 0));
         }
         
+        private void UpdateBitstamp()
+        {
+            BitstampBidsGrid.Dispatcher?.Invoke(() =>
+                BitstampBidsGrid.ItemsSource = bitstamp.Bids.Where(b => b.Size >= filterSettings.MinSize));
+            BitstampAsksGrid.Dispatcher?.Invoke(() =>
+                BitstampAsksGrid.ItemsSource = bitstamp.Asks.Where(a => a.Size >= filterSettings.MinSize));
+        }
         
         public void Update()
         {
-            while (true)
-            {
-                try
-                {
-                    BinanceBidsGrid.Dispatcher?.Invoke(() => BinanceBidsGrid.ItemsSource = GetBinanceBinds());
-                    BinanceAsksGrid.Dispatcher?.Invoke(() => BinanceAsksGrid.ItemsSource = GetBinanceAsks());
-
-                    BitfinexBidsGrid.Dispatcher?.Invoke(() =>
-                        BitfinexBidsGrid.ItemsSource = bitfinex.Orders.Where(o => o.Amount > 0));
-                    BitfinexAsksGrid.Dispatcher?.Invoke(() =>
-                        BitfinexAsksGrid.ItemsSource = bitfinex.Orders.Where(o => o.Amount < 0));
-
-                    BitstampBidsGrid.Dispatcher?.Invoke(() =>
-                        BitstampBidsGrid.ItemsSource = bitstamp.Bids);
-                    BitstampAsksGrid.Dispatcher?.Invoke(() =>
-                        BitstampAsksGrid.ItemsSource = bitstamp.Asks);
-                    
-                    Task.Delay(updateFrequency).Wait();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }
+            UpdateBinance();
+            UpdateBitfinex();
+            UpdateBitstamp();
         }
     }
 

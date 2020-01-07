@@ -19,6 +19,8 @@ namespace Blocktrader.Bitstamp
 
         public IEnumerable<BinanceOrder> Asks { get; set; } = new List<BinanceOrder>();
 
+        public event EventHandler OnUpdate;
+
         public BitstampExchange()
         {
             web = new WebClient();
@@ -37,6 +39,7 @@ namespace Blocktrader.Bitstamp
             while (true)
             {
                 SetBindsAndAsks();
+                OnUpdate?.Invoke(this, EventArgs.Empty);
                 Thread.Sleep(updatePeriod);
             }
         }

@@ -19,6 +19,8 @@ namespace Blocktrader.Binance
 
         public IEnumerable<BinanceOrder> Asks { get; set; } = new List<BinanceOrder>();
 
+        public event EventHandler OnUpdate;
+
         public BinanceExchange()
         {
             web = new WebClient();
@@ -37,6 +39,7 @@ namespace Blocktrader.Binance
             while (true)
             {
                 SetBindsAndAsks();
+                OnUpdate?.Invoke(this, EventArgs.Empty);
                 Thread.Sleep(updatePeriod);
             }
         }

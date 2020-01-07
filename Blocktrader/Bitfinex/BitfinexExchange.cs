@@ -17,8 +17,6 @@ namespace Blocktrader.Bitfinex
         private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
         
         public IEnumerable<BitfinexOrder> Orders { get; set; } = new List<BitfinexOrder>();
-        
-        public ObservableCollection<BitfinexOrder> Orders2 { get; set; } = new ObservableCollection<BitfinexOrder>();
 
         public event EventHandler OnUpdate;
 
@@ -39,6 +37,7 @@ namespace Blocktrader.Bitfinex
             while (true)
             {
                 SetBindsAndAsks();
+                OnUpdate?.Invoke(this, EventArgs.Empty);
                 Thread.Sleep(updatePeriod);
             }
         }
