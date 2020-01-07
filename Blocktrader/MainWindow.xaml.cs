@@ -64,35 +64,42 @@ namespace Blocktrader
 
         private void UpdateBinance()
         {
+            var info = binance.GetInfo();
             BinanceBidsGrid.Dispatcher?.Invoke(() => 
-                BinanceBidsGrid.ItemsSource = binance.Bids.Where(b => b.Size >= filterSettings.MinSize));
+                BinanceBidsGrid.ItemsSource = info.Bids.Where(IsOk));
             BinanceAsksGrid.Dispatcher?.Invoke(() =>
-                BinanceAsksGrid.ItemsSource = binance.Asks.Where(b => b.Size >= filterSettings.MinSize));
+                BinanceAsksGrid.ItemsSource = info.Asks.Where(IsOk));
         }
 
 
         private void UpdateBitfinex()
         {
-            var orders = bitfinex.Orders.Where(b => Math.Abs(b.Amount) >= filterSettings.MinSize);
+            var info = bitstamp.GetInfo();
             BitfinexBidsGrid.Dispatcher?.Invoke(() =>
-                BitfinexBidsGrid.ItemsSource = orders.Where(o => o.Amount > 0));
+                BitfinexBidsGrid.ItemsSource = info.Bids.Where(IsOk));
             BitfinexAsksGrid.Dispatcher?.Invoke(() =>
-                BitfinexAsksGrid.ItemsSource = orders.Where(o => o.Amount < 0));
+                BitfinexAsksGrid.ItemsSource = info.Asks.Where(IsOk));
         }
         
         private void UpdateBitstamp()
         {
+            var info = bitstamp.GetInfo();
             BitstampBidsGrid.Dispatcher?.Invoke(() =>
-                BitstampBidsGrid.ItemsSource = bitstamp.Bids.Where(b => b.Size >= filterSettings.MinSize));
+                BitstampBidsGrid.ItemsSource = info.Bids.Where(IsOk));
             BitstampAsksGrid.Dispatcher?.Invoke(() =>
-                BitstampAsksGrid.ItemsSource = bitstamp.Asks.Where(a => a.Size >= filterSettings.MinSize));
+                BitstampAsksGrid.ItemsSource = info.Asks.Where(IsOk));
         }
-        
-        public void Update()
+
+        private void Update()
         {
             UpdateBinance();
             UpdateBitfinex();
             UpdateBitstamp();
+        }
+
+        private bool IsOk(Order order)
+        {
+            return order.Amount >= filterSettings.MinSize;
         }
     }
 

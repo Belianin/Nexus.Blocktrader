@@ -1,18 +1,14 @@
 using System.Globalization;
 
-namespace Blocktrader.Bitfinex
+namespace Blocktrader
 {
-    public class BitfinexOrder
+    public class OrderWithCount : Order
     {
-        public decimal Price { get; set; }
-        
         public int Count { get; set; }
         
-        public decimal Amount { get; set; }
-
-        public static explicit operator BitfinexOrder(string[] input)
+        public static explicit operator OrderWithCount(string[] input)
         {
-            return new BitfinexOrder
+            return new OrderWithCount
             {
                 Price = decimal.Parse(input[0], CultureInfo.InvariantCulture),
                 Count = int.Parse(input[1], CultureInfo.InvariantCulture),

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -9,15 +10,24 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Bitstamp
 {
-    public class BitstampExchange
+    public class BitstampExchange : IExchange
     {
         private readonly WebClient web;
         
         private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
         
-        public IEnumerable<BinanceOrder> Bids { get; set; } = new List<BinanceOrder>();
+        private IEnumerable<Order> bids = new List<Order>();
 
-        public IEnumerable<BinanceOrder> Asks { get; set; } = new List<BinanceOrder>();
+        private IEnumerable<Order> asks = new List<Order>();
+
+        public ExchangeInfo GetInfo()
+        {
+            return new ExchangeInfo
+            {
+                Asks = asks,
+                Bids = bids
+            };
+        }
 
         public event EventHandler OnUpdate;
 
@@ -30,8 +40,17 @@ namespace Blocktrader.Bitstamp
         private void SetBindsAndAsks()
         {
             var response = GetOrderBook("btcusd");
-            Bids = response.Bids.Select(b => (BinanceOrder) b);
-            Asks = response.Asks.Select(a => (BinanceOrder) a);
+            bids = response.Bids.Select(ParseOrder);
+            asks = response.Asks.Select(ParseOrder);
+        }
+
+        private Order ParseOrder(string[] parameters)
+        {
+            return new Order
+            {
+                Price = decimal.Parse(parameters[0], CultureInfo.InvariantCulture),
+                Amount = decimal.Parse(parameters[1], CultureInfo.InvariantCulture)
+            };
         }
 
         private void Update()

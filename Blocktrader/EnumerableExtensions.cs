@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Blocktrader
@@ -10,6 +11,15 @@ namespace Blocktrader
             foreach (var u in update)
             {
                 source.Add(u);
+            }
+        }
+        
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (var element in source)
+            {
+                action(element);
+                yield return element;
             }
         }
     }

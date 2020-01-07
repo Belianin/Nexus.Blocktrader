@@ -9,15 +9,24 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Binance
 {
-    public class BinanceExchange
+    public class BinanceExchange : IExchange
     {
         private readonly WebClient web;
         
         private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
         
-        public IEnumerable<BinanceOrder> Bids { get; set; } = new List<BinanceOrder>();
+        private IEnumerable<Order> bids = new List<Order>();
 
-        public IEnumerable<BinanceOrder> Asks { get; set; } = new List<BinanceOrder>();
+        private IEnumerable<Order> asks = new List<Order>();
+
+        public ExchangeInfo GetInfo()
+        {
+            return new ExchangeInfo
+            {
+                Bids = bids,
+                Asks = asks,
+            };
+        }
 
         public event EventHandler OnUpdate;
 
@@ -30,8 +39,17 @@ namespace Blocktrader.Binance
         private void SetBindsAndAsks()
         {
             var response = GetOrderBook("BTCUSDT", 100);
-            Bids = response.Bids.Select(b => (BinanceOrder) b);
-            Asks = response.Asks.Select(a => (BinanceOrder) a);
+            bids = response.Bids.Select(ParseOrder);
+            asks = response.Asks.Select(ParseOrder);
+        }
+        
+        private Order ParseOrder(string[] parameters)
+        {
+            return new Order
+            {
+                Price = decimal.Parse(parameters[0], CultureInfo.InvariantCulture),
+                Amount = decimal.Parse(parameters[1], CultureInfo.InvariantCulture)
+            };
         }
 
         private void Update()

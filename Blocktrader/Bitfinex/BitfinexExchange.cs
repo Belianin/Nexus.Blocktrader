@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -10,13 +11,24 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Bitfinex
 {
-    public class BitfinexExchange
+    public class BitfinexExchange : IExchange
     {
         private readonly WebClient web;
         
         private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
         
-        public IEnumerable<BitfinexOrder> Orders { get; set; } = new List<BitfinexOrder>();
+        private IEnumerable<OrderWithCount> bids = new List<OrderWithCount>();
+        
+        private IEnumerable<OrderWithCount> asks = new List<OrderWithCount>();
+
+        public ExchangeInfo GetInfo()
+        {
+            return new ExchangeInfo
+            {
+                Bids = bids,
+                Asks = asks
+            };
+        }
 
         public event EventHandler OnUpdate;
 
@@ -29,7 +41,10 @@ namespace Blocktrader.Bitfinex
         private void SetBindsAndAsks()
         {
             var response = GetOrderBook("tBTCUSD", 100);
-            Orders = response.Select(r => (BitfinexOrder) r);
+            var orders = response.Select(r => (OrderWithCount) r);
+
+            bids = orders.Where(o => o.Amount > 0);
+            asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
         }
 
         private void Update()
