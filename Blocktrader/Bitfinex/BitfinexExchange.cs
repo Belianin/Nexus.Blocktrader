@@ -77,7 +77,9 @@ namespace Blocktrader.Bitfinex
 
         private string[][] GetOrderBook(string symbol, int limit)
         {
-            var response = web.DownloadString($"https://api-pub.bitfinex.com/v2/book/{symbol}/P0?len={limit}");
+            var uri = $"https://api-pub.bitfinex.com/v2/book/{symbol}/P0?len={limit}";
+            Console.WriteLine(uri);
+            var response = web.DownloadString(uri);
             var result = JsonConvert.DeserializeObject<string[][]>(response);
             return result;
         }

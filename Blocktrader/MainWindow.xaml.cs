@@ -81,7 +81,7 @@ namespace Blocktrader
 
         private void UpdateBitfinex()
         {
-            var info = bitstamp.GetInfo();
+            var info = bitfinex.GetInfo();
             BitfinexBidsGrid.Dispatcher?.Invoke(() =>
                 BitfinexBidsGrid.ItemsSource = info.Bids.Where(IsOk));
             BitfinexAsksGrid.Dispatcher?.Invoke(() =>
@@ -117,7 +117,7 @@ namespace Blocktrader
             bitfinex.Ticket = ticket;
             bitstamp.Ticket = ticket;
             
-            ForceUpdate();
+            //ForceUpdate(); 
         }
     }
 

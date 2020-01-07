@@ -30,7 +30,7 @@ namespace Blocktrader.Bitstamp
         };
 
         public Ticket Ticket { get; set; }
-
+        
         public void ForceUpdate()
         {
             SetBindsAndAsks();
@@ -83,7 +83,7 @@ namespace Blocktrader.Bitstamp
 
         private OrderBookResponse GetOrderBook(string symbol)
         {
-            var response = web.DownloadString($"https://bitstamp.net/api/order_book/{symbol}");
+            var response = web.DownloadString($"https://bitstamp.net/api/v2/order_book/{symbol}/");
             var result = JsonConvert.DeserializeObject<OrderBookResponse>(response);
             return result;
         }
