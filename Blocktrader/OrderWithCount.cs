@@ -10,9 +10,9 @@ namespace Blocktrader
         {
             return new OrderWithCount
             {
-                Price = decimal.Parse(input[0], CultureInfo.InvariantCulture),
+                Price = float.Parse(input[0], CultureInfo.InvariantCulture),
                 Count = int.Parse(input[1], CultureInfo.InvariantCulture),
-                Amount = decimal.Parse(input[2], CultureInfo.InvariantCulture)
+                Amount = float.Parse(input[2], CultureInfo.InvariantCulture)
             };
         }
     }

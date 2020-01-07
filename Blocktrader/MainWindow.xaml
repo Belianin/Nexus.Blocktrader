@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Blocktrader"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1000">
+        Title="MainWindow" Height="450" Width="1000"
+        Background="Indigo">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"></RowDefinition>
@@ -37,10 +38,11 @@
             Width="380"
             ColumnWidth="200"
             Grid.Row="1" Grid.Column="0"
-            IsReadOnly="True"/>
+            IsReadOnly="True"
+            RowBackground="Chartreuse"/>
         <DataGrid 
             x:Name="BinanceAsksGrid"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Left"
             Height="256"
             VerticalAlignment="Top"
             Width="380"
@@ -58,7 +60,7 @@
             IsReadOnly="True"/>
         <DataGrid 
             x:Name="BitfinexAsksGrid"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Left"
             Height="256"
             VerticalAlignment="Top"
             Width="380"
@@ -76,7 +78,7 @@
             IsReadOnly="True"/>
         <DataGrid 
             x:Name="BitstampAsksGrid"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Left"
             Height="256"
             VerticalAlignment="Top"
             Width="380"
@@ -98,5 +100,16 @@
             Height="32"
             SelectionChanged="TicketPicker_OnSelected"
             ></ComboBox>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Open"/>
+                    <MenuItem Header="_Close"/>
+                    <MenuItem Header="_Save"/>
+                </MenuItem>
+            </Menu>
+            <StackPanel></StackPanel>
+        </DockPanel>
     </Grid>
+    
 </Window>

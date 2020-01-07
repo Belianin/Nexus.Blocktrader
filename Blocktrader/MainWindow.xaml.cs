@@ -56,11 +56,14 @@ namespace Blocktrader
                 Ticket.XrpUsd,
                 Ticket.XrpBtc
             };
+
+            var picker = new Picker();
+            picker.Show();
         }
 
         public void Filter(object sender, RoutedEventArgs routedEventArgs)
         {
-            if (decimal.TryParse(OrderSizeInput.Text, out var value))
+            if (float.TryParse(OrderSizeInput.Text, out var value))
             {
                 filterSettings.MinSize = value;
                 ForceUpdate();
@@ -123,6 +126,6 @@ namespace Blocktrader
 
     internal class FilterSettings
     {
-        public decimal MinSize { get; set; } = 0;
+        public float MinSize { get; set; } = 0;
     }
 }

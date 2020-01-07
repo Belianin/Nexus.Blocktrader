@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -19,7 +20,7 @@ namespace Blocktrader.Bitstamp
         private IEnumerable<Order> bids = new List<Order>();
 
         private IEnumerable<Order> asks = new List<Order>();
-        
+
         private Dictionary<Ticket, string> tickets = new Dictionary<Ticket, string>
         {
             {Ticket.BtcUsd, "btcusd"},
@@ -43,6 +44,7 @@ namespace Blocktrader.Bitstamp
         {
             web = new WebClient();
             Task.Run(Update);
+
         }
 
         public ExchangeInfo GetInfo()
@@ -54,21 +56,37 @@ namespace Blocktrader.Bitstamp
             };
         }
 
+        private FileStream GetWriter()
+        {
+            var filename = $"bitstamp_{Ticket}_{DateTime.Now.ToString("MMM-yyyy", new CultureInfo("en_US"))}";
+
+            return File.Open(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+        }
+
         private void SetBindsAndAsks()
         {
             if (!tickets.TryGetValue(Ticket, out var symbol))
                 return;
+            var writer = GetWriter();
             var response = GetOrderBook(symbol);
             bids = response.Bids.Select(ParseOrder);
             asks = response.Asks.Select(ParseOrder);
+
+            var timestamp = new Timestamp
+            {
+                Date = DateTime.UtcNow,
+                Orders = bids.ToArray()
+            };
+            
+            writer.Write(timestamp.ToBytes());
         }
 
         private Order ParseOrder(string[] parameters)
         {
             return new Order
             {
-                Price = decimal.Parse(parameters[0], CultureInfo.InvariantCulture),
-                Amount = decimal.Parse(parameters[1], CultureInfo.InvariantCulture)
+                Price = float.Parse(parameters[0], CultureInfo.InvariantCulture),
+                Amount = float.Parse(parameters[1], CultureInfo.InvariantCulture)
             };
         }
 

@@ -66,8 +66,8 @@ namespace Blocktrader.Binance
         {
             return new Order
             {
-                Price = decimal.Parse(parameters[0], CultureInfo.InvariantCulture),
-                Amount = decimal.Parse(parameters[1], CultureInfo.InvariantCulture)
+                Price = float.Parse(parameters[0], CultureInfo.InvariantCulture),
+                Amount = float.Parse(parameters[1], CultureInfo.InvariantCulture)
             };
         }
 
