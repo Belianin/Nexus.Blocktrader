@@ -13,26 +13,32 @@ namespace Blocktrader
         public Picker()
         {
             InitializeComponent();
-
-            var file = File.Open(GetFileName("Bitstamp", Ticket.BtcUsd, DateTime.Now), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var rawData = new byte[int.MaxValue / 8];
-            file.Read(rawData, 0, int.MaxValue / 8);
-            var timestamps = Timestamp.FromBytes(rawData);
-
-            var orders = timestamps.First().Bids;
-//            var min = orders.Min(o => o.Price);
-//            var max = orders.Max(o => o.Price) - min;
-//            BitstampBids.ItemsSource = orders.Select(o => new DataGridRow
-//            {
-//                Item = o,
-//                Background = new SolidColorBrush(Color.FromRgb(50, (byte) (int) (255 * (o.Price / min)), 50))
-//            });
-            BitstampBids.ItemsSource = orders;
         }
 
-        private string GetFileName(string exchange, Ticket ticket, DateTime dateTime)
+        private string GetFileName(string exchange, Ticket ticket, DateTime dateTime)   
         {
-            return $"{exchange}_{ticket}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
+            return $"Data/{exchange}/{exchange}_{ticket}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
+        }
+
+        private void DatePicker_OnSelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var dateTime = DatePicker.SelectedDate;
+            if (dateTime == null)
+                return;
+
+            var filename = GetFileName("Bitstamp", Ticket.BtcUsd, dateTime.Value);
+            
+            var file = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var rawData = new byte[int.MaxValue / 4];
+            file.Read(rawData, 0, int.MaxValue / 4);
+            var timestamps = Timestamp.FromBytes(rawData);
+
+            var timestamp = timestamps.FirstOrDefault();//(d => d.Date.Day == dateTime.Value.Day);
+            if (timestamp == null)
+                return;
+
+            BitstampBids.ItemsSource = timestamp.Bids;
+            BitstampAsks.ItemsSource = timestamp.Asks;
         }
     }
 }

@@ -40,8 +40,8 @@ namespace Blocktrader
             {
                 foreach (var ticket in tickets)
                 {
-                    using var writer = GetWriter(ticket);
                     var timestamp = GetTimestamp(ticket);
+                    using var writer = GetWriter(ticket);
                     writer.Write(timestamp.ToBytes());
                 }
                 Thread.Sleep(updatePeriod);

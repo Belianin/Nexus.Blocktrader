@@ -7,12 +7,30 @@
         mc:Ignorable="d"
         Title="Picker" Height="450" Width="800">
     <Grid>
-        <DataGrid 
-            x:Name="BitstampBids"/>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"></RowDefinition>
+            <RowDefinition Height="32"></RowDefinition>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
         <DatePicker 
-            Height="64"
-            Width="64"/>
+            x:Name="DatePicker"
+            SelectedDateChanged="DatePicker_OnSelectedDateChanged" 
+            HorizontalAlignment="Center" 
+            Grid.Row="0" Grid.ColumnSpan="2"
+            Width="256"/>
         <Slider 
-            Width="128"/>
+            Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
+            Width="384"/>
+        <DataGrid 
+            x:Name="BitstampBids"
+            Grid.Row="2" Grid.Column="0"/>
+        <DataGrid 
+            x:Name="BitstampAsks"
+            Grid.Row="2" Grid.Column="1"/>
     </Grid>
 </Window>

@@ -18,6 +18,7 @@ namespace Blocktrader
                 .Concat(BitConverter.GetBytes(Bids.Length))
                 .Concat(Bids.SelectMany(b => b.ToBytes()))
                 .Concat(BitConverter.GetBytes(Asks.Length))
+                .Concat(Asks.SelectMany(a => a.ToBytes()))
                 .ToArray();
         }
 
