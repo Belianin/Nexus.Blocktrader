@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Blocktrader.Binance;
@@ -11,9 +12,11 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Bitstamp
 {
-    public class BitstampExchange : IExchange
+    public class BitstampExchange : BaseExchange, IExchange
     {
         private readonly WebClient web;
+
+        private readonly HttpClient client;
         
         private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
         
@@ -34,13 +37,14 @@ namespace Blocktrader.Bitstamp
         
         public void ForceUpdate()
         {
-            SetBindsAndAsks();
+            foreach (var ticket in tickets.Keys) 
+                SetBindsAndAsks(ticket);
             OnUpdate?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler OnUpdate;
 
-        public BitstampExchange()
+        public BitstampExchange() : base("Bitstamp")
         {
             web = new WebClient();
             Task.Run(Update);
@@ -56,26 +60,18 @@ namespace Blocktrader.Bitstamp
             };
         }
 
-        private FileStream GetWriter()
+        private void SetBindsAndAsks(Ticket ticket)
         {
-            var filename = $"bitstamp_{Ticket}_{DateTime.Now.ToString("MMM-yyyy", new CultureInfo("en_US"))}";
-
-            return File.Open(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-        }
-
-        private void SetBindsAndAsks()
-        {
-            if (!tickets.TryGetValue(Ticket, out var symbol))
-                return;
-            var writer = GetWriter();
-            var response = GetOrderBook(symbol);
+            using var writer = GetWriter(ticket);
+            var response = GetOrderBook(ticket);
             bids = response.Bids.Select(ParseOrder);
             asks = response.Asks.Select(ParseOrder);
 
             var timestamp = new Timestamp
             {
                 Date = DateTime.UtcNow,
-                Orders = bids.ToArray()
+                Bids = bids.ToArray(),
+                Asks = asks.ToArray()
             };
             
             writer.Write(timestamp.ToBytes());
@@ -99,11 +95,29 @@ namespace Blocktrader.Bitstamp
             }
         }
 
-        private OrderBookResponse GetOrderBook(string symbol)
+        private OrderBookResponse GetOrderBook(Ticket ticket)
         {
+            var symbol = tickets[ticket];
             var response = web.DownloadString($"https://bitstamp.net/api/v2/order_book/{symbol}/");
             var result = JsonConvert.DeserializeObject<OrderBookResponse>(response);
             return result;
+        }
+
+        protected override Timestamp GetTimestamp(Ticket ticket)
+        {
+            var symbol = tickets[ticket];
+            var response = web.DownloadString($"https://bitstamp.net/api/v2/order_book/{symbol}/");
+            var book = JsonConvert.DeserializeObject<OrderBookResponse>(response);
+            
+            var bids = book.Bids.Select(ParseOrder);
+            var asks = book.Asks.Select(ParseOrder);
+
+            return new Timestamp
+            {
+                Date = DateTime.UtcNow,
+                Bids = bids.ToArray(),
+                Asks = asks.ToArray()
+            };
         }
     }
 }

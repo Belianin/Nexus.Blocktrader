@@ -8,19 +8,17 @@ namespace Blocktrader
     {
         public DateTime Date { get; set; }
         
-        public Order[] Orders { get; set; }
+        public Order[] Bids { get; set; }
+        
+        public Order[] Asks { get; set; }
 
         public byte[] ToBytes()
         {
-            var result = BitConverter.GetBytes(Date.ToBinary())
-                .Concat(BitConverter.GetBytes(Orders.Length));
-
-            foreach (var order in Orders)
-            {
-                result = result.Concat(order.ToBytes());
-            }
-
-            return result.ToArray();
+            return BitConverter.GetBytes(Date.ToBinary())
+                .Concat(BitConverter.GetBytes(Bids.Length))
+                .Concat(Bids.SelectMany(b => b.ToBytes()))
+                .Concat(BitConverter.GetBytes(Asks.Length))
+                .ToArray();
         }
 
         public static IEnumerable<Timestamp> FromBytes(byte[] bytes)
@@ -28,22 +26,31 @@ namespace Blocktrader
             var index = 0;
             while (true)
             {
-                
                 var dateTime = DateTime.FromBinary(BitConverter.ToInt64(bytes, index));
                 index += 8;
-                var length = BitConverter.ToInt32(bytes, index);
+                var bidsCount = BitConverter.ToInt32(bytes, index);
                 index += 4;
-                var orders = new List<Order>(length);
-                for (var i = 0; i < length; i++)
+                var bids = new List<Order>(bidsCount);
+                for (var i = 0; i < bidsCount; i++)
                 {
-                    orders.Add(Order.FromBytes(bytes, index));
+                    bids.Add(Order.FromBytes(bytes, index));
+                    index += 8;
+                }
+
+                var asksCount = BitConverter.ToInt32(bytes, index);
+                index += 4;
+                var asks = new List<Order>(bidsCount);
+                for (var i = 0; i < asksCount; i++)
+                {
+                    asks.Add(Order.FromBytes(bytes, index));
                     index += 8;
                 }
 
                 yield return new Timestamp
                 {
                     Date = dateTime,
-                    Orders = orders.ToArray()
+                    Bids = bids.ToArray(),
+                    Asks = asks.ToArray()
                 };
             }
         }

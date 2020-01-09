@@ -48,6 +48,7 @@ namespace Blocktrader.Bitfinex
         }
 
         public event EventHandler OnUpdate;
+        public string Name => "Bitfinex";
 
         public BitfinexExchange()
         {

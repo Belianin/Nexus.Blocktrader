@@ -46,6 +46,7 @@ namespace Blocktrader.Binance
         }
 
         public event EventHandler OnUpdate;
+        public string Name => "Binance";
 
         public BinanceExchange()
         {

@@ -25,4 +25,10 @@ namespace Blocktrader
             };
         }
     }
+
+    public enum OrderType
+    {
+        Bid,
+        Ask
+    }
 }

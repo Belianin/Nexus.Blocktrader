@@ -14,12 +14,12 @@ namespace Blocktrader
         {
             InitializeComponent();
 
-            var file = File.Open(GetFileName("bitstamp", Ticket.BtcUsd, DateTime.Now), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var file = File.Open(GetFileName("Bitstamp", Ticket.BtcUsd, DateTime.Now), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var rawData = new byte[int.MaxValue / 8];
             file.Read(rawData, 0, int.MaxValue / 8);
             var timestamps = Timestamp.FromBytes(rawData);
 
-            var orders = timestamps.First().Orders;
+            var orders = timestamps.First().Bids;
 //            var min = orders.Min(o => o.Price);
 //            var max = orders.Max(o => o.Price) - min;
 //            BitstampBids.ItemsSource = orders.Select(o => new DataGridRow
@@ -32,7 +32,7 @@ namespace Blocktrader
 
         private string GetFileName(string exchange, Ticket ticket, DateTime dateTime)
         {
-            return $"{exchange}_{ticket}_{dateTime.ToString("MMM-yyyy", new CultureInfo("en_US"))}";
+            return $"{exchange}_{ticket}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
         }
     }
 }
