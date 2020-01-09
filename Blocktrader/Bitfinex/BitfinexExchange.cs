@@ -11,17 +11,11 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Bitfinex
 {
-    public class BitfinexExchange
+    public class BitfinexExchange : BaseExchange
     {
         private readonly WebClient web;
-        
-        private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
-        
-        private IEnumerable<OrderWithCount> bids = new List<OrderWithCount>();
-        
-        private IEnumerable<OrderWithCount> asks = new List<OrderWithCount>();
-        
-        private Dictionary<Ticket, string> tickets = new Dictionary<Ticket, string>
+
+        private Dictionary<Ticket, string> symbols = new Dictionary<Ticket, string>
         {
             {Ticket.BtcUsd, "tBTCUSD"},
             {Ticket.EthUsd, "tETHUSD"},
@@ -30,50 +24,26 @@ namespace Blocktrader.Bitfinex
             {Ticket.XrpUsd, "tXRPUSD"}
         };
 
-        public Ticket Ticket { get; set; }
-
-        public ExchangeInfo GetInfo()
-        {
-            return new ExchangeInfo
-            {
-                Bids = bids,
-                Asks = asks
-            };
-        }
-
-        public void ForceUpdate()
-        {
-            SetBindsAndAsks();
-            OnUpdate?.Invoke(this, EventArgs.Empty);
-        }
-
-        public event EventHandler OnUpdate;
-        public string Name => "Bitfinex";
-
-        public BitfinexExchange()
+        public BitfinexExchange() : base("Bitfinex", new List<Ticket>{ Ticket.BtcUsd, Ticket.EthUsd, Ticket.EthBtc, Ticket.XrpUsd, Ticket.XrpBtc})
         {
             web = new WebClient();
-            Task.Run(Update);
         }
 
-        private void SetBindsAndAsks()
+        protected override Timestamp GetTimestamp(Ticket ticket)
         {
-            if (!tickets.TryGetValue(Ticket, out var symbol))
-                return;
+            var symbol = symbols[ticket];
             var response = GetOrderBook(symbol, 100);
-            var orders = response.Select(r => (OrderWithCount) r);
+            var orders = response.Select(r => (OrderWithCount) r).ToArray();
 
-            bids = orders.Where(o => o.Amount > 0);
-            asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
-        }
+            var bids = orders.Where(o => o.Amount > 0);
+            var asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
 
-        private void Update()
-        {
-            while (true)
+            return new Timestamp
             {
-                ForceUpdate();
-                Thread.Sleep(updatePeriod);
-            }
+                Date = DateTime.Now,
+                Bids = bids.ToArray(),
+                Asks = asks.ToArray()
+            };
         }
 
         private string[][] GetOrderBook(string symbol, int limit)

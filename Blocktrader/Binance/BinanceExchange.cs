@@ -9,17 +9,13 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Binance
 {
-    public class BinanceExchange
+    public class BinanceExchange : BaseExchange
     {
         private readonly WebClient web;
         
         private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
         
-        private IEnumerable<Order> bids = new List<Order>();
-
-        private IEnumerable<Order> asks = new List<Order>();
-        
-        private Dictionary<Ticket, string> tickets = new Dictionary<Ticket, string>
+        private Dictionary<Ticket, string> symbols = new Dictionary<Ticket, string>
         {
             {Ticket.BtcUsd, "BTCUSDT"},
             {Ticket.EthUsd, "ETHUSDT"},
@@ -28,41 +24,26 @@ namespace Blocktrader.Binance
             {Ticket.XrpUsd, "XRPUSDT"}
         };
 
-        public Ticket Ticket { get; set; }
-
-        public ExchangeInfo GetInfo()
+        public BinanceExchange() : base("Binance", new List<Ticket>{ Ticket.BtcUsd, Ticket.EthUsd, Ticket.EthBtc, Ticket.XrpUsd, Ticket.XrpBtc})
         {
-            return new ExchangeInfo
+            web = new WebClient();
+        }
+        
+        protected override Timestamp GetTimestamp(Ticket ticket)
+        {
+            var symbol = symbols[ticket];
+            var response = GetOrderBook(symbol, 100);
+            var bids = response.Bids.Select(ParseOrder);
+            var asks = response.Asks.Select(ParseOrder);
+
+            return new Timestamp
             {
-                Bids = bids,
-                Asks = asks,
+                Date = DateTime.Now,
+                Bids = bids.ToArray(),
+                Asks = asks.ToArray()
             };
         }
 
-        public void ForceUpdate()
-        {
-            SetBindsAndAsks();
-            OnUpdate?.Invoke(this, EventArgs.Empty);
-        }
-
-        public event EventHandler OnUpdate;
-        public string Name => "Binance";
-
-        public BinanceExchange()
-        {
-            web = new WebClient();
-            Task.Run(Update);
-        }
-
-        private void SetBindsAndAsks()
-        {
-            if (!tickets.TryGetValue(Ticket, out var symbol))
-                return;
-            var response = GetOrderBook(symbol, 100);
-            bids = response.Bids.Select(ParseOrder);
-            asks = response.Asks.Select(ParseOrder);
-        }
-        
         private Order ParseOrder(string[] parameters)
         {
             return new Order
@@ -70,15 +51,6 @@ namespace Blocktrader.Binance
                 Price = float.Parse(parameters[0], CultureInfo.InvariantCulture),
                 Amount = float.Parse(parameters[1], CultureInfo.InvariantCulture)
             };
-        }
-
-        private void Update()
-        {
-            while (true)
-            {
-                ForceUpdate();
-                Thread.Sleep(updatePeriod);
-            }
         }
 
         private OrderBookResponse GetOrderBook(string symbol, int limit)

@@ -116,8 +116,8 @@ namespace Blocktrader
         private void TicketPicker_OnSelected(object sender, RoutedEventArgs e)
         {
             var ticket = (Ticket) TicketPicker.SelectedItem;
-            binance.Ticket = ticket;
-            bitfinex.Ticket = ticket;
+//            binance.Ticket = ticket;
+//            bitfinex.Ticket = ticket;
             //bitstamp.Ticket = ticket;
             
             //ForceUpdate(); 

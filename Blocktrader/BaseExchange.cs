@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Blocktrader
 {
@@ -18,8 +19,10 @@ namespace Blocktrader
         public BaseExchange(string name, ICollection<Ticket> tickets)
         {
             Name = name;
+            this.tickets = tickets;
             if (!Directory.Exists($"Data/{Name}"))
                 Directory.CreateDirectory($"Data/{Name}");
+            Task.Run(Update);
         }
         
         protected FileStream GetWriter(Ticket ticket)

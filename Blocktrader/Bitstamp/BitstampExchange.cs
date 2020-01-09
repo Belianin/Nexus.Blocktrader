@@ -25,8 +25,6 @@ namespace Blocktrader.Bitstamp
             {Ticket.XrpUsd, "xrpusd"}
         };
 
-        public event EventHandler OnUpdate;
-
         public BitstampExchange() : base("Bitstamp", new List<Ticket>{ Ticket.BtcUsd, Ticket.EthUsd, Ticket.EthBtc, Ticket.XrpUsd, Ticket.XrpBtc})
         {
             web = new WebClient();
