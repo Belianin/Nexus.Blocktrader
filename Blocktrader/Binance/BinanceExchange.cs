@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Binance
 {
-    public class BinanceExchange : IExchange
+    public class BinanceExchange
     {
         private readonly WebClient web;
         

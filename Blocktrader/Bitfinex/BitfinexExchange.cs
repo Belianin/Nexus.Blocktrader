@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Blocktrader.Bitfinex
 {
-    public class BitfinexExchange : IExchange
+    public class BitfinexExchange
     {
         private readonly WebClient web;
         

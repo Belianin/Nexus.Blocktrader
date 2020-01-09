@@ -43,10 +43,10 @@ namespace Blocktrader
             binance = new BinanceExchange();
             bitfinex = new BitfinexExchange();
             bitstamp = new BitstampExchange();
-
-            binance.OnUpdate += (s, e) => UpdateBinance();
-            bitfinex.OnUpdate += (s, e) => UpdateBitfinex();
-            bitstamp.OnUpdate += (s, e) => UpdateBitstamp();
+//
+//            binance.OnUpdate += (s, e) => UpdateBinance();
+//            bitfinex.OnUpdate += (s, e) => UpdateBitfinex();
+//            bitstamp.OnUpdate += (s, e) => UpdateBitstamp();
 
             TicketPicker.ItemsSource = new[]
             {
@@ -72,39 +72,39 @@ namespace Blocktrader
             OrderSizeInput.Text = filterSettings.MinSize.ToString(CultureInfo.CurrentCulture);
         }
 
-        private void UpdateBinance()
-        {
-            var info = binance.GetInfo();
-            BinanceBidsGrid.Dispatcher?.Invoke(() => 
-                BinanceBidsGrid.ItemsSource = info.Bids.Where(IsOk));
-            BinanceAsksGrid.Dispatcher?.Invoke(() =>
-                BinanceAsksGrid.ItemsSource = info.Asks.Where(IsOk));
-        }
-
-
-        private void UpdateBitfinex()
-        {
-            var info = bitfinex.GetInfo();
-            BitfinexBidsGrid.Dispatcher?.Invoke(() =>
-                BitfinexBidsGrid.ItemsSource = info.Bids.Where(IsOk));
-            BitfinexAsksGrid.Dispatcher?.Invoke(() =>
-                BitfinexAsksGrid.ItemsSource = info.Asks.Where(IsOk));
-        }
-        
-        private void UpdateBitstamp()
-        {
-            var info = bitstamp.GetInfo();
-            BitstampBidsGrid.Dispatcher?.Invoke(() =>
-                BitstampBidsGrid.ItemsSource = info.Bids.Where(IsOk));
-            BitstampAsksGrid.Dispatcher?.Invoke(() =>
-                BitstampAsksGrid.ItemsSource = info.Asks.Where(IsOk));
-        }
+//        private void UpdateBinance()
+//        {
+//            var info = binance.GetInfo();
+//            BinanceBidsGrid.Dispatcher?.Invoke(() => 
+//                BinanceBidsGrid.ItemsSource = info.Bids.Where(IsOk));
+//            BinanceAsksGrid.Dispatcher?.Invoke(() =>
+//                BinanceAsksGrid.ItemsSource = info.Asks.Where(IsOk));
+//        }
+//
+//
+//        private void UpdateBitfinex()
+//        {
+//            var info = bitfinex.GetInfo();
+//            BitfinexBidsGrid.Dispatcher?.Invoke(() =>
+//                BitfinexBidsGrid.ItemsSource = info.Bids.Where(IsOk));
+//            BitfinexAsksGrid.Dispatcher?.Invoke(() =>
+//                BitfinexAsksGrid.ItemsSource = info.Asks.Where(IsOk));
+//        }
+//        
+//        private void UpdateBitstamp()
+//        {
+//            var info = bitstamp.GetInfo();
+//            BitstampBidsGrid.Dispatcher?.Invoke(() =>
+//                BitstampBidsGrid.ItemsSource = info.Bids.Where(IsOk));
+//            BitstampAsksGrid.Dispatcher?.Invoke(() =>
+//                BitstampAsksGrid.ItemsSource = info.Asks.Where(IsOk));
+//        }
 
         private void ForceUpdate()
         {
-            binance.ForceUpdate();
-            bitfinex.ForceUpdate();
-            bitstamp.ForceUpdate();
+//            binance.ForceUpdate();
+//            bitfinex.ForceUpdate();
+//            bitstamp.ForceUpdate();
         }
 
         private bool IsOk(Order order)
@@ -118,7 +118,7 @@ namespace Blocktrader
             var ticket = (Ticket) TicketPicker.SelectedItem;
             binance.Ticket = ticket;
             bitfinex.Ticket = ticket;
-            bitstamp.Ticket = ticket;
+            //bitstamp.Ticket = ticket;
             
             //ForceUpdate(); 
         }
