@@ -6,33 +6,49 @@ namespace Blocktrader
 {
     public static class EnumerableExtensions
     {
-        public static IEnumerable<Order> Flat(this IEnumerable<Order> orders, int delta)
+        public static IEnumerable<Order> Flat(this IEnumerable<Order> orders, int precision, bool bid)
         {
-            var currentAmount = 0f;
-            var currentPrice = orders.First().Price;
-            foreach (var order in orders)
+            if (precision >= 0)
             {
-                var price = Math.Ceiling(order.Price / Math.Pow(10, delta)) * Math.Pow(10, delta);
-                if (Math.Abs(currentPrice - order.Price) <= delta)
+                var currentAmount = 0f;
+                var delta = Convert.ToSingle(Math.Pow(10, precision));
+                var price = Convert.ToSingle(Math.Ceiling(orders.First().Price / delta) * delta);
+                if (bid) {price = Convert.ToSingle(Math.Floor(orders.First().Price / delta) * delta);}
+
+                foreach (var order in orders)
                 {
-                    currentAmount += order.Amount;
+                    var bidask = (price - order.Price >= 0);
+                    if (bid) {bidask = (price - order.Price <= 0);}
+
+                    if (bidask)
+                    {
+                        currentAmount += order.Amount;
+                    }
+                    else
+                    {
+                        yield return new Order
+                        {
+                            Amount = currentAmount,
+                            Price = price
+                        };
+                        price = Convert.ToSingle(Math.Ceiling(order.Price / delta) * delta);
+                        if (bid) {price = Convert.ToSingle(Math.Floor(order.Price / delta) * delta);}
+                            currentAmount = order.Amount;
+                    }
                 }
-                else
+              
+            }
+            else
+            {
+                foreach (var order in orders) 
                 {
                     yield return new Order
                     {
-                        Amount = currentAmount,
-                        Price = currentPrice
+                        Amount = order.Amount,
+                        Price = order.Price
                     };
-                    currentPrice = order.Price;
-                    currentAmount = order.Amount;
                 }
             }
-            yield return new Order
-            {
-                Amount = currentAmount,
-                Price = currentPrice
-            };
         }
         
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Action<T> action)

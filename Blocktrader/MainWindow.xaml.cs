@@ -54,30 +54,31 @@ namespace Blocktrader
             return order.Amount >= filterSettings.MinSize;
         }
 
-        private IEnumerable<Order> Flat(IEnumerable<Order> orders, float delta)
-        {
-            //var sorted = orders.ToList()
-            //.Sort();
-            var currentAmount = 0f;
-            var currentPrice = orders.First().Price;
-            foreach (var order in orders)
-            {
-                if (currentPrice - order.Price <= delta)
-                {
-                    currentAmount += order.Amount;
-                }
-                else
-                {
-                    yield return new Order
-                    {
-                        Amount = currentAmount,
-                        Price = currentPrice
-                    };
-                    currentPrice = order.Price;
-                    currentAmount = order.Amount;
-                }
-            }
-        }
+      //private IEnumerable<Order> Flat(IEnumerable<Order> orders, float delta)
+      //  {
+      //      //var sorted = orders.ToList()
+      //      //.Sort();
+      //      var currentAmount = 0f;
+      //      var currentPrice = orders.First().Price;
+      //      foreach (var order in orders)
+      //      {
+      //          if (currentPrice - order.Price <= delta)
+      //          {
+      //              currentAmount += order.Amount;
+      //          }
+      //          else
+      //          {
+      //              yield return new Order
+      //              {
+      //                  Amount = currentAmount,
+      //                  Price = currentPrice
+      //              };
+      //              currentPrice = order.Price;
+      //              currentAmount = order.Amount;
+      //          }
+      //      }
+      //  }
+    
         
         private string GetFileName(string exchange, Ticket ticket, DateTime dateTime)   
         {
@@ -99,18 +100,18 @@ namespace Blocktrader
             TimePicker.TickFrequency = 1;
             TimePicker.TickPlacement = TickPlacement.BottomRight;
         }
-
         private void TimePicker_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (timestamps == null)
                 return;
-            var index = (int) e.NewValue;
+            var index = (int) TimePicker.Value;
             if (index < 0 || index >= timestamps.Length)
                 return;
-            var timestamp = timestamps[(int) e.NewValue];
-
-            BitstampBids.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(50);
-            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(50);
+            var timestamp = timestamps[(int) TimePicker.Value];
+            var p = Convert.ToInt32(PrecPicker.Value)-1;
+            BitstampBids.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p,true);
+            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p,false);
         }
+
     }
 }

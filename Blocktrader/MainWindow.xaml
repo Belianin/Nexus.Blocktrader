@@ -29,6 +29,13 @@
             Width="384"
             ValueChanged="TimePicker_OnValueChanged"
             IsSnapToTickEnabled="True"/>
+        <Slider 
+            x:Name="PrecPicker" Grid.Column="1"
+            ValueChanged="TimePicker_OnValueChanged"
+            Maximum="4" 
+            TickPlacement="BottomRight"
+            TickFrequency="1"
+            IsSnapToTickEnabled="True" Margin="298,0,92,0" Grid.Row="1"/>
         <DataGrid 
             x:Name="BitstampBids"
             Grid.Row="2" Grid.Column="0"
@@ -38,5 +45,5 @@
             Grid.Row="2" Grid.Column="1"
             IsReadOnly="True"/>
     </Grid>
-    
+
 </Window>
