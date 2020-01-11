@@ -10,7 +10,7 @@ namespace Blocktrader
         {
             var currentAmount = 0f;
             var currentPrice = orders.First().Price;
-            foreach (var order in orders.OrderByDescending(a => a.Price))
+            foreach (var order in orders)
             {
                 if (Math.Abs(currentPrice - order.Price) <= delta)
                 {

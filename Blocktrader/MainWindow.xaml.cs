@@ -109,8 +109,8 @@ namespace Blocktrader
                 return;
             var timestamp = timestamps[(int) e.NewValue];
 
-            BitstampBids.ItemsSource = timestamp.Bids.Where(IsOk);
-            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk).Flat(50);
+            BitstampBids.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(50);
+            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(50);
         }
     }
 }
