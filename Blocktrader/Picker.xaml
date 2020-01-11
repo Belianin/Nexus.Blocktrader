@@ -24,8 +24,10 @@
             Grid.Row="0" Grid.ColumnSpan="2"
             Width="256"/>
         <Slider 
+            x:Name="TimePicker"
             Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
-            Width="384"/>
+            Width="384"
+            ValueChanged="TimePicker_OnValueChanged"/>
         <DataGrid 
             x:Name="BitstampBids"
             Grid.Row="2" Grid.Column="0"/>

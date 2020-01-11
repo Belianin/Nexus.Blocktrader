@@ -1,15 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace Blocktrader
 {
     public partial class Picker : Window
     {
+        private Timestamp[] timestamps;
+        
         public Picker()
         {
             InitializeComponent();
@@ -27,15 +31,23 @@ namespace Blocktrader
                 return;
 
             var filename = GetFileName("Bitstamp", Ticket.BtcUsd, dateTime.Value);
-            
-            var file = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var rawData = new byte[int.MaxValue / 4];
-            file.Read(rawData, 0, int.MaxValue / 4);
-            var timestamps = Timestamp.FromBytes(rawData);
+            var rawData = File.ReadAllBytes(filename);
+            timestamps = Timestamp.FromBytes(rawData)
+                .Where(d => d.Date.Day == dateTime.Value.Day)
+                .ToArray();
+            TimePicker.Maximum = timestamps.Count();
+            TimePicker.TickFrequency = 1;
+            TimePicker.TickPlacement = TickPlacement.BottomRight;
+        }
 
-            var timestamp = timestamps.FirstOrDefault();//(d => d.Date.Day == dateTime.Value.Day);
-            if (timestamp == null)
+        private void TimePicker_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (timestamps == null)
                 return;
+            var index = (int) e.NewValue;
+            if (index < 0 || index >= timestamps.Length)
+                return;
+            var timestamp = timestamps[(int) e.NewValue];
 
             BitstampBids.ItemsSource = timestamp.Bids;
             BitstampAsks.ItemsSource = timestamp.Asks;
