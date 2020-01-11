@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -34,6 +36,8 @@ namespace Blocktrader
         private readonly BitfinexExchange bitfinex;
 
         private readonly BitstampExchange bitstamp;
+        
+        private Timestamp[] timestamps;
 
         private FilterSettings filterSettings = new FilterSettings();
         
@@ -43,68 +47,6 @@ namespace Blocktrader
             binance = new BinanceExchange();
             bitfinex = new BitfinexExchange();
             bitstamp = new BitstampExchange();
-//
-//            binance.OnUpdate += (s, e) => UpdateBinance();
-//            bitfinex.OnUpdate += (s, e) => UpdateBitfinex();
-//            bitstamp.OnUpdate += (s, e) => UpdateBitstamp();
-
-            TicketPicker.ItemsSource = new[]
-            {
-                Ticket.BtcUsd,
-                Ticket.EthUsd,
-                Ticket.EthBtc,
-                Ticket.XrpUsd,
-                Ticket.XrpBtc
-            };
-
-            var picker = new Picker();
-            picker.Show();
-        }
-
-        public void Filter(object sender, RoutedEventArgs routedEventArgs)
-        {
-            if (float.TryParse(OrderSizeInput.Text, out var value))
-            {
-                filterSettings.MinSize = value;
-                ForceUpdate();
-            }
-
-            OrderSizeInput.Text = filterSettings.MinSize.ToString(CultureInfo.CurrentCulture);
-        }
-
-//        private void UpdateBinance()
-//        {
-//            var info = binance.GetInfo();
-//            BinanceBidsGrid.Dispatcher?.Invoke(() => 
-//                BinanceBidsGrid.ItemsSource = info.Bids.Where(IsOk));
-//            BinanceAsksGrid.Dispatcher?.Invoke(() =>
-//                BinanceAsksGrid.ItemsSource = info.Asks.Where(IsOk));
-//        }
-//
-//
-//        private void UpdateBitfinex()
-//        {
-//            var info = bitfinex.GetInfo();
-//            BitfinexBidsGrid.Dispatcher?.Invoke(() =>
-//                BitfinexBidsGrid.ItemsSource = info.Bids.Where(IsOk));
-//            BitfinexAsksGrid.Dispatcher?.Invoke(() =>
-//                BitfinexAsksGrid.ItemsSource = info.Asks.Where(IsOk));
-//        }
-//        
-//        private void UpdateBitstamp()
-//        {
-//            var info = bitstamp.GetInfo();
-//            BitstampBidsGrid.Dispatcher?.Invoke(() =>
-//                BitstampBidsGrid.ItemsSource = info.Bids.Where(IsOk));
-//            BitstampAsksGrid.Dispatcher?.Invoke(() =>
-//                BitstampAsksGrid.ItemsSource = info.Asks.Where(IsOk));
-//        }
-
-        private void ForceUpdate()
-        {
-//            binance.ForceUpdate();
-//            bitfinex.ForceUpdate();
-//            bitstamp.ForceUpdate();
         }
 
         private bool IsOk(Order order)
@@ -112,20 +54,38 @@ namespace Blocktrader
             return order.Amount >= filterSettings.MinSize;
         }
         
-        
-        private void TicketPicker_OnSelected(object sender, RoutedEventArgs e)
+        private string GetFileName(string exchange, Ticket ticket, DateTime dateTime)   
         {
-            var ticket = (Ticket) TicketPicker.SelectedItem;
-//            binance.Ticket = ticket;
-//            bitfinex.Ticket = ticket;
-            //bitstamp.Ticket = ticket;
-            
-            //ForceUpdate(); 
+            return $"Data/{exchange}/{exchange}_{ticket}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
         }
-    }
 
-    internal class FilterSettings
-    {
-        public float MinSize { get; set; } = 0;
+        private void DatePicker_OnSelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var dateTime = DatePicker.SelectedDate;
+            if (dateTime == null)
+                return;
+
+            var filename = GetFileName("Bitstamp", Ticket.BtcUsd, dateTime.Value);
+            var rawData = File.ReadAllBytes(filename);
+            timestamps = Timestamp.FromBytes(rawData)
+                .Where(d => d.Date.Day == dateTime.Value.Day)
+                .ToArray();
+            TimePicker.Maximum = timestamps.Count();
+            TimePicker.TickFrequency = 1;
+            TimePicker.TickPlacement = TickPlacement.BottomRight;
+        }
+
+        private void TimePicker_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (timestamps == null)
+                return;
+            var index = (int) e.NewValue;
+            if (index < 0 || index >= timestamps.Length)
+                return;
+            var timestamp = timestamps[(int) e.NewValue];
+
+            BitstampBids.ItemsSource = timestamp.Bids.Where(IsOk);
+            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk);
+        }
     }
 }

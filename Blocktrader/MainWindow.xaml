@@ -10,106 +10,31 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"></RowDefinition>
-            <RowDefinition Height="256"></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="32"></RowDefinition>
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <Label
-            Content="Bids" Height="32"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Grid.Row="0" Grid.Column="0"/>
-        <Label
-            Content="Asks"
-            Height="32"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Grid.Row="0" Grid.Column="1"/>
+        <DatePicker 
+            x:Name="DatePicker"
+            SelectedDateChanged="DatePicker_OnSelectedDateChanged" 
+            HorizontalAlignment="Center" 
+            Grid.Row="0" Grid.ColumnSpan="2"
+            Width="256"/>
+        <Slider 
+            x:Name="TimePicker"
+            Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
+            Width="384"
+            ValueChanged="TimePicker_OnValueChanged"
+            IsSnapToTickEnabled="True"/>
         <DataGrid 
-            x:Name="BinanceBidsGrid"
-            HorizontalAlignment="Left"
-            Height="256"
-            VerticalAlignment="Top"
-            Width="380"
-            ColumnWidth="200"
-            Grid.Row="1" Grid.Column="0"
-            IsReadOnly="True"
-            RowBackground="Chartreuse"/>
-        <DataGrid 
-            x:Name="BinanceAsksGrid"
-            HorizontalAlignment="Left"
-            Height="256"
-            VerticalAlignment="Top"
-            Width="380"
-            ColumnWidth="200"
-            Grid.Row="1" Grid.Column="1"
-            IsReadOnly="True"/>
-        <DataGrid 
-            x:Name="BitfinexBidsGrid"
-            HorizontalAlignment="Left"
-            Height="256"
-            VerticalAlignment="Top"
-            Width="380"
-            ColumnWidth="200"
-            Grid.Row="2" Grid.Column="0"
-            IsReadOnly="True"/>
-        <DataGrid 
-            x:Name="BitfinexAsksGrid"
-            HorizontalAlignment="Left"
-            Height="256"
-            VerticalAlignment="Top"
-            Width="380"
-            ColumnWidth="200"
-            Grid.Row="2" Grid.Column="1"
-            IsReadOnly="True"/>
-        <DataGrid 
-            x:Name="BitstampBidsGrid"
-            HorizontalAlignment="Left"
-            Height="256"
-            VerticalAlignment="Top"
-            Width="380"
-            ColumnWidth="200"
-            Grid.Row="3" Grid.Column="0"
-            IsReadOnly="True"/>
-        <DataGrid 
-            x:Name="BitstampAsksGrid"
-            HorizontalAlignment="Left"
-            Height="256"
-            VerticalAlignment="Top"
-            Width="380"
-            ColumnWidth="200"
-            Grid.Row="3" Grid.Column="1"
-            IsReadOnly="True"/>
-        <TextBox
-            Height="16"
-            Name="OrderSizeInput"
+            x:Name="BitstampBids"
             Grid.Row="2" Grid.Column="0"/>
-        <Button
-            Height="16"
-            Content="GO"
-            Click="Filter"
-            Grid.Row="3" Grid.Column="0"/>
-        <ComboBox
-            Grid.Row="3" Grid.Column="0"
-            x:Name="TicketPicker"
-            Height="32"
-            SelectionChanged="TicketPicker_OnSelected"
-            ></ComboBox>
-        <DockPanel>
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File">
-                    <MenuItem Header="_Open"/>
-                    <MenuItem Header="_Close"/>
-                    <MenuItem Header="_Save"/>
-                </MenuItem>
-            </Menu>
-            <StackPanel></StackPanel>
-        </DockPanel>
+        <DataGrid 
+            x:Name="BitstampAsks"
+            Grid.Row="2" Grid.Column="1"/>
     </Grid>
     
 </Window>
