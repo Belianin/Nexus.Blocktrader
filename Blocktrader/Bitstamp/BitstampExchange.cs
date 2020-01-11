@@ -24,6 +24,7 @@ namespace Blocktrader.Bitstamp
             {Ticket.XrpBtc, "xrpbtc"},
             {Ticket.XrpUsd, "xrpusd"}
         };
+        public Ticket Ticket { get; set; }
 
         public BitstampExchange() : base("Bitstamp", new List<Ticket>{ Ticket.BtcUsd, Ticket.EthUsd, Ticket.EthBtc, Ticket.XrpUsd, Ticket.XrpBtc})
         {

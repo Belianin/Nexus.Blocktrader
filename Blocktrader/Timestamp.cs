@@ -27,7 +27,6 @@ namespace Blocktrader
             var index = 0;
             while (index < bytes.Length)
             {
-                Console.WriteLine(index);
                 var dateTime = DateTime.FromBinary(BitConverter.ToInt64(bytes, index));
                 index += 8;
                 var bidsCount = BitConverter.ToInt32(bytes, index);
@@ -47,8 +46,6 @@ namespace Blocktrader
                     asks.Add(Order.FromBytes(bytes, index));
                     index += 8;
                 }
-
-                Console.WriteLine(dateTime);
                 yield return new Timestamp
                 {
                     Date = dateTime,

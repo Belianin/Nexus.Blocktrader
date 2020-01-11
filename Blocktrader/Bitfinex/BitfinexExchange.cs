@@ -23,6 +23,7 @@ namespace Blocktrader.Bitfinex
             {Ticket.XrpBtc, "tXRPBTC"},
             {Ticket.XrpUsd, "tXRPUSD"}
         };
+        public Ticket Ticket { get; set; }
 
         public BitfinexExchange() : base("Bitfinex", new List<Ticket>{ Ticket.BtcUsd, Ticket.EthUsd, Ticket.EthBtc, Ticket.XrpUsd, Ticket.XrpBtc})
         {

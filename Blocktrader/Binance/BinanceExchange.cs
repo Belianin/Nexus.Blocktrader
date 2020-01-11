@@ -13,7 +13,7 @@ namespace Blocktrader.Binance
     {
         private readonly WebClient web;
         
-        private TimeSpan updatePeriod = TimeSpan.FromSeconds(5);
+        private TimeSpan updatePeriod = TimeSpan.FromSeconds(30);
         
         private Dictionary<Ticket, string> symbols = new Dictionary<Ticket, string>
         {
@@ -23,6 +23,7 @@ namespace Blocktrader.Binance
             {Ticket.XrpBtc, "XRPBTC"},
             {Ticket.XrpUsd, "XRPUSDT"}
         };
+        public Ticket Ticket { get; set; }
 
         public BinanceExchange() : base("Binance", new List<Ticket>{ Ticket.BtcUsd, Ticket.EthUsd, Ticket.EthBtc, Ticket.XrpUsd, Ticket.XrpBtc})
         {
@@ -32,7 +33,7 @@ namespace Blocktrader.Binance
         public override Timestamp GetTimestamp(Ticket ticket)
         {
             var symbol = symbols[ticket];
-            var response = GetOrderBook(symbol, 100);
+            var response = GetOrderBook(symbol, 5000);
             var bids = response.Bids.Select(ParseOrder);
             var asks = response.Asks.Select(ParseOrder);
 
