@@ -29,7 +29,7 @@ namespace Blocktrader.Binance
             web = new WebClient();
         }
         
-        protected override Timestamp GetTimestamp(Ticket ticket)
+        public override Timestamp GetTimestamp(Ticket ticket)
         {
             var symbol = symbols[ticket];
             var response = GetOrderBook(symbol, 100);

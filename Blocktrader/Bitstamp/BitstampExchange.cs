@@ -30,7 +30,7 @@ namespace Blocktrader.Bitstamp
             web = new WebClient();
         }
         
-        protected override Timestamp GetTimestamp(Ticket ticket)
+        public override Timestamp GetTimestamp(Ticket ticket)
         {
             var symbol = symbols[ticket];
             var response = web.DownloadString($"https://bitstamp.net/api/v2/order_book/{symbol}/");

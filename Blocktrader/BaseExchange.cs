@@ -15,7 +15,9 @@ namespace Blocktrader
         private ICollection<Ticket> tickets;
         
         public string Name { get; }
-        
+
+        public abstract Timestamp GetTimestamp(Ticket ticket);
+
         public BaseExchange(string name, ICollection<Ticket> tickets)
         {
             Name = name;
@@ -24,15 +26,13 @@ namespace Blocktrader
                 Directory.CreateDirectory($"Data/{Name}");
             Task.Run(Update);
         }
-        
+
         protected FileStream GetWriter(Ticket ticket)
         {
             var filename = $"Data/{Name}/{Name}_{ticket}_{DateTime.Now.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
 
             return File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
         }
-
-        protected abstract Timestamp GetTimestamp(Ticket ticket);
 
         private void Update()
         {

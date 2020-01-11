@@ -53,6 +53,31 @@ namespace Blocktrader
         {
             return order.Amount >= filterSettings.MinSize;
         }
+
+        private IEnumerable<Order> Flat(IEnumerable<Order> orders, float delta)
+        {
+            //var sorted = orders.ToList()
+            //.Sort();
+            var currentAmount = 0f;
+            var currentPrice = orders.First().Price;
+            foreach (var order in orders)
+            {
+                if (currentPrice - order.Price <= delta)
+                {
+                    currentAmount += order.Amount;
+                }
+                else
+                {
+                    yield return new Order
+                    {
+                        Amount = currentAmount,
+                        Price = currentPrice
+                    };
+                    currentPrice = order.Price;
+                    currentAmount = order.Amount;
+                }
+            }
+        }
         
         private string GetFileName(string exchange, Ticket ticket, DateTime dateTime)   
         {
@@ -85,7 +110,7 @@ namespace Blocktrader
             var timestamp = timestamps[(int) e.NewValue];
 
             BitstampBids.ItemsSource = timestamp.Bids.Where(IsOk);
-            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk);
+            BitstampAsks.ItemsSource = timestamp.Asks.Where(IsOk).Flat(50);
         }
     }
 }

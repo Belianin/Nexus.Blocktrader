@@ -31,10 +31,12 @@
             IsSnapToTickEnabled="True"/>
         <DataGrid 
             x:Name="BitstampBids"
-            Grid.Row="2" Grid.Column="0"/>
+            Grid.Row="2" Grid.Column="0"
+            IsReadOnly="True"/>
         <DataGrid 
             x:Name="BitstampAsks"
-            Grid.Row="2" Grid.Column="1"/>
+            Grid.Row="2" Grid.Column="1"
+            IsReadOnly="True"/>
     </Grid>
     
 </Window>
