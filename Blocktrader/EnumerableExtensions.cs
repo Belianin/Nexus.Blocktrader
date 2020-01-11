@@ -12,6 +12,7 @@ namespace Blocktrader
             var currentPrice = orders.First().Price;
             foreach (var order in orders)
             {
+                var price = Math.Ceiling(order.Price / Math.Pow(10, delta)) * Math.Pow(10, delta);
                 if (Math.Abs(currentPrice - order.Price) <= delta)
                 {
                     currentAmount += order.Amount;
