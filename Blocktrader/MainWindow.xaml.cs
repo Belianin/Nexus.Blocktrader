@@ -125,13 +125,17 @@ namespace Blocktrader
                 .ToArray();
 
             TimePicker.Maximum = timestamps.Count();
+            TimePicker.TickFrequency = 1;
+            TimePicker.TickPlacement = TickPlacement.BottomRight;
 
             if (timestamps == null)
                 return;
+            
             var index = (int)TimePicker.Value;
-            if (index < 0 || index >= timestamps.Length)
+            if (index < 0 || index >= timestamps.Length - 1)
                 return;
-            var timestamp = timestamps[(int)TimePicker.Value];
+            
+            var timestamp = timestamps[index];
             var p = Convert.ToInt32(PrecPicker.Value) - 1;
 
             BitstampBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
@@ -142,23 +146,21 @@ namespace Blocktrader
             timestamps = Timestamp.FromBytes(rawData)
                 .Where(d => d.Date.Day == dateTime.Value.Day)
                 .ToArray();
-            timestamp = timestamps[(int)TimePicker.Value];
+            timestamp = timestamps[index];
 
             BitfinexBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
             BitfinexAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
-
 
             filename = GetFileName("Binance", binance.Ticket, dateTime.Value);
             rawData = File.ReadAllBytes(filename);
             timestamps = Timestamp.FromBytes(rawData)
                 .Where(d => d.Date.Day == dateTime.Value.Day)
                 .ToArray();
-            timestamp = timestamps[(int)TimePicker.Value];
+            timestamp = timestamps[index];
 
             BinanceBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
             BinanceAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
-
-
+            
         }
 
         private void PrecPickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

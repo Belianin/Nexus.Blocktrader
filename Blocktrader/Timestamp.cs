@@ -8,6 +8,8 @@ namespace Blocktrader
     {
         public DateTime Date { get; set; }
         
+        public float AveragePrice { get; set; }
+        
         public Order[] Bids { get; set; }
         
         public Order[] Asks { get; set; }
@@ -15,6 +17,7 @@ namespace Blocktrader
         public byte[] ToBytes()
         {
             return BitConverter.GetBytes(Date.ToBinary())
+                .Concat(BitConverter.GetBytes(AveragePrice))
                 .Concat(BitConverter.GetBytes(Bids.Length))
                 .Concat(Bids.SelectMany(b => b.ToBytes()))
                 .Concat(BitConverter.GetBytes(Asks.Length))
@@ -29,6 +32,8 @@ namespace Blocktrader
             {
                 var dateTime = DateTime.FromBinary(BitConverter.ToInt64(bytes, index));
                 index += 8;
+                var averagePrice = BitConverter.ToSingle(bytes, index);
+                index += 4;
                 var bidsCount = BitConverter.ToInt32(bytes, index);
                 index += 4;
                 var bids = new List<Order>(bidsCount);
@@ -49,6 +54,7 @@ namespace Blocktrader
                 yield return new Timestamp
                 {
                     Date = dateTime,
+                    AveragePrice = averagePrice,
                     Bids = bids.ToArray(),
                     Asks = asks.ToArray()
                 };

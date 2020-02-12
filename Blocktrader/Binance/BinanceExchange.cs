@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -32,17 +33,27 @@ namespace Blocktrader.Binance
         
         public override Timestamp GetTimestamp(Ticket ticket)
         {
-            var symbol = symbols[ticket];
-            var response = GetOrderBook(symbol, 5000);
-            var bids = response.Bids.Select(ParseOrder);
-            var asks = response.Asks.Select(ParseOrder);
-
-            return new Timestamp
+            try
             {
-                Date = DateTime.Now,
-                Bids = bids.ToArray(),
-                Asks = asks.ToArray()
-            };
+                var symbol = symbols[ticket];
+                var response = GetOrderBook(symbol, 5000);
+                var averagePrice = GetAveragePrice(symbol);
+                var bids = response.Bids.Select(ParseOrder);
+                var asks = response.Asks.Select(ParseOrder);
+
+                return new Timestamp
+                {
+                    Date = DateTime.Now,
+                    AveragePrice = averagePrice,
+                    Bids = bids.ToArray(),
+                    Asks = asks.ToArray(),
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private Order ParseOrder(string[] parameters)
@@ -59,6 +70,14 @@ namespace Blocktrader.Binance
             var response = web.DownloadString($"https://api.binance.com/api/v3/depth?symbol={symbol}&limit={limit}");
             var result = JsonConvert.DeserializeObject<OrderBookResponse>(response);
             return result;
+        }
+
+        private float GetAveragePrice(string symbol)
+        {
+            var response = web.DownloadString($"https://api.binance.com/api/v3/avgPrice?symbol={symbol}");
+            Console.WriteLine(response);
+            var result = JsonConvert.DeserializeObject<AveragePriceResponse>(response);
+            return float.Parse(result.Price, CultureInfo.InvariantCulture);
         }
     }
 }

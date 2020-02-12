@@ -32,28 +32,45 @@ namespace Blocktrader.Bitfinex
 
         public override Timestamp GetTimestamp(Ticket ticket)
         {
-            var symbol = symbols[ticket];
-            var response = GetOrderBook(symbol, 100);
-            var orders = response.Select(r => (OrderWithCount) r).ToArray();
-
-            var bids = orders.Where(o => o.Amount > 0);
-            var asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
-
-            return new Timestamp
+            try
             {
-                Date = DateTime.Now,
-                Bids = bids.ToArray(),
-                Asks = asks.ToArray()
-            };
+                var symbol = symbols[ticket];
+                var response = GetOrderBook(symbol, 100);
+                var orders = response.Select(r => (OrderWithCount) r).ToArray();
+                var averagePrice = GetAveragePrice(symbol);
+
+                var bids = orders.Where(o => o.Amount > 0);
+                var asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
+
+                return new Timestamp
+                {
+                    Date = DateTime.Now,
+                    AveragePrice = averagePrice,
+                    Bids = bids.ToArray(),
+                    Asks = asks.ToArray()
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private string[][] GetOrderBook(string symbol, int limit)
         {
             var uri = $"https://api-pub.bitfinex.com/v2/book/{symbol}/P0?len={limit}";
-            Console.WriteLine(uri);
             var response = web.DownloadString(uri);
             var result = JsonConvert.DeserializeObject<string[][]>(response);
             return result;
+        }
+        
+        private float GetAveragePrice(string symbol)
+        {
+            var uri = $"https://api-pub.bitfinex.com/v2/ticker/{symbol}";
+            var response = web.DownloadString(uri);
+            var result = JsonConvert.DeserializeObject<float[]>(response);
+            return result[6];
         }
     }
 }

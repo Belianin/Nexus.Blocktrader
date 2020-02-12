@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blocktrader.Binance;
 using Newtonsoft.Json;
+using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 
 namespace Blocktrader.Bitstamp
 {
@@ -33,19 +34,32 @@ namespace Blocktrader.Bitstamp
         
         public override Timestamp GetTimestamp(Ticket ticket)
         {
-            var symbol = symbols[ticket];
-            var response = web.DownloadString($"https://bitstamp.net/api/v2/order_book/{symbol}/");
-            var book = JsonConvert.DeserializeObject<OrderBookResponse>(response);
-            
-            var bids = book.Bids.Select(ParseOrder);
-            var asks = book.Asks.Select(ParseOrder);
-
-            return new Timestamp
+            try
             {
-                Date = DateTime.UtcNow,
-                Bids = bids.ToArray(),
-                Asks = asks.ToArray()
-            };
+                var symbol = symbols[ticket];
+                var response = web.DownloadString($"https://bitstamp.net/api/v2/order_book/{symbol}/");
+                var book = JsonConvert.DeserializeObject<OrderBookResponse>(response);
+            
+                var tickerResponse = web.DownloadString($"https://www.bitstamp.net/api/v2/ticker/{symbol}/");
+                var ticker = JsonConvert.DeserializeObject<Dictionary<string, object>>(tickerResponse);
+                var averagePrice = float.Parse((string) ticker["last"], CultureInfo.InvariantCulture);
+            
+                var bids = book.Bids.Select(ParseOrder);
+                var asks = book.Asks.Select(ParseOrder);
+
+                return new Timestamp
+                {
+                    Date = DateTime.UtcNow,
+                    AveragePrice = averagePrice,
+                    Bids = bids.ToArray(),
+                    Asks = asks.ToArray()
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         private Order ParseOrder(string[] parameters)
