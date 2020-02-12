@@ -51,8 +51,13 @@ namespace Blocktrader.Binance
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return new Timestamp
+                {
+                    Date = DateTime.Now,
+                    AveragePrice = 0,
+                    Asks = new Order[0],
+                    Bids = new Order[0],
+                };
             }
         }
 
