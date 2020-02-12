@@ -116,6 +116,9 @@ namespace Blocktrader
                 return;
 
             var filename = GetFileName("Bitstamp", bitstamp.Ticket, dateTime.Value);
+            if (!File.Exists(filename))
+                return;
+            
             var rawData = File.ReadAllBytes(filename);
             timestamps = Timestamp.FromBytes(rawData)
                 .Where(d => d.Date.Day == dateTime.Value.Day)
