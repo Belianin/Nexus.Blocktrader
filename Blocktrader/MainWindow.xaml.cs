@@ -19,7 +19,7 @@ namespace Blocktrader
     {
         private readonly TimeSpan updateInterval = TimeSpan.FromSeconds(30);
         private readonly BlocktraderService service;
-        private readonly ITimestampManager timestampManager = new TimestampFileManager();
+        private readonly ITimestampManager timestampManager;
 
         private FilterSettings filterSettings = new FilterSettings();
 
@@ -34,15 +34,9 @@ namespace Blocktrader
             InitializeComponent();
             var log = new ConsoleLog();
             service = new BlocktraderService(log);
-        
-            TicketPicker.ItemsSource = new[]
-            {
-                Ticket.BtcUsd,
-                Ticket.EthUsd,
-                Ticket.EthBtc,
-                Ticket.XrpUsd,
-                Ticket.XrpBtc
-            };
+            timestampManager = new TimestampFileManager(log);
+
+            TicketPicker.ItemsSource = (Ticket[]) Enum.GetValues(typeof(Ticket));
             DatePicker.SelectedDate = DateTime.Now;
             PrecPicker.Value = 0;
 
@@ -100,7 +94,8 @@ namespace Blocktrader
         }
         private void Update()
         {
-            selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
+            if (selectedDate.Month != DateTime.Now.Month || selectedTimestamp == null)
+                selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
             
             var currentDayTimestamp = selectedTimestamp.Info.Where(i => i.Key.Day == selectedDate.Day).Select(v => v.Value).ToArray();
             BitstampBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
@@ -116,11 +111,13 @@ namespace Blocktrader
         private void PrecPickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             precision = (int) PrecPicker.Value - 1;
+            Update();
         }
 
         private void TimePickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             currentTick = (int) TimePicker.Value;
+            Update();
         }
     }
 }

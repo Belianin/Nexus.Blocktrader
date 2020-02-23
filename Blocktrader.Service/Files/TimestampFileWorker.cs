@@ -5,13 +5,22 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Blocktrader.Domain;
+using Blocktrader.Utils.Logging;
 
 namespace Blocktrader.Service.Files
 {
     public class TimestampFileManager : ITimestampManager
     {
+        private readonly ILog log;
+
+        public TimestampFileManager(ILog log)
+        {
+            this.log = log;
+        }
+
         public async Task WriteAsync(CommonTimestamp commonTimestamp)
         {
+            log.Debug($"Writing common timestamp for {commonTimestamp.DateTime:yy-MM}");
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
                 foreach (var (ticket, info) in commonTimestamp.Exchanges[exchange].Tickets)
@@ -25,6 +34,7 @@ namespace Blocktrader.Service.Files
 
         public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket)
         {
+            log.Debug($"Reading timestamps for {dateTime:yy-MM}");
             var result = new MonthTimestamp(dateTime, ticket);
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
