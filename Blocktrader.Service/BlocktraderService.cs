@@ -36,12 +36,9 @@ namespace Blocktrader.Service
         {
             var result = new Timestamp
             {
-                Exchanges =
-                {
-                    ["Binance"] = await GetExchangeTimestampAsync(binance).ConfigureAwait(false),
-                    ["Bitfinex"] = await GetExchangeTimestampAsync(bitfinex).ConfigureAwait(false),
-                    ["Bitstamp"] = await GetExchangeTimestampAsync(bitstamp).ConfigureAwait(false)
-                },
+                Binance = await GetExchangeTimestampAsync(binance).ConfigureAwait(false),
+                Bitfinex = await GetExchangeTimestampAsync(bitfinex).ConfigureAwait(false),
+                Bitstamp = await GetExchangeTimestampAsync(bitstamp).ConfigureAwait(false),
                 DateTime = DateTime.Now
             };
 
