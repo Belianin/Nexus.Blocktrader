@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Blocktrader
+namespace Blocktrader.Bitfinex
 {
     public class OrderWithCount : Order
     {
