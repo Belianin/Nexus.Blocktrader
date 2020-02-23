@@ -1,9 +1,7 @@
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Blocktrader.Utils;
 using Blocktrader.Utils.Logging;
-using Newtonsoft.Json;
 
 namespace Blocktrader.Exchange
 {

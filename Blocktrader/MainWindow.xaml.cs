@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using Blocktrader.Domain;
@@ -15,7 +15,8 @@ namespace Blocktrader
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        private readonly TimeSpan updateInterval = TimeSpan.FromMinutes(10);
+        
         private readonly BlocktraderService service;
 
         private FilterSettings filterSettings = new FilterSettings();
@@ -36,11 +37,21 @@ namespace Blocktrader
             };
             DatePicker.SelectedDate = DateTime.Now;
             PrecPicker.Value = 0;
-            Update();
+
+            var timer = new Timer(updateInterval.TotalMilliseconds) {AutoReset = true};
+            timer.Elapsed += (s, e) => Download();
+            timer.Start();
 
 
         }
-        public void Filter(object sender, RoutedEventArgs routedEventArgs)
+
+        private void Download()
+        {
+            var timestamp = service.GetCurrentTimestampAsync().Result;
+            
+        }
+
+        private void Filter(object sender, RoutedEventArgs routedEventArgs)
         {
             if (float.TryParse(OrderSizeInput.Text, out var value))
             {
