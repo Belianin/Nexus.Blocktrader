@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,9 +18,7 @@ namespace Blocktrader
     public partial class MainWindow : Window
     {
         private readonly TimeSpan updateInterval = TimeSpan.FromSeconds(30);
-        
         private readonly BlocktraderService service;
-
         private readonly ITimestampManager timestampManager = new TimestampFileManager();
 
         private FilterSettings filterSettings = new FilterSettings();
@@ -28,42 +27,34 @@ namespace Blocktrader
         private DateTime selectedDate = DateTime.Now;
         private int currentTick = 0;
         private MonthTimestamp selectedTimestamp;
+        private int precision = -1;
         
         public MainWindow()
         {
-            try
+            InitializeComponent();
+            var log = new ConsoleLog();
+            service = new BlocktraderService(log);
+        
+            TicketPicker.ItemsSource = new[]
             {
+                Ticket.BtcUsd,
+                Ticket.EthUsd,
+                Ticket.EthBtc,
+                Ticket.XrpUsd,
+                Ticket.XrpBtc
+            };
+            DatePicker.SelectedDate = DateTime.Now;
+            PrecPicker.Value = 0;
 
-                InitializeComponent();
-                var log = new ConsoleLog();
-                service = new BlocktraderService(log);
-            
-                TicketPicker.ItemsSource = new[]
-                {
-                    Ticket.BtcUsd,
-                    Ticket.EthUsd,
-                    Ticket.EthBtc,
-                    Ticket.XrpUsd,
-                    Ticket.XrpBtc
-                };
-                DatePicker.SelectedDate = DateTime.Now;
-                PrecPicker.Value = 0;
-
-                var timer = new Timer(updateInterval.TotalMilliseconds) {AutoReset = true};
-                timer.Elapsed += (s, e) => Download();
-                timer.Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var timer = new Timer(updateInterval.TotalMilliseconds) {AutoReset = true};
+            timer.Elapsed += (s, e) => DownloadAsync().Wait();
+            timer.Start();
         }
 
-        private void Download()
+        private async Task DownloadAsync()
         {
-            var timestamp = service.GetCurrentTimestampAsync().Result;
-            timestampManager.WriteAsync(timestamp).Wait();
+            var timestamp = await service.GetCurrentTimestampAsync().ConfigureAwait(false);
+            await timestampManager.WriteAsync(timestamp);
 
         }
 
@@ -112,20 +103,19 @@ namespace Blocktrader
             selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
             
             var currentDayTimestamp = selectedTimestamp.Info.Where(i => i.Key.Day == selectedDate.Day).Select(v => v.Value).ToArray();
-            var prec = 1;
-            BitstampBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(prec, true);
-            BitstampAsksGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(prec, false);
-            BitfinexBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitfinex].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(prec, true);
-            BitfinexAsksGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(prec, false);
-            BinanceBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(prec, true);
-            BinanceAsksGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(prec, false);
+            BitstampBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+            BitstampAsksGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+            BitfinexBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitfinex].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+            BitfinexAsksGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+            BinanceBidsGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+            BinanceAsksGrid.ItemsSource = currentDayTimestamp[currentTick][ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
             
             InvalidateVisual();
         }
 
         private void PrecPickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            precision = (int) PrecPicker.Value - 1;
         }
 
         private void TimePickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
