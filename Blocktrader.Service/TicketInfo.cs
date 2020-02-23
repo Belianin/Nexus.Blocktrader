@@ -2,7 +2,7 @@ using Blocktrader.Domain;
 
 namespace Blocktrader.Service
 {
-    public class TickerInfo
+    public class TicketInfo
     {
         public float AveragePrice { get; set; }
         

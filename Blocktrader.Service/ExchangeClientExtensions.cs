@@ -7,14 +7,14 @@ namespace Blocktrader.Service
 {
     public static class ExchangeClientExtensions
     {
-        public static async Task<TickerInfo> GetTickerInfoAsync(this IExchangeClient client, Ticket ticket)
+        public static async Task<TicketInfo> GetTickerInfoAsync(this IExchangeClient client, Ticket ticket)
         {
             try
             {
                 var orderBook = await client.GetOrderBookAsync(ticket).ConfigureAwait(false);
                 var averagePrice = await client.GetCurrentAveragePriceAsync(ticket).ConfigureAwait(false);
 
-                return new TickerInfo
+                return new TicketInfo
                 {
                     OrderBook = orderBook.IsSuccess ? orderBook.Value : null,
                     AveragePrice = averagePrice.IsSuccess ? averagePrice.Value : 0f

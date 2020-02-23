@@ -32,9 +32,9 @@ namespace Blocktrader.Service
             bitstamp = new BitstampClient(log);
         }
         
-        public async Task<Timestamp> GetCurrentTimestampAsync()
+        public async Task<CommonTimestamp> GetCurrentTimestampAsync()
         {
-            var result = new Timestamp
+            var result = new CommonTimestamp
             {
                 Binance = await GetExchangeTimestampAsync(binance).ConfigureAwait(false),
                 Bitfinex = await GetExchangeTimestampAsync(bitfinex).ConfigureAwait(false),

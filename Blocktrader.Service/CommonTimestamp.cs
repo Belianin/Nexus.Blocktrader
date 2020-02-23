@@ -2,7 +2,7 @@ using System;
 
 namespace Blocktrader.Service
 {
-    public class Timestamp
+    public class CommonTimestamp
     {
         public DateTime DateTime { get; set; }
         public ExchangeTimestamp Binance { get; set; }

@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using Blocktrader.Domain;
 
-namespace Blocktrader
+namespace Blocktrader.Service.Files
 {
-    public class FileTimestamp
+    public class Timestamp
     {
-        public DateTime Date { get; set; }
+        public DateTime Date { get; }
+
+        public TicketInfo TicketInfo { get; }
         
-        public float AveragePrice { get; set; }
-        
-        public Order[] Bids { get; set; }
-        
-        public Order[] Asks { get; set; }
+        public Timestamp(DateTime date, TicketInfo ticketInfo)
+        {
+            Date = date;
+            TicketInfo = ticketInfo;
+        }
 
         public byte[] ToBytes()
         {
             return BitConverter.GetBytes(Date.ToBinary())
-                .Concat(BitConverter.GetBytes(AveragePrice))
-                .Concat(BitConverter.GetBytes(Bids.Length))
-                .Concat(Bids.SelectMany(b => b.ToBytes()))
-                .Concat(BitConverter.GetBytes(Asks.Length))
-                .Concat(Asks.SelectMany(a => a.ToBytes()))
+                .Concat(BitConverter.GetBytes(TicketInfo.AveragePrice))
+                .Concat(BitConverter.GetBytes(TicketInfo.OrderBook.Bids.Length))
+                .Concat(TicketInfo.OrderBook.Bids.SelectMany(b => b.ToBytes()))
+                .Concat(BitConverter.GetBytes(TicketInfo.OrderBook.Asks.Length))
+                .Concat(TicketInfo.OrderBook.Asks.SelectMany(a => a.ToBytes()))
                 .ToArray();
         }
 
-        public static IEnumerable<FileTimestamp> FromBytes(byte[] bytes)
+        public static IEnumerable<Timestamp> FromBytes(byte[] bytes)
         {
             var index = 0;
             while (index < bytes.Length)
@@ -52,13 +54,13 @@ namespace Blocktrader
                     asks.Add(Order.FromBytes(bytes, index));
                     index += 8;
                 }
-                yield return new FileTimestamp
-                {
-                    Date = dateTime,
-                    AveragePrice = averagePrice,
-                    Bids = bids.ToArray(),
-                    Asks = asks.ToArray()
-                };
+
+                yield return new Timestamp(dateTime,
+                    new TicketInfo
+                    {
+                        AveragePrice = averagePrice,
+                        OrderBook = new OrderBook {Bids = bids.ToArray(), Asks = asks.ToArray()}
+                    });
             }
         }
     }
