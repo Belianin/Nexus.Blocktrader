@@ -1,4 +1,4 @@
-namespace Blocktrader.Binance
+namespace Blocktrader.Exchange.Binance.Models
 {
     internal class AveragePriceResponse
     {

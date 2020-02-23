@@ -8,7 +8,7 @@
         Title="MainWindow" Height="1056" Width="760"
         Background="Indigo">
   <Grid>
-    <Grid.RowDefinitions>
+          <Grid.RowDefinitions>
       <RowDefinition Height="32"></RowDefinition>
       <RowDefinition Height="256"></RowDefinition>
       <RowDefinition Height="256"></RowDefinition>
@@ -19,6 +19,7 @@
       <ColumnDefinition Width="380"></ColumnDefinition>
       <ColumnDefinition Width="380"></ColumnDefinition>
     </Grid.ColumnDefinitions>
+          
     <DatePicker 
             x:Name="DatePicker"
             SelectedDateChanged="DatePicker_OnSelectedDateChanged" 

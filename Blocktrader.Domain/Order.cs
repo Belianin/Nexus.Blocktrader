@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocktrader
+namespace Blocktrader.Domain
 {
     public class Order
     {
@@ -24,11 +24,5 @@ namespace Blocktrader
                 Amount = BitConverter.ToSingle(bytes, index + 4),
             };
         }
-    }
-
-    public enum OrderType
-    {
-        Bid,
-        Ask
     }
 }

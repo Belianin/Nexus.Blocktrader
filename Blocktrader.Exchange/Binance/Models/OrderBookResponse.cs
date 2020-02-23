@@ -1,8 +1,8 @@
-namespace Blocktrader.Binance
+namespace Blocktrader.Exchange.Binance.Models
 {
-    class OrderBookResponse
+    internal class OrderBookResponse
     {
-        public int LastUpdateId { get; set; }
+        public long LastUpdateId { get; set; }
         
         public int Timestamp { get; set; }
         
