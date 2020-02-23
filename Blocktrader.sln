@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Utils", "Blockt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Domain", "Blocktrader.Domain\Blocktrader.Domain.csproj", "{41735B93-23C6-48E3-A4E0-DB8CD633C380}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Service", "Blocktrader.Service\Blocktrader.Service.csproj", "{8C2F8001-3EB3-43F1-9F16-D1AA8F822643}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C2F8001-3EB3-43F1-9F16-D1AA8F822643}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C2F8001-3EB3-43F1-9F16-D1AA8F822643}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C2F8001-3EB3-43F1-9F16-D1AA8F822643}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C2F8001-3EB3-43F1-9F16-D1AA8F822643}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

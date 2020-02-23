@@ -25,10 +25,4 @@ namespace Blocktrader.Domain
             };
         }
     }
-
-    public enum OrderType
-    {
-        Bid,
-        Ask
-    }
 }

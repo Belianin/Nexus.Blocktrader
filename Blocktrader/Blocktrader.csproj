@@ -14,6 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Blocktrader.Domain\Blocktrader.Domain.csproj" />
       <ProjectReference Include="..\Blocktrader.Exchange\Blocktrader.Exchange.csproj" />
+      <ProjectReference Include="..\Blocktrader.Service\Blocktrader.Service.csproj" />
       <ProjectReference Include="..\Blocktrader.Utils\Blocktrader.Utils.csproj" />
     </ItemGroup>
 

@@ -3,7 +3,7 @@ using Blocktrader.Domain;
 
 namespace Blocktrader.Exchange.Bitfinex.Models
 {
-    public class OrderWithCount : Order
+    internal class OrderWithCount : Order
     {
         public int Count { get; set; }
         

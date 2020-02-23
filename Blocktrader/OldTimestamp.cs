@@ -5,7 +5,7 @@ using Blocktrader.Domain;
 
 namespace Blocktrader
 {
-    public class Timestamp
+    public class OldTimestamp
     {
         public DateTime Date { get; set; }
         
@@ -26,7 +26,7 @@ namespace Blocktrader
                 .ToArray();
         }
 
-        public static IEnumerable<Timestamp> FromBytes(byte[] bytes)
+        public static IEnumerable<OldTimestamp> FromBytes(byte[] bytes)
         {
             var index = 0;
             while (index < bytes.Length)
@@ -52,7 +52,7 @@ namespace Blocktrader
                     asks.Add(Order.FromBytes(bytes, index));
                     index += 8;
                 }
-                yield return new Timestamp
+                yield return new OldTimestamp
                 {
                     Date = dateTime,
                     AveragePrice = averagePrice,

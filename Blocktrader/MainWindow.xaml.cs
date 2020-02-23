@@ -2,10 +2,13 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Blocktrader.Domain;
+using Blocktrader.Service;
+using Blocktrader.Utils.Logging;
 
 namespace Blocktrader
 {
@@ -14,23 +17,17 @@ namespace Blocktrader
     /// </summary>
     public partial class MainWindow : Window
     {
-//        private readonly BinanceExchange binance;
-//
-//        private readonly BitfinexExchange bitfinex;
-//
-//        private readonly BitstampExchange bitstamp;
-        
-        private Timestamp[] timestamps;
+
+        private readonly BlocktraderService service;
 
         private FilterSettings filterSettings = new FilterSettings();
         
         public MainWindow()
         {
             InitializeComponent();
-//            binance = new BinanceExchange();
-//            bitfinex = new BitfinexExchange();
-//            bitstamp = new BitstampExchange();
-
+            var log = new ConsoleLog();
+            service = new BlocktraderService(log);
+            
             TicketPicker.ItemsSource = new[]
            {
                 Ticket.BtcUsd,
@@ -39,7 +36,6 @@ namespace Blocktrader
                 Ticket.XrpUsd,
                 Ticket.XrpBtc
             };
-            //Thread.Sleep(TimeSpan.FromSeconds(15));
             DatePicker.SelectedDate = DateTime.Now;
             PrecPicker.Value = 0;
             Update();
@@ -92,7 +88,7 @@ namespace Blocktrader
                 }
             }
         }
-        private void Update()
+        private async Task Update()
         {
 //            var dateTime = DatePicker.SelectedDate;
 //            if (dateTime == null)
@@ -143,7 +139,7 @@ namespace Blocktrader
 //
 //            BinanceBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
 //            BinanceAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
-            
+
         }
 
         private void PrecPickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
