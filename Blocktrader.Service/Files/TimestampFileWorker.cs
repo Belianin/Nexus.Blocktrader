@@ -20,7 +20,7 @@ namespace Blocktrader.Service.Files
 
         public async Task WriteAsync(CommonTimestamp commonTimestamp)
         {
-            log.Debug($"Writing common timestamp for {commonTimestamp.DateTime:yy-MM}");
+            log.Debug($"Writing common timestamp for {commonTimestamp.DateTime:yyyy-MM}");
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
                 foreach (var (ticket, info) in commonTimestamp.Exchanges[exchange].Tickets)
@@ -34,7 +34,7 @@ namespace Blocktrader.Service.Files
 
         public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket)
         {
-            log.Debug($"Reading timestamps for {dateTime:yy-MM}");
+            log.Debug($"Reading timestamps for {dateTime:yyyy-MM}");
             var result = new MonthTimestamp(dateTime, ticket);
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
