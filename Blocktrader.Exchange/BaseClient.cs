@@ -4,7 +4,7 @@ using Blocktrader.Utils;
 using Blocktrader.Utils.Logging;
 using Newtonsoft.Json;
 
-namespace Blocktrader
+namespace Blocktrader.Exchange
 {
     public abstract class BaseClient
     {

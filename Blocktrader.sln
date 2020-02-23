@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader", "Blocktrader\Blocktrader.csproj", "{7E3F7EE5-BFA2-4B32-AF8F-FFA6A3A0D08F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Exchange", "Blocktrader.Exchange\Blocktrader.Exchange.csproj", "{F0D13500-58B7-4975-BCB7-50DBF3C2BDB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Utils", "Blocktrader.Utils\Blocktrader.Utils.csproj", "{ABA1ED49-2B10-447B-BC09-4E2C4732E086}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Domain", "Blocktrader.Domain\Blocktrader.Domain.csproj", "{41735B93-23C6-48E3-A4E0-DB8CD633C380}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +18,17 @@ Global
 		{7E3F7EE5-BFA2-4B32-AF8F-FFA6A3A0D08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E3F7EE5-BFA2-4B32-AF8F-FFA6A3A0D08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E3F7EE5-BFA2-4B32-AF8F-FFA6A3A0D08F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0D13500-58B7-4975-BCB7-50DBF3C2BDB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0D13500-58B7-4975-BCB7-50DBF3C2BDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0D13500-58B7-4975-BCB7-50DBF3C2BDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0D13500-58B7-4975-BCB7-50DBF3C2BDB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA1ED49-2B10-447B-BC09-4E2C4732E086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA1ED49-2B10-447B-BC09-4E2C4732E086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA1ED49-2B10-447B-BC09-4E2C4732E086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA1ED49-2B10-447B-BC09-4E2C4732E086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41735B93-23C6-48E3-A4E0-DB8CD633C380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

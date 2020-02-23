@@ -1,4 +1,4 @@
-namespace Blocktrader
+namespace Blocktrader.Domain
 {
     public class OrderBook
     {

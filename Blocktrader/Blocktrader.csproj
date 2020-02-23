@@ -11,4 +11,10 @@
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Blocktrader.Domain\Blocktrader.Domain.csproj" />
+      <ProjectReference Include="..\Blocktrader.Exchange\Blocktrader.Exchange.csproj" />
+      <ProjectReference Include="..\Blocktrader.Utils\Blocktrader.Utils.csproj" />
+    </ItemGroup>
+
 </Project>

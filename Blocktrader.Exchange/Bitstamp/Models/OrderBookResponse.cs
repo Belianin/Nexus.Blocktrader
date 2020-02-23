@@ -1,5 +1,8 @@
-namespace Blocktrader.Binance
+using System;
+
+namespace Blocktrader.Exchange.Bitstamp.Models
 {
+    [Obsolete("Проверить на лишние поля")]
     internal class OrderBookResponse
     {
         public int LastUpdateId { get; set; }

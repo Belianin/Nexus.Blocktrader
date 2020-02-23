@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blocktrader.Domain;
+using Blocktrader.Exchange.Bitfinex.Models;
 using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;    
+using Blocktrader.Utils.Logging;
 
-namespace Blocktrader.Bitfinex
+namespace Blocktrader.Exchange.Bitfinex
 {
     public class BitfinexClient : BaseClient, IExchangeClient
     {

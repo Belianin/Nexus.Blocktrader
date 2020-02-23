@@ -5,9 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Blocktrader.Binance;
-using Blocktrader.Bitfinex;
-using Blocktrader.Bitstamp;
+using Blocktrader.Domain;
 
 namespace Blocktrader
 {
@@ -16,11 +14,11 @@ namespace Blocktrader
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly BinanceExchange binance;
-
-        private readonly BitfinexExchange bitfinex;
-
-        private readonly BitstampExchange bitstamp;
+//        private readonly BinanceExchange binance;
+//
+//        private readonly BitfinexExchange bitfinex;
+//
+//        private readonly BitstampExchange bitstamp;
         
         private Timestamp[] timestamps;
 
@@ -29,9 +27,9 @@ namespace Blocktrader
         public MainWindow()
         {
             InitializeComponent();
-            binance = new BinanceExchange();
-            bitfinex = new BitfinexExchange();
-            bitstamp = new BitstampExchange();
+//            binance = new BinanceExchange();
+//            bitfinex = new BitfinexExchange();
+//            bitstamp = new BitstampExchange();
 
             TicketPicker.ItemsSource = new[]
            {
@@ -65,11 +63,11 @@ namespace Blocktrader
 
         private void TicketPicker_OnSelected(object sender, RoutedEventArgs e)
         {
-            var ticket = (Ticket)TicketPicker.SelectedItem;
-            binance.Ticket = ticket;
-            bitfinex.Ticket = ticket;
-            bitstamp.Ticket = ticket;
-            Update();
+//            var ticket = (Ticket)TicketPicker.SelectedItem;
+//            binance.Ticket = ticket;
+//            bitfinex.Ticket = ticket;
+//            bitstamp.Ticket = ticket;
+//            Update();
 
         }
 
@@ -96,55 +94,55 @@ namespace Blocktrader
         }
         private void Update()
         {
-            var dateTime = DatePicker.SelectedDate;
-            if (dateTime == null)
-                return;
-
-            var filename = GetFileName("Bitstamp", bitstamp.Ticket, dateTime.Value);
-            if (!File.Exists(filename))
-                return;
-            
-            var rawData = File.ReadAllBytes(filename);
-            timestamps = Timestamp.FromBytes(rawData)
-                .Where(d => d.Date.Day == dateTime.Value.Day)
-                .ToArray();
-
-            TimePicker.Maximum = timestamps.Count();
-            TimePicker.TickFrequency = 1;
-            TimePicker.TickPlacement = TickPlacement.BottomRight;
-
-            if (timestamps == null)
-                return;
-            
-            var index = (int)TimePicker.Value;
-            if (index < 0 || index >= timestamps.Length - 1)
-                return;
-            
-            var timestamp = timestamps[index];
-            var p = Convert.ToInt32(PrecPicker.Value) - 1;
-
-            BitstampBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
-            BitstampAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
-
-            filename = GetFileName("Bitfinex", bitfinex.Ticket, dateTime.Value);
-            rawData = File.ReadAllBytes(filename);
-            timestamps = Timestamp.FromBytes(rawData)
-                .Where(d => d.Date.Day == dateTime.Value.Day)
-                .ToArray();
-            timestamp = timestamps[index];
-
-            BitfinexBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
-            BitfinexAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
-
-            filename = GetFileName("Binance", binance.Ticket, dateTime.Value);
-            rawData = File.ReadAllBytes(filename);
-            timestamps = Timestamp.FromBytes(rawData)
-                .Where(d => d.Date.Day == dateTime.Value.Day)
-                .ToArray();
-            timestamp = timestamps[index];
-
-            BinanceBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
-            BinanceAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
+//            var dateTime = DatePicker.SelectedDate;
+//            if (dateTime == null)
+//                return;
+//
+//            var filename = GetFileName("Bitstamp", bitstamp.Ticket, dateTime.Value);
+//            if (!File.Exists(filename))
+//                return;
+//            
+//            var rawData = File.ReadAllBytes(filename);
+//            timestamps = Timestamp.FromBytes(rawData)
+//                .Where(d => d.Date.Day == dateTime.Value.Day)
+//                .ToArray();
+//
+//            TimePicker.Maximum = timestamps.Count();
+//            TimePicker.TickFrequency = 1;
+//            TimePicker.TickPlacement = TickPlacement.BottomRight;
+//
+//            if (timestamps == null)
+//                return;
+//            
+//            var index = (int)TimePicker.Value;
+//            if (index < 0 || index >= timestamps.Length - 1)
+//                return;
+//            
+//            var timestamp = timestamps[index];
+//            var p = Convert.ToInt32(PrecPicker.Value) - 1;
+//
+//            BitstampBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
+//            BitstampAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
+//
+//            filename = GetFileName("Bitfinex", bitfinex.Ticket, dateTime.Value);
+//            rawData = File.ReadAllBytes(filename);
+//            timestamps = Timestamp.FromBytes(rawData)
+//                .Where(d => d.Date.Day == dateTime.Value.Day)
+//                .ToArray();
+//            timestamp = timestamps[index];
+//
+//            BitfinexBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
+//            BitfinexAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
+//
+//            filename = GetFileName("Binance", binance.Ticket, dateTime.Value);
+//            rawData = File.ReadAllBytes(filename);
+//            timestamps = Timestamp.FromBytes(rawData)
+//                .Where(d => d.Date.Day == dateTime.Value.Day)
+//                .ToArray();
+//            timestamp = timestamps[index];
+//
+//            BinanceBidsGrid.ItemsSource = timestamp.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(p, true);
+//            BinanceAsksGrid.ItemsSource = timestamp.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(p, false);
             
         }
 

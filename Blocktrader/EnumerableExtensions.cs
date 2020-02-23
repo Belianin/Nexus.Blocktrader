@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blocktrader.Domain;
 
 namespace Blocktrader
 {
@@ -40,15 +41,6 @@ namespace Blocktrader
             return isBid
                 ? orders.Flat(o => (float) Math.Ceiling(o.Price / delta) * delta, (o, p) => p - o.Price >= 0)
                 : orders.Flat(o => (float) Math.Floor(o.Price / delta) * delta, (o, p) => p - o.Price <= 0);
-        }
-        
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (var element in source)
-            {
-                action(element);
-                yield return element;
-            }
         }
     }
 }
