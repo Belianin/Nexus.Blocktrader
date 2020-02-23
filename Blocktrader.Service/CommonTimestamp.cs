@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
+using Blocktrader.Domain;
 
 namespace Blocktrader.Service
 {
     public class CommonTimestamp
     {
         public DateTime DateTime { get; set; }
-        public ExchangeTimestamp Binance { get; set; }
-        public ExchangeTimestamp Bitfinex { get; set; }
-        public ExchangeTimestamp Bitstamp { get; set; }
+        
+        public Dictionary<ExchangeTitle, ExchangeTimestamp> Exchanges { get; set; }
     }
 }

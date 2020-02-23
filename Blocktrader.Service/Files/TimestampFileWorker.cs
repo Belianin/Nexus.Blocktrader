@@ -10,60 +10,31 @@ namespace Blocktrader.Service.Files
 {
     public class TimestampFileManager : ITimestampManager
     {
-        private readonly IReadOnlyCollection<Ticket> tickets = new[]
-        {
-            Ticket.BtcUsd,
-            Ticket.EthBtc,
-            Ticket.EthUsd,
-            Ticket.XrpBtc,
-            Ticket.XrpUsd,
-        };
-        
         public async Task WriteAsync(CommonTimestamp commonTimestamp)
         {
-            foreach (var (ticket, info) in commonTimestamp.Binance.Tickers)
+            foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
-                await using var writer = GetWriter(DateTime.Now, ExchangeTitle.Binance, ticket);
-                var data = new Timestamp(commonTimestamp.DateTime, info);
-                await writer.WriteAsync(data.ToBytes());
-            }
-            
-            foreach (var (ticket, info) in commonTimestamp.Bitfinex.Tickers)
-            {
-                await using var writer = GetWriter(DateTime.Now, ExchangeTitle.Bitfinex, ticket);
-                var data = new Timestamp(commonTimestamp.DateTime, info);
-                await writer.WriteAsync(data.ToBytes());
-            }
-            
-            foreach (var (ticket, info) in commonTimestamp.Bitstamp.Tickers)
-            {
-                await using var writer = GetWriter(DateTime.Now, ExchangeTitle.Bitstamp, ticket);
-                var data = new Timestamp(commonTimestamp.DateTime, info);
-                await writer.WriteAsync(data.ToBytes());
+                foreach (var (ticket, info) in commonTimestamp.Exchanges[exchange].Tickets)
+                {
+                    await using var writer = GetWriter(DateTime.Now, exchange, ticket);
+                    var data = new Timestamp(commonTimestamp.DateTime, info);
+                    await writer.WriteAsync(data.ToBytes());
+                }
             }
         }
 
         public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket)
         {
             var result = new MonthTimestamp(dateTime, ticket);
-            var binanceInfo = ReadTicketInfo(dateTime, ExchangeTitle.Binance, ticket);
-            foreach (var (tick, info) in binanceInfo)
+            foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
-                if (!result.Info.ContainsKey(tick))
-                    result.Info[tick] = new Dictionary<ExchangeTitle, TicketInfo>();
-                result.Info[tick][ExchangeTitle.Binance] = info;
-            }
-
-            var bitfinexInfo = ReadTicketInfo(dateTime, ExchangeTitle.Bitfinex, ticket);
-            foreach (var (tick, info) in bitfinexInfo)
-            {
-                result.Info[tick][ExchangeTitle.Bitfinex] = info;
-            }
-            
-            var bitstampInfo = ReadTicketInfo(dateTime, ExchangeTitle.Bitfinex, ticket);
-            foreach (var (tick, info) in bitstampInfo)
-            {
-                result.Info[tick][ExchangeTitle.Bitstamp] = info;
+                var ticketInfo = ReadTicketInfo(dateTime, exchange, ticket);
+                foreach (var (tick, info) in ticketInfo)
+                {
+                    if (!result.Info.ContainsKey(tick))
+                        result.Info[tick] = new Dictionary<ExchangeTitle, TicketInfo>();
+                    result.Info[tick][exchange] = info;
+                }
             }
 
             return result;

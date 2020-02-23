@@ -16,15 +16,6 @@ namespace Blocktrader.Service
         private readonly BitfinexClient bitfinex;
         private readonly BitstampClient bitstamp;
 
-        private readonly IReadOnlyCollection<Ticket> tickets = new[]
-        {
-            Ticket.BtcUsd,
-            Ticket.EthBtc,
-            Ticket.EthUsd,
-            Ticket.XrpBtc,
-            Ticket.XrpUsd
-        };
-
         public BlocktraderService(ILog log)
         {
             binance = new BinanceClient(log);
@@ -36,9 +27,12 @@ namespace Blocktrader.Service
         {
             var result = new CommonTimestamp
             {
-                Binance = await GetExchangeTimestampAsync(binance).ConfigureAwait(false),
-                Bitfinex = await GetExchangeTimestampAsync(bitfinex).ConfigureAwait(false),
-                Bitstamp = await GetExchangeTimestampAsync(bitstamp).ConfigureAwait(false),
+                Exchanges = new Dictionary<ExchangeTitle, ExchangeTimestamp>
+                {
+                    [ExchangeTitle.Binance] = await GetExchangeTimestampAsync(binance).ConfigureAwait(false),
+                    [ExchangeTitle.Bitfinex] = await GetExchangeTimestampAsync(bitfinex).ConfigureAwait(false),
+                    [ExchangeTitle.Bitstamp] = await GetExchangeTimestampAsync(bitstamp).ConfigureAwait(false),
+                },
                 DateTime = DateTime.Now
             };
 
@@ -48,10 +42,10 @@ namespace Blocktrader.Service
         private async Task<ExchangeTimestamp> GetExchangeTimestampAsync(IExchangeClient client)
         {
             var result = new ExchangeTimestamp();
-            foreach (var ticket in tickets)
+            foreach (var ticket in (Ticket[]) Enum.GetValues(typeof(Ticket)))
             {
                 var tickerInfo = await client.GetTickerInfoAsync(ticket).ConfigureAwait(false);
-                result.Tickers[ticket] = tickerInfo;
+                result.Tickets[ticket] = tickerInfo;
             }
 
             return result;
