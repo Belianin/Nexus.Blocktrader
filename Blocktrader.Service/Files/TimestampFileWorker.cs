@@ -43,12 +43,14 @@ namespace Blocktrader.Service.Files
             }
         }
 
-        public async Task<MonthTimestamp> ReadTimestampsFromMonthAsync(DateTime dateTime, Ticket ticket)
+        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket)
         {
             var result = new MonthTimestamp(dateTime, ticket);
             var binanceInfo = ReadTicketInfo(dateTime, ExchangeTitle.Binance, ticket);
             foreach (var (tick, info) in binanceInfo)
             {
+                if (!result.Info.ContainsKey(tick))
+                    result.Info[tick] = new Dictionary<ExchangeTitle, TicketInfo>();
                 result.Info[tick][ExchangeTitle.Binance] = info;
             }
 
