@@ -22,7 +22,7 @@ namespace Blocktrader.Exchange
         {
             Log.Debug($"Sending request {uri}");
             var response = await httpClient.GetAsync(uri).ConfigureAwait(false);
-            Log.Debug($"Got response from {uri}: {response.StatusCode.ToString()}");
+            Log.Debug($"Got response from {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()}");
 
             return response;
         }
@@ -31,10 +31,9 @@ namespace Blocktrader.Exchange
         {
             var response = await GetAsync(uri).ConfigureAwait(false);
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            
             if (response.IsSuccessStatusCode)
-            {
-                return JsonConvert.DeserializeObject<T>(content);
-            }
+                return content.TryDeserialize<T>();
 
             return $"{response.StatusCode.ToString()}: {content}";
         }
