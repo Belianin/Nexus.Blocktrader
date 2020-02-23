@@ -52,7 +52,11 @@ namespace Blocktrader.Service.Files
 
         private static Dictionary<DateTime, TicketInfo> ReadTicketInfo(DateTime dateTime, ExchangeTitle exchange, Ticket ticket)
         {
-            var rawData = File.ReadAllBytes(GetFilename(dateTime, exchange, ticket));
+            var filename = GetFilename(dateTime, exchange, ticket);
+            if (!File.Exists(filename))
+                return new Dictionary<DateTime, TicketInfo>();
+            
+            var rawData = File.ReadAllBytes(filename);
             return Timestamp.FromBytes(rawData).ToDictionary(k => k.Date, v => v.TicketInfo);
         }
 
