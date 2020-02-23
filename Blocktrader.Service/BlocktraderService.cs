@@ -32,7 +32,7 @@ namespace Blocktrader.Service
             bitstamp = new BitstampClient(log);
         }
         
-        public async Task<Timestamp> GetTimestampAsync()
+        public async Task<Timestamp> GetCurrentTimestampAsync()
         {
             var result = new Timestamp
             {

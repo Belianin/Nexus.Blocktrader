@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Blocktrader.Utils;
@@ -29,12 +30,13 @@ namespace Blocktrader.Exchange
         protected async Task<Result<T>> GetAsync<T>(string uri)
         {
             var response = await GetAsync(uri).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<T>(response.Content.ToString());
+                return JsonConvert.DeserializeObject<T>(content);
             }
 
-            return $"{response.StatusCode.ToString()}: {response.Content.ToString()}";
+            return $"{response.StatusCode.ToString()}: {content}";
         }
     }
 }
