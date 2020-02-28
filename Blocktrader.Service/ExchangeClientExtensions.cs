@@ -14,11 +14,9 @@ namespace Blocktrader.Service
                 var orderBook = await client.GetOrderBookAsync(ticket).ConfigureAwait(false);
                 var averagePrice = await client.GetCurrentAveragePriceAsync(ticket).ConfigureAwait(false);
 
-                return new TicketInfo
-                {
-                    OrderBook = orderBook.IsSuccess ? orderBook.Value : null,
-                    AveragePrice = averagePrice.IsSuccess ? averagePrice.Value : 0f
-                };
+                return new TicketInfo(
+                    averagePrice.IsSuccess ? averagePrice.Value : 0f,
+                    orderBook.IsSuccess ? orderBook.Value : new OrderBook());
             }
             catch (Exception e)
             {
