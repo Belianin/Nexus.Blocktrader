@@ -35,7 +35,7 @@ namespace Blocktrader
         public MainWindow()
         {
             InitializeComponent();
-            var log = new ConsoleLog();
+            var log = new ColorConsoleLog();
             service = new BlocktraderService(log);
             timestampManager = new TimestampFileManager(log);
 
@@ -46,6 +46,7 @@ namespace Blocktrader
             var timer = new Timer(updateInterval.TotalMilliseconds) {AutoReset = true};
             timer.Elapsed += (s, e) => DownloadAsync().Wait();
             timer.Start();
+            log.Info($"Blocktader initializated");
         }
 
         private async Task DownloadAsync()

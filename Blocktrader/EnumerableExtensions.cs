@@ -34,7 +34,6 @@ namespace Blocktrader
         }
         public static IEnumerable<Order> Flat(this IEnumerable<Order> orders, int precision, bool isBid)
         {
-            return orders;
             if (precision < 0) 
                 return orders;
             
