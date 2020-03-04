@@ -58,13 +58,9 @@ namespace Blocktrader.Exchange.Binance
         private static OrderBook ParseOrderBook(OrderBookResponse response)
         {
             var bids = response.Bids.Select(ParseOrder);
-            var asks = response.Asks.Select(ParseOrder); 
-            
-            return new OrderBook
-            {
-                Asks = asks.ToArray(),
-                Bids = bids.ToArray()
-            };
+            var asks = response.Asks.Select(ParseOrder);
+
+            return new OrderBook(bids.ToArray(), asks.ToArray());
         }
 
         private static Order ParseOrder(string[] parameters)

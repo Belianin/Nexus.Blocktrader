@@ -56,11 +56,7 @@ namespace Blocktrader.Exchange.Bitfinex
             var bids = orders.Where(o => o.Amount > 0);
             var asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
 
-            return new OrderBook
-            {
-                Asks = asks.ToArray(),
-                Bids = bids.ToArray()
-            };
+            return new OrderBook(bids.Cast<Order>().ToArray(), asks.Cast<Order>().ToArray());
         }
     }
 }
