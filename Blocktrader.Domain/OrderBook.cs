@@ -9,6 +9,6 @@ namespace Blocktrader.Domain
         {
             Bids = bids ?? new Order[0];
             Asks = asks ?? new Order[0];
-        }Fix
+        }
     }
 }
