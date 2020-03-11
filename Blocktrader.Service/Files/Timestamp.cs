@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Blocktrader.Domain;
 
@@ -11,7 +12,7 @@ namespace Blocktrader.Service.Files
 
         public TicketInfo TicketInfo { get; }
         
-        public Timestamp(DateTime date, TicketInfo ticketInfo)
+        public Timestamp(DateTime date, [NotNull] TicketInfo ticketInfo)
         {
             Date = date;
             TicketInfo = ticketInfo;
@@ -55,12 +56,7 @@ namespace Blocktrader.Service.Files
                     index += 8;
                 }
 
-                yield return new Timestamp(dateTime,
-                    new TicketInfo
-                    {
-                        AveragePrice = averagePrice,
-                        OrderBook = new OrderBook {Bids = bids.ToArray(), Asks = asks.ToArray()}
-                    });
+                yield return new Timestamp(dateTime, new TicketInfo(averagePrice, new OrderBook(bids.ToArray(), asks.ToArray())));
             }
         }
     }
