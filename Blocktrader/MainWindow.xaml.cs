@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using Blocktrader.Domain;
 using Blocktrader.Service;
 using Blocktrader.Service.Files;
+using Blocktrader.Utils;
 using Blocktrader.Utils.Logging;
 
 namespace Blocktrader
@@ -111,11 +112,11 @@ namespace Blocktrader
                 selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
                 needToCache = false;
             }
-
-            if (selectedTimestamp.Info.Count == 0)
-                return;
             
-            var tickTimestamp = GetTickInfos();
+            var tickTimestampResult = GetTickInfos();
+            if (tickTimestampResult.IsFail)
+                return;
+            var tickTimestamp = tickTimestampResult.Value;
             
             BitstampBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
             BitstampAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
@@ -125,19 +126,22 @@ namespace Blocktrader
             BinanceAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
 
             var tickDateTime = tickTimestamp[ExchangeTitle.Binance].DateTime;
-            TimeTextBlock.Text = "Time: " + tickDateTime.ToString();
-            PriceTextBlock.Text = Math.Floor(tickTimestamp[ExchangeTitle.Binance].AveragePrice).ToString();
+            TimeTextBlock.Text = "Time: " + tickDateTime.ToString("F", CultureInfo.CurrentCulture);
+            PriceTextBlock.Text = Math.Floor(tickTimestamp[ExchangeTitle.Binance].AveragePrice).ToString(CultureInfo.InvariantCulture);
             
             
             InvalidateVisual();
         }
 
-        private Dictionary<ExchangeTitle, TicketInfo> GetTickInfos()
+        private Result<Dictionary<ExchangeTitle, TicketInfo>> GetTickInfos()
         {
             var currentDayTimestamp = selectedTimestamp.Info
                 .Where(i => i.Key.Day == selectedDate.Day)
                 .Select(v => v.Value)
                 .ToArray();
+
+            if (currentDayTimestamp.Length == 0)
+                return "No timestamps";
             
             // можно проверку на 0
             if (selectedTick >= currentDayTimestamp.Length)
