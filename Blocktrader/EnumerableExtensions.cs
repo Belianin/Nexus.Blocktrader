@@ -12,8 +12,11 @@ namespace Blocktrader
             Func<Order, float> priceGetter,
             Func<Order, float, bool> predicate)
         {
+            // Здесь происходят странные вещества
             var currentAmount = 0f;
-            var price = priceGetter(orders.First());
+            var firstOrder = orders.FirstOrDefault();
+            var price = firstOrder != null ? priceGetter(firstOrder) : 0;
+            
             foreach (var order in orders)
             {
                 if (predicate(order, price))
@@ -34,7 +37,7 @@ namespace Blocktrader
         }
         public static IEnumerable<Order> Flat(this IEnumerable<Order> orders, int precision, bool isBid)
         {
-            if (precision < 0) 
+            if (precision < 0 || orders == null) 
                 return orders;
             
             var delta = (float) Math.Pow(10, precision);
