@@ -25,13 +25,21 @@ namespace Blocktrader.Service
         
         public async Task<CommonTimestamp> GetCurrentTimestampAsync()
         {
+            var binanceTask = Task.Run(async () => await GetExchangeTimestampAsync(binance));
+            var bitfinexTask = Task.Run(async () => await GetExchangeTimestampAsync(bitfinex));
+            var bitstampTask = Task.Run(async () => await GetExchangeTimestampAsync(bitstamp));
+
+            var tasks = new[] { binanceTask, binanceTask, bitstampTask };
+            Task.WaitAll(); // or WhenAll ?
+
+
             var result = new CommonTimestamp
             {
                 Exchanges = new Dictionary<ExchangeTitle, ExchangeTimestamp>
                 {
-                    [ExchangeTitle.Binance] = await GetExchangeTimestampAsync(binance).ConfigureAwait(false),
-                    [ExchangeTitle.Bitfinex] = await GetExchangeTimestampAsync(bitfinex).ConfigureAwait(false),
-                    [ExchangeTitle.Bitstamp] = await GetExchangeTimestampAsync(bitstamp).ConfigureAwait(false),
+                    [ExchangeTitle.Binance] = binanceTask.Result,
+                    [ExchangeTitle.Bitfinex] = bitfinexTask.Result,
+                    [ExchangeTitle.Bitstamp] = bitstampTask.Result,
                 },
                 DateTime = DateTime.Now
             };

@@ -127,7 +127,6 @@ namespace Blocktrader
                 BinanceBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
                 BinanceAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
 
-
                 var tickDateTime = tickTimestamp[ExchangeTitle.Binance].DateTime;
                 TimeTextBlock.Text = "Time: " + tickDateTime.ToString("F", CultureInfo.CurrentCulture);
                 PriceTextBlock.Text = Math.Floor(tickTimestamp[ExchangeTitle.Binance].AveragePrice).ToString(CultureInfo.InvariantCulture);
