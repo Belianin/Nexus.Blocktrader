@@ -112,6 +112,9 @@ namespace Blocktrader
                 needToCache = false;
             }
 
+            if (selectedTimestamp.Info.Count == 0)
+                return;
+            
             var tickTimestamp = GetTickInfos();
             
             BitstampBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
