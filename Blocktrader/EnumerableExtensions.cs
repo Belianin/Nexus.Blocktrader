@@ -39,8 +39,8 @@ namespace Blocktrader
             
             var delta = (float) Math.Pow(10, precision);
             return isBid
-                ? orders.Flat(o => (float) Math.Ceiling(o.Price / delta) * delta, (o, p) => p - o.Price >= 0)
-                : orders.Flat(o => (float) Math.Floor(o.Price / delta) * delta, (o, p) => p - o.Price <= 0);
+                ? orders.Flat(o => (float) Math.Floor(o.Price / delta) * delta, (o, p) => p <= o.Price)
+                : orders.Flat(o => (float) Math.Ceiling(o.Price / delta) * delta, (o, p) => p >= o.Price);
         }
     }
 }

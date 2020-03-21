@@ -117,7 +117,10 @@ namespace Blocktrader
             BitfinexAsksGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
             BinanceBidsGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
             BinanceAsksGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
-            
+
+            TimeTextBlock.Text = "Time: " + selectedDate.ToString();
+            PriceTextBlock.Text = Math.Floor(currentDayTimestamp[selectedTick][ExchangeTitle.Binance].AveragePrice).ToString();
+
             InvalidateVisual();
         }
 
@@ -129,8 +132,29 @@ namespace Blocktrader
 
         private void TimePickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            selectedTick = (int) TimePicker.Value;
-            Update();
+            if ((int)TimePicker.Value != 0)
+            { 
+                selectedTick = (int) TimePicker.Value - 1;
+                Update();
+            }
+            
+        }
+
+        private void PickerLeft6_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(ShiftCount.Text, out var value))
+            {
+                TimePicker.Value -= value;
+            }
+            
+        }
+
+        private void PickerRight6_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(ShiftCount.Text, out var value))
+            {
+                TimePicker.Value += value;
+            }
         }
     }
 }

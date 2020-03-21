@@ -56,10 +56,7 @@ namespace Blocktrader.Service.Files
                     index += 8;
                 }
 
-                yield return new Timestamp(dateTime,
-                    new TicketInfo(
-                        averagePrice,
-                        new OrderBook {Bids = bids.ToArray(), Asks = asks.ToArray()}));
+                yield return new Timestamp(dateTime, new TicketInfo(averagePrice, new OrderBook(bids.ToArray(), asks.ToArray())));
             }
         }
     }

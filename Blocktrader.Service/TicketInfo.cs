@@ -12,7 +12,7 @@ namespace Blocktrader.Service
         public TicketInfo(float averagePrice, [NotNull] OrderBook orderBook)
         {
             AveragePrice = averagePrice;
-            OrderBook = orderBook;
+            OrderBook = orderBook ?? new OrderBook(null, null);
         }
     }
 }
