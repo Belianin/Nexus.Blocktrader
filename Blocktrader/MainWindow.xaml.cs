@@ -112,6 +112,8 @@ namespace Blocktrader
             }
             
             var currentDayTimestamp = selectedTimestamp.Info.Where(i => i.Key.Day == selectedDate.Day).Select(v => v.Value).ToArray();
+            if (selectedTick >= currentDayTimestamp.Length)
+                selectedTick = currentDayTimestamp.Length - 1;  
             
             TimePicker.Maximum = currentDayTimestamp.Length;
             TimePicker.TickFrequency = 1;
@@ -138,12 +140,9 @@ namespace Blocktrader
 
         private void TimePickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if ((int)TimePicker.Value != 0)
-            { 
-                selectedTick = (int) TimePicker.Value - 1;
-                Update();
-            }
-            
+            selectedTick = (int) TimePicker.Value;
+            Update();
+
         }
 
         private void PickerLeft6_Click(object sender, RoutedEventArgs e)
