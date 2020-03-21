@@ -29,15 +29,17 @@ namespace Blocktrader
         private int selectedTick = 0;
         private MonthTimestamp selectedTimestamp;
         private int precision = -1;
-
+        
         private bool isUpdating = false;
+
+        private bool needToCache = true;
         
         public MainWindow()
         {
             InitializeComponent();
             var log = new ColorConsoleLog();
             service = new BlocktraderService(log);
-            timestampManager = new TimestampFileManager(log);
+            timestampManager = new FileTimestampManager(log);
 
             TicketPicker.ItemsSource = (Ticket[]) Enum.GetValues(typeof(Ticket));
             DatePicker.SelectedDate = DateTime.Now;
@@ -54,6 +56,7 @@ namespace Blocktrader
             isUpdating = true;
             var timestamp = await service.GetCurrentTimestampAsync().ConfigureAwait(false);
             await timestampManager.WriteAsync(timestamp);
+            needToCache = true;
             isUpdating = false;
         }
 
@@ -101,9 +104,12 @@ namespace Blocktrader
         {
             if (isUpdating)
                 return;
-            
-            if (selectedDate.Month == DateTime.Now.Month || selectedTimestamp == null)
+
+            if (needToCache && (selectedDate.Month == DateTime.Now.Month || selectedTimestamp == null))
+            {
                 selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
+                needToCache = false;
+            }
             
             var currentDayTimestamp = selectedTimestamp.Info.Where(i => i.Key.Day == selectedDate.Day).Select(v => v.Value).ToArray();
             

@@ -9,11 +9,11 @@ using Blocktrader.Utils.Logging;
 
 namespace Blocktrader.Service.Files
 {
-    public class TimestampFileManager : ITimestampManager
+    public class FileTimestampManager : ITimestampManager
     {
         private readonly ILog log;
 
-        public TimestampFileManager(ILog log)
+        public FileTimestampManager(ILog log)
         {
             this.log = log;
         }
