@@ -128,7 +128,8 @@ namespace Blocktrader
 
             TimeTextBlock.Text = "Time: " + selectedDate.ToString();
             PriceTextBlock.Text = Math.Floor(currentDayTimestamp[selectedTick][ExchangeTitle.Binance].AveragePrice).ToString();
-
+            var tickDateTime = currentDayTimestamp[selectedTick][ExchangeTitle.Binance].DateTime;
+            
             InvalidateVisual();
         }
 
@@ -162,4 +163,4 @@ namespace Blocktrader
             }
         }
     }
-}
+}Cosy

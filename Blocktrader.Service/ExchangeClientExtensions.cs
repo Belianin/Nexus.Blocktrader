@@ -16,7 +16,8 @@ namespace Blocktrader.Service
 
                 return new TicketInfo(
                     averagePrice.IsSuccess ? averagePrice.Value : 0f,
-                    orderBook.IsSuccess ? orderBook.Value : new OrderBook(null, null));
+                    orderBook.IsSuccess ? orderBook.Value : new OrderBook(null, null),
+                    DateTime.Now); // НЕ ИСПОЛЬЗУТСЯ ПРИ ЗАПИСИ, ПРОСТО НУЖНО ДЛЯ ЧТЕНИЯ
             }
             catch (Exception e)
             {
