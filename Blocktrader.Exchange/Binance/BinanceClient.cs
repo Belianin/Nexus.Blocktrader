@@ -13,20 +13,20 @@ namespace Blocktrader.Exchange.Binance
     {
         private const string BaseUrl = "https://api.binance.com/api/v3/";
         
-        private Dictionary<Ticket, string> symbols = new Dictionary<Ticket, string>
+        private Dictionary<Ticker, string> symbols = new Dictionary<Ticker, string>
         {
-            {Ticket.BtcUsd, "BTCUSDT"},
-            {Ticket.EthUsd, "ETHUSDT"},
-            {Ticket.EthBtc, "ETHBTC"},
-            {Ticket.XrpBtc, "XRPBTC"},
-            {Ticket.XrpUsd, "XRPUSDT"}
+            {Ticker.BtcUsd, "BTCUSDT"},
+            {Ticker.EthUsd, "ETHUSDT"},
+            {Ticker.EthBtc, "ETHBTC"},
+            {Ticker.XrpBtc, "XRPBTC"},
+            {Ticker.XrpUsd, "XRPUSDT"}
         };
 
         public BinanceClient(ILog log) : base(log) {}
         
-        public async Task<Result<OrderBook>> GetOrderBookAsync(Ticket ticket)
+        public async Task<Result<OrderBook>> GetOrderBookAsync(Ticker ticker)
         {
-            var symbol = symbols[ticket];
+            var symbol = symbols[ticker];
             
             var result = await GetAsync<OrderBookResponse>($"{BaseUrl}depth?symbol={symbol}&limit={5000}")
                 .ConfigureAwait(false);
@@ -39,9 +39,9 @@ namespace Blocktrader.Exchange.Binance
             return ParseOrderBook(result.Value);
         }
 
-        public async Task<Result<float>> GetCurrentAveragePriceAsync(Ticket ticket)
+        public async Task<Result<float>> GetCurrentAveragePriceAsync(Ticker ticker)
         {
-            var symbol = symbols[ticket];
+            var symbol = symbols[ticker];
             
             var result = await GetAsync<AveragePriceResponse>($"{BaseUrl}avgPrice?symbol={symbol}")
                 .ConfigureAwait(false);

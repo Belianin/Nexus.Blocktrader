@@ -6,8 +6,8 @@ namespace Blocktrader.Exchange
 {
     public interface IExchangeClient
     {
-        Task<Result<OrderBook>> GetOrderBookAsync(Ticket ticket);
+        Task<Result<OrderBook>> GetOrderBookAsync(Ticker ticker);
         
-        Task<Result<float>> GetCurrentAveragePriceAsync(Ticket ticket);
+        Task<Result<float>> GetCurrentAveragePriceAsync(Ticker ticker);
     }
 }

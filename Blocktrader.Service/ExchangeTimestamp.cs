@@ -5,6 +5,6 @@ namespace Blocktrader.Service
 {
     public class ExchangeTimestamp
     {
-        public Dictionary<Ticket, TicketInfo> Tickets = new Dictionary<Ticket, TicketInfo>();
+        public Dictionary<Ticker, TickerInfo> Tickets = new Dictionary<Ticker, TickerInfo>();
     }
 }

@@ -1,6 +1,6 @@
 namespace Blocktrader.Domain
 {
-    public enum Ticket
+    public enum Ticker
     {
         BtcUsd,
         EthUsd,

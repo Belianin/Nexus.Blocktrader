@@ -50,7 +50,7 @@ namespace Blocktrader.Service
         private async Task<ExchangeTimestamp> GetExchangeTimestampAsync(IExchangeClient client)
         {
             var result = new ExchangeTimestamp();
-            foreach (var ticket in (Ticket[]) Enum.GetValues(typeof(Ticket)))
+            foreach (var ticket in (Ticker[]) Enum.GetValues(typeof(Ticker)))
             {
                 var tickerInfo = await client.GetTickerInfoAsync(ticket).ConfigureAwait(false);
                 result.Tickets[ticket] = tickerInfo;

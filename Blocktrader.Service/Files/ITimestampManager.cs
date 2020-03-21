@@ -9,6 +9,6 @@ namespace Blocktrader.Service.Files
     {
         Task WriteAsync(CommonTimestamp commonTimestamp);
 
-        MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket);
+        MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker);
     }
 }

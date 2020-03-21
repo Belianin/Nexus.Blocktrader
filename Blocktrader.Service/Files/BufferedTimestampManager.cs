@@ -9,12 +9,12 @@ namespace Blocktrader.Service.Files
     public class BufferedTimestampManager : ITimestampManager
     {
         private readonly ITimestampManager innerManager;
-        private readonly IDictionary<Ticket, MonthTimestamp> current;
+        private readonly IDictionary<Ticker, MonthTimestamp> current;
 
         public BufferedTimestampManager(ITimestampManager innerManager)
         {
             this.innerManager = innerManager;
-            current = new Dictionary<Ticket, MonthTimestamp>();
+            current = new Dictionary<Ticker, MonthTimestamp>();
         }
 
         public async Task WriteAsync(CommonTimestamp commonTimestamp)
@@ -22,9 +22,9 @@ namespace Blocktrader.Service.Files
             await innerManager.WriteAsync(commonTimestamp).ConfigureAwait(false);
         }
 
-        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket)
+        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
         {
-            return innerManager.ReadTimestampsFromMonth(dateTime, ticket);
+            return innerManager.ReadTimestampsFromMonth(dateTime, ticker);
         }
     }
 }

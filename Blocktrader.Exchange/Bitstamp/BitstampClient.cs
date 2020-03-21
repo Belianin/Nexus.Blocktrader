@@ -12,22 +12,22 @@ namespace Blocktrader.Exchange.Bitstamp
     public class BitstampClient : BaseClient, IExchangeClient
     {
         private const string BaseUrl = "https://www.bitstamp.net/api/v2/";
-        private readonly Dictionary<Ticket, string> symbols = new Dictionary<Ticket, string>
+        private readonly Dictionary<Ticker, string> symbols = new Dictionary<Ticker, string>
         {
-            {Ticket.BtcUsd, "btcusd"},
-            {Ticket.EthUsd, "ethusd"},
-            {Ticket.EthBtc, "ethbtc"},
-            {Ticket.XrpBtc, "xrpbtc"},
-            {Ticket.XrpUsd, "xrpusd"}
+            {Ticker.BtcUsd, "btcusd"},
+            {Ticker.EthUsd, "ethusd"},
+            {Ticker.EthBtc, "ethbtc"},
+            {Ticker.XrpBtc, "xrpbtc"},
+            {Ticker.XrpUsd, "xrpusd"}
         };
         
         public BitstampClient(ILog log) : base(log)
         {
         }
 
-        public async Task<Result<OrderBook>> GetOrderBookAsync(Ticket ticket)
+        public async Task<Result<OrderBook>> GetOrderBookAsync(Ticker ticker)
         {
-            var symbol = symbols[ticket];
+            var symbol = symbols[ticker];
             
             var response = await GetAsync<OrderBookResponse>($"{BaseUrl}order_book/{symbol}/");
             if (response.IsFail)
@@ -36,9 +36,9 @@ namespace Blocktrader.Exchange.Bitstamp
             return ParseOrderBook(response.Value);
         }
 
-        public async Task<Result<float>> GetCurrentAveragePriceAsync(Ticket ticket)
+        public async Task<Result<float>> GetCurrentAveragePriceAsync(Ticker ticker)
         {
-            var symbol = symbols[ticket];
+            var symbol = symbols[ticker];
 
             var result = await GetAsync<Dictionary<string, object>>($"{BaseUrl}ticker/{symbol}/")
                 .ConfigureAwait(false);

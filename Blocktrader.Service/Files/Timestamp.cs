@@ -10,22 +10,22 @@ namespace Blocktrader.Service.Files
     {
         public DateTime Date { get; }
 
-        public TicketInfo TicketInfo { get; }
+        public TickerInfo TickerInfo { get; }
         
-        public Timestamp(DateTime date, [NotNull] TicketInfo ticketInfo)
+        public Timestamp(DateTime date, [NotNull] TickerInfo tickerInfo)
         {
             Date = date;
-            TicketInfo = ticketInfo;
+            TickerInfo = tickerInfo;
         }
 
         public byte[] ToBytes()
         {
             return BitConverter.GetBytes(Date.ToBinary())
-                .Concat(BitConverter.GetBytes(TicketInfo.AveragePrice))
-                .Concat(BitConverter.GetBytes(TicketInfo.OrderBook.Bids.Length))
-                .Concat(TicketInfo.OrderBook.Bids.SelectMany(b => b.ToBytes()))
-                .Concat(BitConverter.GetBytes(TicketInfo.OrderBook.Asks.Length))
-                .Concat(TicketInfo.OrderBook.Asks.SelectMany(a => a.ToBytes()))
+                .Concat(BitConverter.GetBytes(TickerInfo.AveragePrice))
+                .Concat(BitConverter.GetBytes(TickerInfo.OrderBook.Bids.Length))
+                .Concat(TickerInfo.OrderBook.Bids.SelectMany(b => b.ToBytes()))
+                .Concat(BitConverter.GetBytes(TickerInfo.OrderBook.Asks.Length))
+                .Concat(TickerInfo.OrderBook.Asks.SelectMany(a => a.ToBytes()))
                 .ToArray();
         }
 
@@ -56,7 +56,7 @@ namespace Blocktrader.Service.Files
                     index += 8;
                 }
 
-                yield return new Timestamp(dateTime, new TicketInfo(averagePrice, new OrderBook(bids.ToArray(), asks.ToArray()), dateTime));
+                yield return new Timestamp(dateTime, new TickerInfo(averagePrice, new OrderBook(bids.ToArray(), asks.ToArray()), dateTime));
             }
         }
     }

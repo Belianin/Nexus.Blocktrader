@@ -6,7 +6,7 @@ namespace Blocktrader.Service.Files
 {
     public class MonthTimestamp
     {
-        public MonthTimestamp(DateTime dateTime, Ticket ticker)
+        public MonthTimestamp(DateTime dateTime, Ticker ticker)
         {
             DateTime = dateTime;
             Ticker = ticker;
@@ -14,9 +14,9 @@ namespace Blocktrader.Service.Files
 
         public DateTime DateTime { get; set; }
         
-        public Ticket Ticker { get; set; }
+        public Ticker Ticker { get; set; }
         
-        public Dictionary<DateTime, Dictionary<ExchangeTitle, TicketInfo>> Info { get; set; } =
-            new Dictionary<DateTime, Dictionary<ExchangeTitle, TicketInfo>>();
+        public Dictionary<DateTime, Dictionary<ExchangeTitle, TickerInfo>> Info { get; set; } =
+            new Dictionary<DateTime, Dictionary<ExchangeTitle, TickerInfo>>();
     }
 }

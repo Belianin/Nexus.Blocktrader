@@ -4,7 +4,7 @@ using Blocktrader.Domain;
 
 namespace Blocktrader.Service
 {
-    public class TicketInfo
+    public class TickerInfo
     {
         public float AveragePrice { get; }
         
@@ -12,7 +12,7 @@ namespace Blocktrader.Service
         
         public DateTime DateTime { get; }
 
-        public TicketInfo(float averagePrice, [NotNull] OrderBook orderBook, DateTime dateTime)
+        public TickerInfo(float averagePrice, [NotNull] OrderBook orderBook, DateTime dateTime)
         {
             AveragePrice = averagePrice;
             DateTime = dateTime;

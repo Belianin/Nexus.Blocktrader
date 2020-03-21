@@ -32,17 +32,17 @@ namespace Blocktrader.Service.Files
             }
         }
 
-        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticket ticket)
+        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
         {
             log.Debug($"Reading timestamps for {dateTime:yyyy-MM}");
-            var result = new MonthTimestamp(dateTime, ticket);
+            var result = new MonthTimestamp(dateTime, ticker);
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
-                var ticketInfo = ReadTicketInfo(dateTime, exchange, ticket);
+                var ticketInfo = ReadTicketInfo(dateTime, exchange, ticker);
                 foreach (var (tick, info) in ticketInfo)
                 {
                     if (!result.Info.ContainsKey(tick))
-                        result.Info[tick] = new Dictionary<ExchangeTitle, TicketInfo>();
+                        result.Info[tick] = new Dictionary<ExchangeTitle, TickerInfo>();
                     result.Info[tick][exchange] = info;
                 }
             }
@@ -50,28 +50,28 @@ namespace Blocktrader.Service.Files
             return result;
         }
 
-        private static Dictionary<DateTime, TicketInfo> ReadTicketInfo(DateTime dateTime, ExchangeTitle exchange, Ticket ticket)
+        private static Dictionary<DateTime, TickerInfo> ReadTicketInfo(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
-            var filename = GetFilename(dateTime, exchange, ticket);
+            var filename = GetFilename(dateTime, exchange, ticker);
             if (!File.Exists(filename))
-                return new Dictionary<DateTime, TicketInfo>();
+                return new Dictionary<DateTime, TickerInfo>();
             
             var rawData = File.ReadAllBytes(filename);
-            return Timestamp.FromBytes(rawData).ToDictionary(k => k.Date, v => v.TicketInfo);
+            return Timestamp.FromBytes(rawData).ToDictionary(k => k.Date, v => v.TickerInfo);
         }
 
-        private static string GetFilename(DateTime dateTime, ExchangeTitle exchange, Ticket ticket)
+        private static string GetFilename(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
             if (!Directory.Exists($"Data/{exchange.ToString()}"))
                 Directory.CreateDirectory($"Data/{exchange.ToString()}");
             
-            return $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticket}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
+            return $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticker}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
 
         }
 
-        private static FileStream GetWriter(DateTime dateTime, ExchangeTitle exchange, Ticket ticket)
+        private static FileStream GetWriter(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
-            return File.Open(GetFilename(dateTime, exchange, ticket), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            return File.Open(GetFilename(dateTime, exchange, ticker), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
         }
     }
 }

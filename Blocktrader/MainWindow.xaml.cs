@@ -26,7 +26,7 @@ namespace Blocktrader
 
         private FilterSettings filterSettings = new FilterSettings();
 
-        private Ticket currentTicket = Ticket.BtcUsd;
+        private Ticker currentTicker = Ticker.BtcUsd;
         private DateTime selectedDate = DateTime.Now;
         private int selectedTick = 0;
         private MonthTimestamp selectedTimestamp;
@@ -43,7 +43,7 @@ namespace Blocktrader
             service = new BlocktraderService(log);
             timestampManager = new FileTimestampManager(log);
 
-            TicketPicker.ItemsSource = (Ticket[]) Enum.GetValues(typeof(Ticket));
+            TicketPicker.ItemsSource = (Ticker[]) Enum.GetValues(typeof(Ticker));
             DatePicker.SelectedDate = DateTime.Now;
             PrecPicker.Value = 0;
 
@@ -80,7 +80,7 @@ namespace Blocktrader
 
         private void TicketPicker_OnSelected(object sender, RoutedEventArgs e)
         {
-            currentTicket = (Ticket) TicketPicker.SelectedItem;
+            currentTicker = (Ticker) TicketPicker.SelectedItem;
 
         }
         
@@ -109,7 +109,7 @@ namespace Blocktrader
 
             if (needToCache && (selectedDate.Month == DateTime.Now.Month || selectedTimestamp == null))
             {
-                selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
+                selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicker);
                 needToCache = false;
             }
             
@@ -140,7 +140,7 @@ namespace Blocktrader
             InvalidateVisual();
         }
 
-        private Result<Dictionary<ExchangeTitle, TicketInfo>> GetTickInfos()
+        private Result<Dictionary<ExchangeTitle, TickerInfo>> GetTickInfos()
         {
             var currentDayTimestamp = selectedTimestamp.Info
                 .Where(i => i.Key.Day == selectedDate.Day)
