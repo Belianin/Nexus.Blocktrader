@@ -118,18 +118,26 @@ namespace Blocktrader
                 return;
             var tickTimestamp = tickTimestampResult.Value;
             
-            BitstampBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
-            BitstampAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
-            BitfinexBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitfinex].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
-            BitfinexAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
-            BinanceBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
-            BinanceAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+            try
+            {
+                BitstampBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+                BitstampAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+                BitfinexBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitfinex].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+                BitfinexAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+                BinanceBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+                BinanceAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
 
-            var tickDateTime = tickTimestamp[ExchangeTitle.Binance].DateTime;
-            TimeTextBlock.Text = "Time: " + tickDateTime.ToString("F", CultureInfo.CurrentCulture);
-            PriceTextBlock.Text = Math.Floor(tickTimestamp[ExchangeTitle.Binance].AveragePrice).ToString(CultureInfo.InvariantCulture);
-            
-            
+
+                var tickDateTime = tickTimestamp[ExchangeTitle.Binance].DateTime;
+                TimeTextBlock.Text = "Time: " + tickDateTime.ToString("F", CultureInfo.CurrentCulture);
+                PriceTextBlock.Text = Math.Floor(tickTimestamp[ExchangeTitle.Binance].AveragePrice).ToString(CultureInfo.InvariantCulture);
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine(e.Message);
+            }
+                 
             InvalidateVisual();
         }
 
