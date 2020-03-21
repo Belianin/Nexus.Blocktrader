@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -110,27 +111,40 @@ namespace Blocktrader
                 selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicket);
                 needToCache = false;
             }
+
+            var tickTimestamp = GetTickInfos();
             
-            var currentDayTimestamp = selectedTimestamp.Info.Where(i => i.Key.Day == selectedDate.Day).Select(v => v.Value).ToArray();
+            BitstampBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+            BitstampAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+            BitfinexBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitfinex].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+            BitfinexAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+            BinanceBidsGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
+            BinanceAsksGrid.ItemsSource = tickTimestamp[ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
+
+            TimeTextBlock.Text = "Time: " + selectedDate.ToString();
+            PriceTextBlock.Text = Math.Floor(tickTimestamp[ExchangeTitle.Binance].AveragePrice).ToString();
+            var tickDateTime = tickTimestamp[ExchangeTitle.Binance].DateTime;
+            
+            InvalidateVisual();
+        }
+
+        private Dictionary<ExchangeTitle, TicketInfo> GetTickInfos()
+        {
+            var currentDayTimestamp = selectedTimestamp.Info
+                .Where(i => i.Key.Day == selectedDate.Day)
+                .Select(v => v.Value)
+                .ToArray();
+            
+            // можно проверку на 0
             if (selectedTick >= currentDayTimestamp.Length)
                 selectedTick = currentDayTimestamp.Length - 1;  
             
+            // Что это тут вообще делает :/
             TimePicker.Maximum = currentDayTimestamp.Length;
             TimePicker.TickFrequency = 1;
             TimePicker.TickPlacement = TickPlacement.BottomRight;
-            
-            BitstampBidsGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Binance].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
-            BitstampAsksGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Binance].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
-            BitfinexBidsGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitfinex].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
-            BitfinexAsksGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitfinex].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
-            BinanceBidsGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitstamp].OrderBook.Bids.Where(IsOk).OrderByDescending(b => b.Price).Flat(precision, true);
-            BinanceAsksGrid.ItemsSource = currentDayTimestamp[selectedTick][ExchangeTitle.Bitstamp].OrderBook.Asks.Where(IsOk).OrderBy(p => p.Price).Flat(precision, false);
 
-            TimeTextBlock.Text = "Time: " + selectedDate.ToString();
-            PriceTextBlock.Text = Math.Floor(currentDayTimestamp[selectedTick][ExchangeTitle.Binance].AveragePrice).ToString();
-            var tickDateTime = currentDayTimestamp[selectedTick][ExchangeTitle.Binance].DateTime;
-            
-            InvalidateVisual();
+            return currentDayTimestamp[selectedTick];
         }
 
         private void PrecPickerChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -163,4 +177,4 @@ namespace Blocktrader
             }
         }
     }
-}Cosy
+}
