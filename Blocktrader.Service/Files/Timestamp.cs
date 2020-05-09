@@ -28,6 +28,20 @@ namespace Nexus.Blocktrader.Service.Files
                 .Concat(TickerInfo.OrderBook.Asks.SelectMany(a => a.ToBytes()))
                 .ToArray();
         }
+        
+        public byte[] ToBytes2()
+        {
+            var unixTimestamp = (long)(Date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            unixTimestamp = unixTimestamp * 1000;
+            
+            return BitConverter.GetBytes(unixTimestamp)
+                .Concat(BitConverter.GetBytes(TickerInfo.AveragePrice))
+                .Concat(BitConverter.GetBytes(TickerInfo.OrderBook.Bids.Length))
+                .Concat(TickerInfo.OrderBook.Bids.SelectMany(b => b.ToBytes()))
+                .Concat(BitConverter.GetBytes(TickerInfo.OrderBook.Asks.Length))
+                .Concat(TickerInfo.OrderBook.Asks.SelectMany(a => a.ToBytes()))
+                .ToArray();
+        }
 
         public static IEnumerable<Timestamp> FromBytes(byte[] bytes)
         {

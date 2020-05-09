@@ -1,12 +1,24 @@
 import React from 'react';
 import logo from './logo.png';
 import './App.css';
+import {Table} from '@material-ui/core'
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import {Button} from '@material-ui/core'
+import Slider from '@material-ui/core/Slider';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: false
+      value: [],
+      selectedTimestamp: 0
     };
   }
 
@@ -21,7 +33,7 @@ class App extends React.Component {
             },
             (error) => {
               this.setState({
-                value: error.toString()
+                value: []
               });
             }
         )
@@ -33,8 +45,7 @@ class App extends React.Component {
     const dataView = new DataView(buffer);
 
     while (index < buffer.byteLength) {
-      console.log(index);
-      const date = new Date(Number(dataView.getBigInt64(index, true)) / 1000);
+      const date = new Date(Number(dataView.getBigInt64(index, true)));
       index += 8;
       const averagePrice = dataView.getFloat32(index, true);
       index += 4;
@@ -42,11 +53,8 @@ class App extends React.Component {
       const bidsCount = dataView.getInt32(index, true);
       index += 4;
       const bids = [];
-      console.log(dataView.byteLength);
-      console.log(bidsCount);
       for (let i = 0; i < bidsCount; i++)
       {
-        console.log(index);
         bids.push(this.getOrderFromBytes(dataView, index));
         index += 8;
       }
@@ -93,23 +101,79 @@ class App extends React.Component {
   convertToHtml(timestamp) {
     return (
         <div>
-          <p>Цена на {timestamp.date.getDay()}:{timestamp.date.getMonth()}: {timestamp.tickerInfo.averagePrice}</p>
-          <p>Биды</p>
-          <table>
-            {timestamp.tickerInfo.orderBook.bids.map(b => <tr><td>{b.price}</td><td>{b.amount}</td></tr>)}
-          </table>
+          <Paper>
+            <TableContainer>
+              <Typography variant="h6" id="tableTitle" component="div">
+                Биды {timestamp.date.toString()}
+              </Typography>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left">Цена</TableCell>
+                    <TableCell align="right">Колличество</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {timestamp.tickerInfo.orderBook.bids.map(b => (
+                      <TableRow>
+                        <TableCell align="left">{b.price}</TableCell>
+                        <TableCell align="right">{b.amount}</TableCell>
+                      </TableRow>))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TableContainer>
+              <Typography variant="h6" id="tableTitle" component="div">
+                Аски
+              </Typography>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left">Цена</TableCell>
+                    <TableCell align="right">Колличество</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {timestamp.tickerInfo.orderBook.asks.map(b => (
+                      <TableRow>
+                        <TableCell align="left">{b.price}</TableCell>
+                        <TableCell align="right">{b.amount}</TableCell>
+                      </TableRow>))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </div>
     )
+  }
+
+  onSliderChange(value) {
+    this.setState({
+      selectedTimestamp: value
+    });
+    console.log("Тыкнули слайдер " + value)
   }
 
   render() {
     return (
         <div>
           <header>
-            <img src={logo} alt="logo"/>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+            <img src={logo} style={{height: 128, width: "auto"}} alt="logo"/>
           </header>
           <div>
-            {this.state.value && this.state.value.map(t => this.convertToHtml(t))}
+            <Button variant="contained">>>></Button>
+            <Grid item xs>
+              <Slider
+                  step={1}
+                  min={0}
+                  marks
+                  max={this.state.value.length}
+                  valueLabelDisplay="auto"
+                  onChange={(e, v) => this.onSliderChange(v)}
+                  aria-labelledby="discrete-slider-small-steps" />
+            </Grid>
+            {this.state.value.length > 0 && this.convertToHtml(this.state.value[this.state.selectedTimestamp])}
           </div>
         </div>
     );

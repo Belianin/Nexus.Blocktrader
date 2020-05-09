@@ -46,9 +46,8 @@ namespace Nexus.Blocktrader.Api.Controllers
                     new OrderBook(t.TickerInfo.OrderBook.Bids.Flat(precision, true).ToArray(),
                         t.TickerInfo.OrderBook.Asks.Flat(precision, false).ToArray()), 
                     t.TickerInfo.DateTime)))
-                .Select(t => t.ToBytes()).SelectMany(t => t).ToArray();
+                .Select(t => t.ToBytes2()).SelectMany(t => t).ToArray();
 
-            Console.WriteLine(BitConverter.ToInt32(byteData, 12));
 
             return File(byteData, "application/btd", "data.btd");
         }
