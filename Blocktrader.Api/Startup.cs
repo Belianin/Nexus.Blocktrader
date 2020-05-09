@@ -20,6 +20,7 @@ namespace Nexus.Blocktrader.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddMvc(options => options.EnableEndpointRouting = false).AddJsonOptions(options =>
             {
                 // Use the default property (Pascal) casing.
@@ -45,6 +46,7 @@ namespace Nexus.Blocktrader.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(o => o.AllowAnyOrigin());
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

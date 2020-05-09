@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Nexus.Blocktrader.Domain;
@@ -24,7 +25,8 @@ namespace Nexus.Blocktrader.Api.Controllers
             [FromRoute] int month,
             [FromRoute] int day,
             [FromRoute] Ticker ticker,
-            [FromRoute] ExchangeTitle exchange)
+            [FromRoute] ExchangeTitle exchange,
+            [FromQuery] int precision = -1)
         {
             Console.WriteLine("Received a request");
             
@@ -35,15 +37,27 @@ namespace Nexus.Blocktrader.Api.Controllers
             if (timestamp.IsFail)
                 return NotFound("Нет такого файла");
 
+            Console.WriteLine("Нашёл файл");
+
+            // if precision == 0 skip
             var byteData = timestamp.Value
                 .Select(t => new Timestamp(t.Date, new TickerInfo(
                     t.TickerInfo.AveragePrice,
-                    new OrderBook(t.TickerInfo.OrderBook.Bids.Flat(1, true).ToArray(),
-                        t.TickerInfo.OrderBook.Asks.Flat(1, false).ToArray()), 
+                    new OrderBook(t.TickerInfo.OrderBook.Bids.Flat(precision, true).ToArray(),
+                        t.TickerInfo.OrderBook.Asks.Flat(precision, false).ToArray()), 
                     t.TickerInfo.DateTime)))
                 .Select(t => t.ToBytes()).SelectMany(t => t).ToArray();
 
+            Console.WriteLine(BitConverter.ToInt32(byteData, 12));
+
             return File(byteData, "application/btd", "data.btd");
+        }
+
+        [HttpGet("me")]
+        public IActionResult Test()
+        {
+            Console.WriteLine("test");
+            return Ok(new {Hello = "привет"});
         }
     }
     
