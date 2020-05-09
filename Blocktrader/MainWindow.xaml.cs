@@ -29,7 +29,7 @@ namespace Nexus.Blocktrader
         private Ticker currentTicker = Ticker.BtcUsd;
         private DateTime selectedDate = DateTime.Now;
         private int selectedTick = 0;
-        private MonthTimestamp selectedTimestamp;
+        private OldMonthTimestamp selectedTimestamp;
         private int precision = -1;
         
         private bool isUpdating = false;

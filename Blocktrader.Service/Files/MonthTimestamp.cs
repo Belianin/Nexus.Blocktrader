@@ -1,22 +1,29 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using Nexus.Blocktrader.Domain;
 
 namespace Nexus.Blocktrader.Service.Files
 {
     public class MonthTimestamp
     {
-        public MonthTimestamp(DateTime dateTime, Ticker ticker)
+        public Ticker Ticker { get; }
+        public ExchangeTitle Exchange { get; }
+        public Timestamp[] Timestamps { get; }
+        public int Year { get; }
+        public int Month { get; }
+
+        public MonthTimestamp(DateTime dateTime, ExchangeTitle exchange, Ticker ticker, Timestamp[] timestamps)
         {
-            DateTime = dateTime;
+            Year = dateTime.Year;
+            Month = dateTime.Month;
             Ticker = ticker;
+            Exchange = exchange;
+            Timestamps = timestamps;
         }
 
-        public DateTime DateTime { get; set; }
-        
-        public Ticker Ticker { get; set; }
-        
-        public Dictionary<DateTime, Dictionary<ExchangeTitle, TickerInfo>> Info { get; set; } =
-            new Dictionary<DateTime, Dictionary<ExchangeTitle, TickerInfo>>();
+        public Timestamp[] GetForDay(int day)
+        {
+            return Timestamps.Where(t => t.Date.Day == day).ToArray();
+        }
     }
 }

@@ -29,8 +29,8 @@ namespace Nexus.Blocktrader.Service
             var bitfinexTask = Task.Run(async () => await GetExchangeTimestampAsync(bitfinex));
             var bitstampTask = Task.Run(async () => await GetExchangeTimestampAsync(bitstamp));
 
-            var tasks = new[] { binanceTask, binanceTask, bitstampTask };
-            Task.WaitAll(); // or WhenAll ?
+            var tasks = new[] {binanceTask, bitfinexTask, bitstampTask };
+            Task.WaitAll(tasks); // or WhenAll ?
 
 
             var result = new CommonTimestamp

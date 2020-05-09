@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils;
 
 namespace Nexus.Blocktrader.Service.Files
 {
@@ -32,10 +33,10 @@ namespace Nexus.Blocktrader.Service.Files
             }
         }
 
-        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
+        public OldMonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
         {
             log.LogDebug($"Reading timestamps for {dateTime:yyyy-MM}");
-            var result = new MonthTimestamp(dateTime, ticker);
+            var result = new OldMonthTimestamp(dateTime, ticker);
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
                 var ticketInfo = ReadTicketInfo(dateTime, exchange, ticker);
@@ -50,6 +51,18 @@ namespace Nexus.Blocktrader.Service.Files
             return result;
         }
 
+        public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            var fileName = GetFilename(dateTime, exchange, ticker);
+            if (!File.Exists(fileName))
+                return "No such file";
+
+            var file = File.ReadAllBytes(fileName);
+
+            return Timestamp.FromBytes(file).ToArray();
+
+        }
+
         private static Dictionary<DateTime, TickerInfo> ReadTicketInfo(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
             var filename = GetFilename(dateTime, exchange, ticker);
@@ -62,10 +75,13 @@ namespace Nexus.Blocktrader.Service.Files
 
         private static string GetFilename(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
+            Console.WriteLine(Directory.GetCurrentDirectory());
             if (!Directory.Exists($"Data/{exchange.ToString()}"))
                 Directory.CreateDirectory($"Data/{exchange.ToString()}");
             
-            return $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticker}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
+            var path = $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticker}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
+            Console.WriteLine(path);
+            return path;
 
         }
 

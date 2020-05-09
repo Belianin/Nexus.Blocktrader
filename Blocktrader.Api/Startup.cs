@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Service.Files;
 
 namespace Nexus.Blocktrader.Api
 {
@@ -18,8 +20,24 @@ namespace Nexus.Blocktrader.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddMvc(options => options.EnableEndpointRouting = false).AddJsonOptions(options =>
+            {
+                // Use the default property (Pascal) casing.
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
+                // Configure a custom converter.
+                options.JsonSerializerOptions.Converters.Add(new TickerJsonConverter());
+                options.JsonSerializerOptions.Converters.Add(new ExchangeTitleJsonConverter());
+            });
             
+            services.AddLogging(l => l.AddConsole().AddDebug());
+            
+            services.AddSingleton<ILogger>(sp => LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+            }).CreateLogger<Startup>());
+            services.AddSingleton<ITimestampManager>(sp => new BufferedTimestampManager(new FileTimestampManager(sp.GetRequiredService<ILogger>())));
+
             // In production, the React files will be served from this directory
             //services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
         }

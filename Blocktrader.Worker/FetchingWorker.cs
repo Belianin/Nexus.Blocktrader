@@ -19,10 +19,18 @@ namespace Blocktrader.Worker
         public FetchingWorker(ILogger<FetchingWorker> logger)
         {
             this.logger = logger;
+            
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole().SetMinimumLevel(LogLevel.Debug);
+            });
+            
+            logger = loggerFactory.CreateLogger<FetchingWorker>();
+            
             service = new BlocktraderService(logger);
             timestampManager = new FileTimestampManager(logger);
 
-            logger.LogInformation("Blocktader initializated");
+            logger.LogInformation("Fetcher worker initializated");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

@@ -2,29 +2,82 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils;
 
 namespace Nexus.Blocktrader.Service.Files
 {
-    [Obsolete("Нет смысла париться, сделам на костлях раз потом уедем в веб")]
     public class BufferedTimestampManager : ITimestampManager
     {
         private readonly ITimestampManager innerManager;
-        private readonly IDictionary<Ticker, MonthTimestamp> current;
+        private readonly Dictionary<TimestampKey, MonthTimestamp> buffer;
 
         public BufferedTimestampManager(ITimestampManager innerManager)
         {
+            buffer = new Dictionary<TimestampKey, MonthTimestamp>();
             this.innerManager = innerManager;
-            current = new Dictionary<Ticker, MonthTimestamp>();
         }
 
-        public async Task WriteAsync(CommonTimestamp commonTimestamp)
+        public Task WriteAsync(CommonTimestamp commonTimestamp)
         {
-            await innerManager.WriteAsync(commonTimestamp).ConfigureAwait(false);
+            return innerManager.WriteAsync(commonTimestamp);
         }
 
-        public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
+        public OldMonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
         {
             return innerManager.ReadTimestampsFromMonth(dateTime, ticker);
+        }
+
+        public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            var key = new TimestampKey{Year = dateTime.Year, Month = dateTime.Month, Exchange = exchange, Ticker = ticker};
+            if (buffer.TryGetValue(key, out var buffered)) // с текущим месяцем не ок
+                return buffered.GetForDay(dateTime.Day);
+
+            var timestamp = innerManager.ReadTimestampForDay(dateTime, exchange, ticker);
+            if (timestamp.IsFail)
+                return "No timestamp";
+            
+            var monthTimestamp = new MonthTimestamp(dateTime, exchange, ticker, timestamp.Value);
+            buffer[key] = monthTimestamp;
+            return monthTimestamp.GetForDay(dateTime.Day);
+        }
+
+        private class TimestampKey
+        {
+            public int Year;
+            public int Month;
+            public ExchangeTitle Exchange;
+            public Ticker Ticker;
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is TimestampKey other))
+                    return false;
+
+                return other.Year == Year &&
+                       other.Month == Month &&
+                       other.Exchange == Exchange &&
+                       other.Ticker == Ticker;
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (int) Math.Pow(Year, Month) + Exchange.GetHashCode() + Ticker.GetHashCode(); // плохой хэш
+                }
+            }
+
+            public static implicit operator TimestampKey(MonthTimestamp timestamp)
+            {
+                return new TimestampKey
+                {
+                    Year = timestamp.Year,
+                    Month = timestamp.Month,
+                    Ticker = timestamp.Ticker,
+                    Exchange = timestamp.Exchange
+                };
+            }
         }
     }
 }

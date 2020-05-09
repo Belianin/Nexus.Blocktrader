@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils;
 
 namespace Nexus.Blocktrader.Service.Files
 {
@@ -8,6 +9,7 @@ namespace Nexus.Blocktrader.Service.Files
     {
         Task WriteAsync(CommonTimestamp commonTimestamp);
 
-        MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker);
+        OldMonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker);
+        Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker);
     }
 }
