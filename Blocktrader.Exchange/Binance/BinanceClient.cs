@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Exchange.Binance.Models;
 using Nexus.Blocktrader.Utils;
-using Nexus.Blocktrader.Utils.Logging;
 
 namespace Nexus.Blocktrader.Exchange.Binance
 {
@@ -22,7 +22,7 @@ namespace Nexus.Blocktrader.Exchange.Binance
             {Ticker.XrpUsd, "XRPUSDT"}
         };
 
-        public BinanceClient(ILog log) : base(log) {}
+        public BinanceClient(ILogger log) : base(log) {}
         
         public async Task<Result<OrderBook>> GetOrderBookAsync(Ticker ticker)
         {

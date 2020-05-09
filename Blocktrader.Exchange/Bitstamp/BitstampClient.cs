@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Exchange.Bitstamp.Models;
 using Nexus.Blocktrader.Utils;
-using Nexus.Blocktrader.Utils.Logging;
 
 namespace Nexus.Blocktrader.Exchange.Bitstamp
 {
@@ -21,7 +21,7 @@ namespace Nexus.Blocktrader.Exchange.Bitstamp
             {Ticker.XrpUsd, "xrpusd"}
         };
         
-        public BitstampClient(ILog log) : base(log)
+        public BitstampClient(ILogger log) : base(log)
         {
         }
 

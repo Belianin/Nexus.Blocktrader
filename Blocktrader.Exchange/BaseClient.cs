@@ -2,17 +2,17 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Utils;
-using Nexus.Blocktrader.Utils.Logging;
 
 namespace Nexus.Blocktrader.Exchange
 {
     public abstract class BaseClient
     {
-        protected readonly ILog Log;
+        protected readonly ILogger Log;
         private readonly HttpClient httpClient;
 
-        protected BaseClient(ILog log)
+        protected BaseClient(ILogger log)
         {
             Log = log;
             httpClient = new HttpClient();
@@ -34,7 +34,7 @@ namespace Nexus.Blocktrader.Exchange
             
             // Для вывода в логи
             var contentMessage = content.IsSuccess ? content.Value : content.Error; 
-            Log.Error($"Request failed {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()} {contentMessage}");
+            Log.LogError($"Request failed {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()} {contentMessage}");
             return $"{response.StatusCode.ToString()}: {contentMessage}";
         }
 
@@ -43,17 +43,17 @@ namespace Nexus.Blocktrader.Exchange
             if (uri == null)
                 return "NULL URI";
             
-            Log.Debug($"Sending request {uri}");
+            Log.LogDebug($"Sending request {uri}");
             try
             {
                 var response = await httpClient.GetAsync(uri).ConfigureAwait(false);
-                Log.Debug($"Got response from {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()}");
+                Log.LogDebug($"Got response from {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()}");
 
                 return response;
             }
             catch (HttpRequestException e)
             {
-                Log.Error($"Failed to get response from {uri}: {e.Message}");
+                Log.LogError($"Failed to get response from {uri}: {e.Message}");
                 return e.Message;
             }
         }

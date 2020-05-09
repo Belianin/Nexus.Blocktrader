@@ -4,23 +4,23 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
-using Nexus.Blocktrader.Utils.Logging;
 
 namespace Nexus.Blocktrader.Service.Files
 {
     public class FileTimestampManager : ITimestampManager
     {
-        private readonly ILog log;
+        private readonly ILogger log;
 
-        public FileTimestampManager(ILog log)
+        public FileTimestampManager(ILogger log)
         {
             this.log = log;
         }
 
         public async Task WriteAsync(CommonTimestamp commonTimestamp)
         {
-            log.Debug($"Writing common timestamp for {commonTimestamp.DateTime:yyyy-MM}");
+            log.LogDebug($"Writing common timestamp for {commonTimestamp.DateTime:yyyy-MM}");
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
                 foreach (var (ticket, info) in commonTimestamp.Exchanges[exchange].Tickets)
@@ -34,7 +34,7 @@ namespace Nexus.Blocktrader.Service.Files
 
         public MonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
         {
-            log.Debug($"Reading timestamps for {dateTime:yyyy-MM}");
+            log.LogDebug($"Reading timestamps for {dateTime:yyyy-MM}");
             var result = new MonthTimestamp(dateTime, ticker);
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Service;
 using Nexus.Blocktrader.Service.Files;
-using Nexus.Blocktrader.Utils.Logging;
 
 namespace Blocktrader.Worker
 {
@@ -20,12 +19,10 @@ namespace Blocktrader.Worker
         public FetchingWorker(ILogger<FetchingWorker> logger)
         {
             this.logger = logger;
-            
-            var log = new ConsoleLog(); // ILogger
-            service = new BlocktraderService(new ConsoleLog());
-            timestampManager = new FileTimestampManager(log);
+            service = new BlocktraderService(logger);
+            timestampManager = new FileTimestampManager(logger);
 
-            log.Info($"Blocktader initializated");
+            logger.LogInformation("Blocktader initializated");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Exchange;
 using Nexus.Blocktrader.Exchange.Binance;
 using Nexus.Blocktrader.Exchange.Bitfinex;
 using Nexus.Blocktrader.Exchange.Bitstamp;
-using Nexus.Blocktrader.Utils.Logging;
 
 namespace Nexus.Blocktrader.Service
 {
@@ -16,7 +16,7 @@ namespace Nexus.Blocktrader.Service
         private readonly BitfinexClient bitfinex;
         private readonly BitstampClient bitstamp;
 
-        public BlocktraderService(ILog log)
+        public BlocktraderService(ILogger log)
         {
             binance = new BinanceClient(log);
             bitfinex = new BitfinexClient(log);
