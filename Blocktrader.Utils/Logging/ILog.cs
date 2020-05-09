@@ -1,4 +1,4 @@
-namespace Blocktrader.Utils.Logging
+namespace Nexus.Blocktrader.Utils.Logging
 {
     public interface ILog
     {

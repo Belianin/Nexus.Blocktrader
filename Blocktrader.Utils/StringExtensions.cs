@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Blocktrader.Utils
+namespace Nexus.Blocktrader.Utils
 {
     public static class StringExtensions
     {

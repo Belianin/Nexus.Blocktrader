@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange.Bitstamp.Models;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange.Bitstamp.Models;
+using Nexus.Blocktrader.Utils;
+using Nexus.Blocktrader.Utils.Logging;
 
-namespace Blocktrader.Exchange.Bitstamp
+namespace Nexus.Blocktrader.Exchange.Bitstamp
 {
     public class BitstampClient : BaseClient, IExchangeClient
     {

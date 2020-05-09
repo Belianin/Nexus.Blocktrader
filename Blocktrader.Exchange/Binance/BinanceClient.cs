@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange.Binance.Models;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange.Binance.Models;
+using Nexus.Blocktrader.Utils;
+using Nexus.Blocktrader.Utils.Logging;
 
-namespace Blocktrader.Exchange.Binance
+namespace Nexus.Blocktrader.Exchange.Binance
 {
     public class BinanceClient : BaseClient, IExchangeClient
     {

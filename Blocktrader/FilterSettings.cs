@@ -1,4 +1,4 @@
-namespace Blocktrader
+namespace Nexus.Blocktrader
 {
     internal class FilterSettings
     {

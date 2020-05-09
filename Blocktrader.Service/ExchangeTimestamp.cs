@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Blocktrader.Domain;
+using Nexus.Blocktrader.Domain;
 
-namespace Blocktrader.Service
+namespace Nexus.Blocktrader.Service
 {
     public class ExchangeTimestamp
     {

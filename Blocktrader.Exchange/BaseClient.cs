@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Nexus.Blocktrader.Utils;
+using Nexus.Blocktrader.Utils.Logging;
 
-namespace Blocktrader.Exchange
+namespace Nexus.Blocktrader.Exchange
 {
     public abstract class BaseClient
     {

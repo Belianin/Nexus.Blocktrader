@@ -5,6 +5,8 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <UseWPF>true</UseWPF>
         <LangVersion>8</LangVersion>
+        <AssemblyName>Nexus.Blocktrader</AssemblyName>
+        <RootNamespace>Nexus.Blocktrader</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

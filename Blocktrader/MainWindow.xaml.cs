@@ -7,13 +7,13 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Blocktrader.Domain;
-using Blocktrader.Service;
-using Blocktrader.Service.Files;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Service;
+using Nexus.Blocktrader.Service.Files;
+using Nexus.Blocktrader.Utils;
+using Nexus.Blocktrader.Utils.Logging;
 
-namespace Blocktrader
+namespace Nexus.Blocktrader
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

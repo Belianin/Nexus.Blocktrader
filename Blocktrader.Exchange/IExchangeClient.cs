@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Utils;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils;
 
-namespace Blocktrader.Exchange
+namespace Nexus.Blocktrader.Exchange
 {
     public interface IExchangeClient
     {

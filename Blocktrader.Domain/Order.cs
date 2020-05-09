@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocktrader.Domain
+namespace Nexus.Blocktrader.Domain
 {
     public class Order
     {

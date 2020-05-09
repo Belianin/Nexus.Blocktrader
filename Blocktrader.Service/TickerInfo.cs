@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Blocktrader.Domain;
+using Nexus.Blocktrader.Domain;
 
-namespace Blocktrader.Service
+namespace Nexus.Blocktrader.Service
 {
     public class TickerInfo
     {

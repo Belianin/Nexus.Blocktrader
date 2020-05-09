@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
+using Nexus.Blocktrader.Domain;
 
-namespace Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Files
 {
     [Obsolete("Нет смысла париться, сделам на костлях раз потом уедем в веб")]
     public class BufferedTimestampManager : ITimestampManager

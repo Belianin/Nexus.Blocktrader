@@ -4,10 +4,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Utils.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils.Logging;
 
-namespace Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Files
 {
     public class FileTimestampManager : ITimestampManager
     {

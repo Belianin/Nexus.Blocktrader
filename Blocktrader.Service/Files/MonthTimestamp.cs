@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Blocktrader.Domain;
+using Nexus.Blocktrader.Domain;
 
-namespace Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Files
 {
     public class MonthTimestamp
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Blocktrader.Utils
+namespace Nexus.Blocktrader.Utils
 {
     public static class EnumerableExtensions
     {

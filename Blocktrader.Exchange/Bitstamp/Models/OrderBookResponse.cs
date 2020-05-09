@@ -1,6 +1,6 @@
 using System;
 
-namespace Blocktrader.Exchange.Bitstamp.Models
+namespace Nexus.Blocktrader.Exchange.Bitstamp.Models
 {
     [Obsolete("Проверить на лишние поля")]
     internal class OrderBookResponse

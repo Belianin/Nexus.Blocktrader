@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange;
-using Blocktrader.Exchange.Binance;
-using Blocktrader.Exchange.Bitfinex;
-using Blocktrader.Exchange.Bitstamp;
-using Blocktrader.Utils.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange;
+using Nexus.Blocktrader.Exchange.Binance;
+using Nexus.Blocktrader.Exchange.Bitfinex;
+using Nexus.Blocktrader.Exchange.Bitstamp;
+using Nexus.Blocktrader.Utils.Logging;
 
-namespace Blocktrader.Service
+namespace Nexus.Blocktrader.Service
 {
     public class BlocktraderService
     {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Blocktrader.Domain;
+using Nexus.Blocktrader.Domain;
 
-namespace Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Files
 {
     public class Timestamp
     {

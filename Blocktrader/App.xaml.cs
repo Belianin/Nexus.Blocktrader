@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Blocktrader
+namespace Nexus.Blocktrader
 {
     /// <summary>
     /// Interaction logic for App.xaml
