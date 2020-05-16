@@ -17,7 +17,7 @@ const styles = (theme) => ({
         // https://github.com/bvaughn/react-virtualized/issues/454
         '& .ReactVirtualized__Table__headerRow': {
             flip: false,
-            paddingRight: theme.direction === 'rtl' ? '0px !important' : undefined,
+            paddingRight: theme.direction === 'rtl' ? '0px !important' : undefined
         },
     },
     tableRow: {
@@ -29,7 +29,7 @@ const styles = (theme) => ({
         },
     },
     tableCell: {
-        flex: 1,
+        flex: 1
     },
     noClick: {
         cursor: 'initial',
@@ -39,7 +39,7 @@ const styles = (theme) => ({
 class MuiVirtualizedTable extends React.PureComponent {
     static defaultProps = {
         headerHeight: 48,
-        rowHeight: 24,
+        rowHeight: 24
     };
 
     getRowClassName = ({ index }) => {
@@ -61,6 +61,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                 variant="body"
                 style={{ height: rowHeight }}
                 align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
+                sortDirection={"asc"}
             >
                 {cellData}
             </TableCell>
@@ -145,7 +146,7 @@ const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
 export default function VirtualizedOrdersTable(props) {
     return (
-        <Paper style={{ height: 400, width: 400 }}>
+        <Paper style={{ height: 400, width: 400, alignItems: "flexEnd" }}>
             <VirtualizedTable
                 rowCount={props.orders.length}
                 rowGetter={({ index }) => props.orders[index]}
@@ -156,7 +157,7 @@ export default function VirtualizedOrdersTable(props) {
                         dataKey: 'price',
                     },
                     {
-                        width: 120,
+                        width: 200,
                         label: 'Обьем',
                         dataKey: 'amount',
                     }

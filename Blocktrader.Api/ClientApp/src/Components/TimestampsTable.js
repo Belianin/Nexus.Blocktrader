@@ -16,7 +16,7 @@ export class TimestampsTable extends React.Component {
         return (
             <div>
                 <Grid key={exchange + 1} item>
-                    <h1>{exchange}</h1>
+                    <h1>{exchange.toUpperCase()}</h1>
                 </Grid>
                 {this.renderOrders(exchange, "asks")}
             </div>
@@ -53,27 +53,25 @@ export class TimestampsTable extends React.Component {
 
         return (
             <Container>
-                <Paper >
                     <Typography variant="h6" id="tableTitle" component="div">
                         {date.getDay()}/{date.getMonth() + 1}/{date.getFullYear()}
                     </Typography>
                     <Typography variant="h6" id="tableTitle" component="div">
                         Аски
                     </Typography>
-                    <Grid item xs>
-                        <Grid container>
+                    <Grid item xs={12}>
+                        <Grid container spacing={12}>
                             {exchanges.map(e => this.renderAsks(e))}
                         </Grid>
                     </Grid>
                     <Typography variant="h6" id="tableTitle" component="div">
                         Биды
                     </Typography>
-                    <Grid item xs>
-                        <Grid container>
+                    <Grid item xs={12}>
+                        <Grid container spacing={12}>
                             {exchanges.map(e => this.renderOrders(e, "bids"))}
                         </Grid>
                     </Grid>
-                </Paper>
             </Container>
         )
     }
