@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import {Timestamp, TickerInfo, OrderBook, timestampFromBytes} from './Models/Timestamp'
 import {TimestampsTable} from "./Components/TimestampsTable";
 
-const exchanges = ["Binance", "Bitfinex", "Bitstamps"];
+const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "http://localhost:777/api/v1/";
 const ticker = "BtcUsd";
 
@@ -21,7 +21,7 @@ class App extends React.Component {
   }
 
   getTimestamps(exchange, ticker, year, month, day) {
-    fetch(`${backendUrl}timestamps/exchange/${exchange}/ticker/${ticker}/year/2020/month/3/day/6?precision=2`)
+    fetch(`${backendUrl}timestamps/exchange/${exchange}/ticker/${ticker}/year/2020/month/3/day/11?precision=2`)
         .then(response => {
           if (response.ok) {
             return response;

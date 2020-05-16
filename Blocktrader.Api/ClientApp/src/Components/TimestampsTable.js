@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {OrdersTable} from "./OrdersTable";
+import Container from "@material-ui/core/Container";
 
 const exchanges = ["binance", "bitfinex", "bitstamp"];
 
@@ -25,7 +26,7 @@ export class TimestampsTable extends React.Component {
         const data = this.props[exchange];
         console.log(data);
         if (!data)
-            return <h4>Нет биржы</h4>;
+            return <h4>Нет биржи</h4>;
 
         const day = data[this.props.pointer];
         if (!day)
@@ -50,8 +51,8 @@ export class TimestampsTable extends React.Component {
         const date = new Date();// this.props.bitfinex[this.props.pointer].date;
 
         return (
-            <div>
-                <Paper>
+            <Container>
+                <Paper >
                     <Typography variant="h6" id="tableTitle" component="div">
                         {date.getDay()}/{date.getMonth() + 1}/{date.getFullYear()}
                     </Typography>
@@ -72,7 +73,7 @@ export class TimestampsTable extends React.Component {
                         </Grid>
                     </Grid>
                 </Paper>
-            </div>
+            </Container>
         )
     }
 }
