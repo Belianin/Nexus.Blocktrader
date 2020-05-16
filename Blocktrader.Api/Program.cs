@@ -18,7 +18,7 @@ namespace Nexus.Blocktrader.Api
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
                     .UseStartup<Startup>()
                     .UseUrls("http://*:777")
-                    .ConfigureLogging(l => l.AddConsole().SetMinimumLevel(LogLevel.Debug)));
-                //.ConfigureServices(services => services.AddHostedService<FetchingWorker>().AddLogging(l => l.AddConsole().SetMinimumLevel(LogLevel.Debug)));
+                    .ConfigureLogging(l => l.AddConsole().SetMinimumLevel(LogLevel.Debug)))
+                .ConfigureServices(services => services.AddHostedService<FetchingWorker>().AddLogging(l => l.AddConsole().SetMinimumLevel(LogLevel.Debug)));
     }
 }
