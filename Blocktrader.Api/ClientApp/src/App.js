@@ -1,17 +1,11 @@
 import React from 'react';
 import logo from './logo.png';
 import './App.css';
-import {Table} from '@material-ui/core'
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 import {Button} from '@material-ui/core'
 import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import {Timestamp, TickerInfo, OrderBook} from './Models/Timestamp'
+import {TimestampsTable} from "./Components/TimestampsTable";
 
 class App extends React.Component {
   constructor(props) {
@@ -53,8 +47,7 @@ class App extends React.Component {
       const bidsCount = dataView.getInt32(index, true);
       index += 4;
       const bids = [];
-      for (let i = 0; i < bidsCount; i++)
-      {
+      for (let i = 0; i < bidsCount; i++) {
         bids.push(this.getOrderFromBytes(dataView, index));
         index += 8;
       }
@@ -62,22 +55,12 @@ class App extends React.Component {
       const asksCount = dataView.getInt32(index, true);
       index += 4;
       const asks = [];
-      for (let i = 0; i < asksCount; i++)
-      {
+      for (let i = 0; i < asksCount; i++) {
         asks.push(this.getOrderFromBytes(dataView, index));
         index += 8;
       }
 
-      result.push({
-        date: date,
-        tickerInfo: {
-          averagePrice: averagePrice,
-          orderBook: {
-            bids: bids,
-            asks: asks
-          },
-        }
-      });
+      result.push(new Timestamp(date, new TickerInfo(new OrderBook(bids, asks), averagePrice)));
     }
 
     return result;
@@ -96,55 +79,6 @@ class App extends React.Component {
         .then(r => r)
     //  .then(response => response.arrayBuffer())
         //.then(buffer => buffer.byteLength)
-  }
-
-  convertToHtml(timestamp) {
-    return (
-        <div>
-          <Paper>
-            <TableContainer>
-              <Typography variant="h6" id="tableTitle" component="div">
-                Биды {timestamp.date.toString()}
-              </Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left">Цена</TableCell>
-                    <TableCell align="right">Колличество</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {timestamp.tickerInfo.orderBook.bids.map(b => (
-                      <TableRow>
-                        <TableCell align="left">{b.price}</TableCell>
-                        <TableCell align="right">{b.amount}</TableCell>
-                      </TableRow>))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TableContainer>
-              <Typography variant="h6" id="tableTitle" component="div">
-                Аски
-              </Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left">Цена</TableCell>
-                    <TableCell align="right">Колличество</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {timestamp.tickerInfo.orderBook.asks.map(b => (
-                      <TableRow>
-                        <TableCell align="left">{b.price}</TableCell>
-                        <TableCell align="right">{b.amount}</TableCell>
-                      </TableRow>))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </div>
-    )
   }
 
   onSliderChange(value) {
@@ -173,7 +107,7 @@ class App extends React.Component {
                   onChange={(e, v) => this.onSliderChange(v)}
                   aria-labelledby="discrete-slider-small-steps" />
             </Grid>
-            {this.state.value.length > 0 && this.convertToHtml(this.state.value[this.state.selectedTimestamp])}
+            {this.state.value.length > 0 && <TimestampsTable timestamps={[this.state.value[this.state.selectedTimestamp]]}/>}
           </div>
         </div>
     );
