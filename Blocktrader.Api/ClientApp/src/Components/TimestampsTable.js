@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {OrdersTable} from "./OrdersTable";
 import Container from "@material-ui/core/Container";
+import VirtualizedOrdersTable from "./VirtualizedOrdersTable";
 
 const exchanges = ["binance", "bitfinex", "bitstamp"];
 
@@ -42,7 +43,7 @@ export class TimestampsTable extends React.Component {
 
         return (
             <Grid key={exchange} item>
-                <OrdersTable orders={orderBook[ordersType]}/>
+                <VirtualizedOrdersTable orders={orderBook[ordersType]}/>
             </Grid>
         )
     }
