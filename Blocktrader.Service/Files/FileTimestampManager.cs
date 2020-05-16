@@ -79,7 +79,7 @@ namespace Nexus.Blocktrader.Service.Files
             if (!Directory.Exists($"Data/{exchange.ToString()}"))
                 Directory.CreateDirectory($"Data/{exchange.ToString()}");
             
-            var path = $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticker}_{dateTime.ToString("MMM_yyyy", new CultureInfo("en_US"))}";
+            var path = $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticker}_{dateTime:MM_yyyy}";
             Console.WriteLine(path);
             return path;
 
