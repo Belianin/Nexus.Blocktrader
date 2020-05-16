@@ -4,81 +4,46 @@ import './App.css';
 import {Button} from '@material-ui/core'
 import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
-import {Timestamp, TickerInfo, OrderBook} from './Models/Timestamp'
+import {Timestamp, TickerInfo, OrderBook, timestampFromBytes} from './Models/Timestamp'
 import {TimestampsTable} from "./Components/TimestampsTable";
+
+const exchanges = ["Binance", "Bitfinex", "Bitstamps"];
+const backendUrl = "http://localhost:777/api/v1/";
+const ticker = "BtcUsd";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: [],
+      month: [{}],
       selectedTimestamp: 0
     };
   }
 
+  getTimestamps(exchange, ticker, year, month, day) {
+    fetch(`${backendUrl}timestamps/exchange/${exchange}/ticker/${ticker}/year/2020/month/3/day/6?precision=2`)
+        .then(response => {
+          if (response.ok) {
+            return response;
+          }
+
+          throw Error(response.status.toString());})
+        .then(response => response.arrayBuffer())
+        .then(result => {
+            month = this.state.month;
+            month[0][exchange] = timestampFromBytes(result);
+
+            this.setState({
+              month: month
+            })
+          })
+        .catch(error => console.log(error))
+  }
+
   componentDidMount() {
-    fetch("http://localhost:777/api/v1/timestamps/exchange/Binance/ticker/BtcUsd/year/2020/month/3/day/6?precision=2")
-        .then(res => res.arrayBuffer())
-        .then(
-            (result) => {
-              this.setState({
-                value: this.convertToTimestamp(result)
-              });
-            },
-            (error) => {
-              this.setState({
-                value: []
-              });
-            }
-        )
-  }
-  convertToTimestamp(buffer) {
-    const result = [];
-
-    let index = 0;
-    const dataView = new DataView(buffer);
-
-    while (index < buffer.byteLength) {
-      const date = new Date(Number(dataView.getBigInt64(index, true)));
-      index += 8;
-      const averagePrice = dataView.getFloat32(index, true);
-      index += 4;
-
-      const bidsCount = dataView.getInt32(index, true);
-      index += 4;
-      const bids = [];
-      for (let i = 0; i < bidsCount; i++) {
-        bids.push(this.getOrderFromBytes(dataView, index));
-        index += 8;
-      }
-
-      const asksCount = dataView.getInt32(index, true);
-      index += 4;
-      const asks = [];
-      for (let i = 0; i < asksCount; i++) {
-        asks.push(this.getOrderFromBytes(dataView, index));
-        index += 8;
-      }
-
-      result.push(new Timestamp(date, new TickerInfo(new OrderBook(bids, asks), averagePrice)));
+    for (let exchange of exchanges) {
+      this.getTimestamps(exchange, "BtcUsd", 2020, 3, 6);
     }
-
-    return result;
-  }
-
-  getOrderFromBytes(dataView, index) {
-    return {
-      price: dataView.getFloat32(index, true),
-      amount: dataView.getFloat32(index + 4, true)
-    }
-  }
-
-  fetchData() {
-    return fetch("http://localhost:777/api/v1/timestamps/me")//("http://localhost:777/api/v1/timestamps/exchange/Binance/ticker/BtcUsd/year/2020/month/3/day/5?precision=2")
-        .then(r => r.json())
-        .then(r => r)
-    //  .then(response => response.arrayBuffer())
-        //.then(buffer => buffer.byteLength)
   }
 
   onSliderChange(value) {
@@ -86,6 +51,13 @@ class App extends React.Component {
       selectedTimestamp: value
     });
     console.log("Тыкнули слайдер " + value)
+  }
+
+  getTimestampsCount() {
+    if (!this.state.month[0].Bitfinex)
+      return 0;
+
+    return this.state.month[0].Bitfinex.length;
   }
 
   render() {
@@ -102,12 +74,17 @@ class App extends React.Component {
                   step={1}
                   min={0}
                   marks
-                  max={this.state.value.length}
+                  max={this.getTimestampsCount()}
                   valueLabelDisplay="auto"
                   onChange={(e, v) => this.onSliderChange(v)}
                   aria-labelledby="discrete-slider-small-steps" />
             </Grid>
-            {this.state.value.length > 0 && <TimestampsTable timestamps={[this.state.value[this.state.selectedTimestamp]]}/>}
+            <TimestampsTable
+                pointer={this.state.selectedTimestamp}
+                bitfinex={this.state.month[0].Bitfinex}
+                bitstamp={this.state.month[0].Bitstamp}
+                binance={this.state.month[0].Binance}
+            />
           </div>
         </div>
     );

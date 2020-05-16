@@ -6,9 +6,48 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {OrdersTable} from "./OrdersTable";
 
+const exchanges = ["binance", "bitfinex", "bitstamp"];
+
 export class TimestampsTable extends React.Component {
+
+    renderAsks(exchange) {
+        return (
+            <div>
+                <Grid key={exchange + 1} item>
+                    <h1>{exchange}</h1>
+                </Grid>
+                {this.renderOrders(exchange, "asks")}
+            </div>
+        )
+    }
+
+    renderOrders(exchange, ordersType) {
+        const data = this.props[exchange];
+        console.log(data);
+        if (!data)
+            return <h4>Нет биржы</h4>;
+
+        const day = data[this.props.pointer];
+        if (!day)
+            return <h4>Нет дня</h4>;
+
+        const tickerInfo = day.tickerInfo;
+        if (!tickerInfo)
+            return <h4>Нет тикера</h4>;
+
+        const orderBook = tickerInfo.orderBook;
+        if (!orderBook)
+            return <h4>Нет ордер бука</h4>;
+
+        return (
+            <Grid key={exchange} item>
+                <OrdersTable orders={orderBook[ordersType]}/>
+            </Grid>
+        )
+    }
+
     render() {
-        const date = this.props.timestamps[0].date;
+        const date = new Date();// this.props.bitfinex[this.props.pointer].date;
 
         return (
             <div>
@@ -21,11 +60,7 @@ export class TimestampsTable extends React.Component {
                     </Typography>
                     <Grid item xs>
                         <Grid container>
-                            {[0, 1, 2].map((value) => (
-                                <Grid key={value} item>
-                                    <OrdersTable orders={this.props.timestamps[0].tickerInfo.orderBook.asks}/>
-                                </Grid>
-                            ))}
+                            {exchanges.map(e => this.renderAsks(e))}
                         </Grid>
                     </Grid>
                     <Typography variant="h6" id="tableTitle" component="div">
@@ -33,11 +68,7 @@ export class TimestampsTable extends React.Component {
                     </Typography>
                     <Grid item xs>
                         <Grid container>
-                            {[0, 1, 2].map((value) => (
-                                <Grid key={value} item>
-                                    <OrdersTable orders={this.props.timestamps[0].tickerInfo.orderBook.bids}/>
-                                </Grid>
-                            ))}
+                            {exchanges.map(e => this.renderOrders(e, "bids"))}
                         </Grid>
                     </Grid>
                 </Paper>
@@ -47,5 +78,8 @@ export class TimestampsTable extends React.Component {
 }
 
 TimestampsTable.propTypes = {
-    timestamps: PropTypes.arrayOf(Timestamp)
+    pointer: PropTypes.number,
+    binance: PropTypes.arrayOf(Timestamp),
+    bitfinex: PropTypes.arrayOf(Timestamp),
+    bitstamp: PropTypes.arrayOf(Timestamp)
 };
