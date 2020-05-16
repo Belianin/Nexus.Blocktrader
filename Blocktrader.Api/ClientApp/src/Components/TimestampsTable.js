@@ -54,9 +54,6 @@ export class TimestampsTable extends React.Component {
         return (
             <Container>
                     <Typography variant="h6" id="tableTitle" component="div">
-                        {date.getDay()}/{date.getMonth() + 1}/{date.getFullYear()}
-                    </Typography>
-                    <Typography variant="h6" id="tableTitle" component="div">
                         Аски
                     </Typography>
                     <Grid item xs={12}>

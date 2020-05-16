@@ -28,7 +28,7 @@ namespace Nexus.Blocktrader.Api.Controllers
             [FromRoute] ExchangeTitle exchange,
             [FromQuery] int precision = -1)
         {
-            Console.WriteLine("Received a request");
+            Console.WriteLine($"Received a request {year}/{month}/{day}");
             
             var selectedDate = new DateTime(year, month, day);
 

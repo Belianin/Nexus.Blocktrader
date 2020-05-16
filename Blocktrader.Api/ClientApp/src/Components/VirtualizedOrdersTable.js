@@ -94,7 +94,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                         width={width}
                         rowHeight={rowHeight}
                         gridStyle={{
-                            direction: 'inherit',
+                            direction: 'inherit'
                         }}
                         headerHeight={headerHeight}
                         className={classes.table}
@@ -146,7 +146,7 @@ const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
 export default function VirtualizedOrdersTable(props) {
     return (
-        <Paper style={{ height: 400, width: 400, alignItems: "flexEnd" }}>
+        <Paper style={{ height: 400, width: 400 }}>
             <VirtualizedTable
                 rowCount={props.orders.length}
                 rowGetter={({ index }) => props.orders[index]}

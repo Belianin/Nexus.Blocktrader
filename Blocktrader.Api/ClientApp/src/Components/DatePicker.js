@@ -21,7 +21,7 @@ export default function DatePickers(props) {
         <form className={classes.container} noValidate>
             <TextField
                 id="date"
-                label="Birthday"
+                label="Дата"
                 type="date"
                 defaultValue="2020-03-06"
                 className={classes.textField}

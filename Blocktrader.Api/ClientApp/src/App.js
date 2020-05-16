@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import {Timestamp, TickerInfo, OrderBook, timestampFromBytes} from './Models/Timestamp'
 import {TimestampsTable} from "./Components/TimestampsTable";
 import DatePicker from "./Components/DatePicker";
+import Container from "@material-ui/core/Container";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "http://localhost:777/api/v1/";
@@ -111,7 +112,9 @@ class App extends React.Component {
                   onChange={(e, v) => this.onSliderChange(v)}
                   aria-labelledby="discrete-slider-small-steps" />
             </Grid>
-            <DatePicker onChange={(e) => this.onDateChanged(e)}/>
+            <Container jusity={"center"}>
+              <DatePicker onChange={(e) => this.onDateChanged(e)}/>
+            </Container>
             <TimestampsTable
                 pointer={this.state.selectedTimestamp}
                 bitfinex={this.state.years[2020][this.state.selectedDate.getMonth() + 1].bitfinex}
