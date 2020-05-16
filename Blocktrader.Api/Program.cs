@@ -1,3 +1,4 @@
+using System;
 using Blocktrader.Worker;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

@@ -49,12 +49,16 @@ export class TimestampsTable extends React.Component {
     }
 
     render() {
-        const date = new Date();// this.props.bitfinex[this.props.pointer].date;
+        let date = "Нет времени на раскачку";// this.props.bitfinex[this.props.pointer].date;
+        if (this.props.binance && this.props.binance[this.props.pointer]) {
+            const dateTime = this.props.binance[this.props.pointer].date;
+            date = `${dateTime.getFullYear()}/${dateTime.getMonth() + 1}/${dateTime.getDate()}`
+        }
 
         return (
             <Container>
                     <Typography variant="h6" id="tableTitle" component="div">
-                        Аски
+                        Аски {date}
                     </Typography>
                     <Grid item xs={12}>
                         <Grid container spacing={12}>
