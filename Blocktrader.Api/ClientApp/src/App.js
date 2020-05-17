@@ -10,31 +10,16 @@ import DatePicker from "./Components/DatePicker";
 import Container from "@material-ui/core/Container";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
-const backendUrl = "/api/v1/";
+const backendUrl = "http://localhost:777/api/v1/";
 const ticker = "BtcUsd";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      years: {
-        2020: {
-          1: {},
-          2: {},
-          3: {},
-          4: {},
-          5: {},
-          6: {},
-          7: {},
-          8: {},
-          9: {},
-          10: {},
-          11: {},
-          12: {}
-        }
-      },
+      years: {},
       selectedTimestamp: 0,
-      selectedDate: new Date(2020, 2, 5)
+      selectedDate: new Date()
     };
   }
 
@@ -49,7 +34,14 @@ class App extends React.Component {
         .then(response => response.arrayBuffer())
         .then(result => {
             let years = this.state.years;
-            years[2020][month][exchange.toLowerCase()] = timestampFromBytes(result);
+
+            if (!years[year])
+              years[year] = this.createYear();
+
+            const selectedMonth = years[year][month];
+            if (!selectedMonth[day])
+              selectedMonth[day] = {};
+          selectedMonth[day][exchange.toLowerCase()] = timestampFromBytes(result);
 
             this.setState({
               years: years
@@ -60,7 +52,11 @@ class App extends React.Component {
 
   loadDay() {
     for (let exchange of exchanges) {
-      this.getTimestamps(exchange, "BtcUsd", this.state.selectedDate.getFullYear(), this.state.selectedDate.getMonth() + 1, this.state.selectedDate.getDate());
+      const year = this.state.selectedDate.getFullYear();
+      const month = this.state.selectedDate.getMonth() + 1;
+      const day = this.state.selectedDate.getDate();
+
+      this.getTimestamps(exchange, "BtcUsd", year, month, day);
     }
   }
 
@@ -75,14 +71,36 @@ class App extends React.Component {
     console.log("Тыкнули слайдер " + value)
   }
 
-  getTimestampsCount() {
-    if (!this.state.selectedDate)
-      return 0;
-    const timestamps = this.state.years[2020][this.state.selectedDate.getMonth() + 1].bitfinex;
-    if (!timestamps)
-      return 0;
+  createYear() {
+    return {
+      1: {},
+      2: {},
+      3: {},
+      4: {},
+      5: {},
+      6: {},
+      7: {},
+      8: {},
+      9: {},
+      10: {},
+      11: {},
+      12: {}
+    };
+  }
 
-    return timestamps.length;
+  getCurrentTimestamp(exchange) {
+    if (!this.state.selectedDate || !this.state.years[this.state.selectedDate.getFullYear()])
+      return [];
+
+    const day = this.state.years[this.state.selectedDate.getFullYear()][this.state.selectedDate.getMonth() + 1][this.state.selectedDate.getDate()];
+    if (!day)
+      return [];
+
+    const timestamps = day[exchange];
+    if (!timestamps)
+      return [];
+
+    return timestamps;
   }
 
   onDateChanged(newDate) {
@@ -107,19 +125,19 @@ class App extends React.Component {
                   step={1}
                   min={0}
                   marks
-                  max={this.getTimestampsCount()}
+                  max={this.getCurrentTimestamp("binance").length}
                   valueLabelDisplay="auto"
                   onChange={(e, v) => this.onSliderChange(v)}
                   aria-labelledby="discrete-slider-small-steps" />
+              <Container jusity={"center"}>
+                <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={"2020-05-17"}/>
+              </Container>
             </Grid>
-            <Container jusity={"center"}>
-              <DatePicker onChange={(e) => this.onDateChanged(e)}/>
-            </Container>
             <TimestampsTable
                 pointer={this.state.selectedTimestamp}
-                bitfinex={this.state.years[2020][this.state.selectedDate.getMonth() + 1].bitfinex}
-                bitstamp={this.state.years[2020][this.state.selectedDate.getMonth() + 1].bitstamp}
-                binance={this.state.years[2020][this.state.selectedDate.getMonth() + 1].binance}
+                bitfinex={this.getCurrentTimestamp("bitfinex")}
+                bitstamp={this.getCurrentTimestamp("bitstamp")}
+                binance={this.getCurrentTimestamp("binance")}
             />
           </div>
         </div>

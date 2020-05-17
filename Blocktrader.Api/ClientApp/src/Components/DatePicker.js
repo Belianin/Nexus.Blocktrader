@@ -23,7 +23,7 @@ export default function DatePickers(props) {
                 id="date"
                 label="Дата"
                 type="date"
-                defaultValue="2020-03-06"
+                defaultValue={props.defaultValue}
                 className={classes.textField}
                 onChange={props.onChange}
                 InputLabelProps={{

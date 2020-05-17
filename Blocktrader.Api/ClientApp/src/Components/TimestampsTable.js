@@ -35,7 +35,7 @@ export class TimestampsTable extends React.Component {
 
         const tickerInfo = day.tickerInfo;
         if (!tickerInfo)
-            return <h4>Нет тикера</h4>;
+            return <h4>Нет тикер инфо</h4>;
 
         const orderBook = tickerInfo.orderBook;
         if (!orderBook)
