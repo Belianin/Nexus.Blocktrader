@@ -30,7 +30,7 @@ namespace Nexus.Blocktrader.Service.Files
         public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
             var key = new TimestampKey{Year = dateTime.Year, Month = dateTime.Month, Exchange = exchange, Ticker = ticker};
-            if (buffer.TryGetValue(key, out var buffered)) // с текущим месяцем не ок
+            if (dateTime.Date != DateTime.Today && buffer.TryGetValue(key, out var buffered))
                 return buffered.GetForDay(dateTime.Day);
 
             var timestamp = innerManager.ReadTimestampForDay(dateTime, exchange, ticker);
