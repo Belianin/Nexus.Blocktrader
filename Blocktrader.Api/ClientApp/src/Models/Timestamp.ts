@@ -1,32 +1,40 @@
 export class Timestamp {
-    constructor(date, tickerInfo){
+    public date: Date;
+    public tickerInfo: TickerInfo;
+    constructor(date: Date, tickerInfo: TickerInfo){
         this.date = date;
         this.tickerInfo = tickerInfo
     }
 }
 
-export class OrderBook {
-    constructor(bids, asks){
-        this.bids = bids;
-        this.asks = asks;
-    }
-}
-
 export class TickerInfo {
-    constructor(orderBook, currentPrice) {
+    public orderBook: OrderBook;
+    public currentPrice: number;
+    constructor(orderBook: OrderBook, currentPrice: number) {
         this.orderBook = orderBook;
         this.currentPrice = currentPrice;
     }
 }
 
+export class OrderBook {
+    public bids: Order[];
+    public asks: Order[];
+    constructor(bids: Order[], asks: Order[]){
+        this.bids = bids;
+        this.asks = asks;
+    }
+}
+
 export class Order {
-    constructor(price, amount){
+    public price: number;
+    public amount: number;
+    constructor(price: number, amount: number){
         this.price = price;
         this.amount = amount;
     }
 }
 
-export function timestampFromBytes(buffer) {
+export function timestampFromBytes(buffer: ArrayBuffer) {
     const result = [];
 
     let index = 0;
@@ -61,7 +69,7 @@ export function timestampFromBytes(buffer) {
     return result;
 }
 
-function getOrderFromBytes(dataView, index) {
+function getOrderFromBytes(dataView: DataView, index: number) {
     return new Order(
         dataView.getFloat32(index, true),
         dataView.getFloat32(index + 4, true));

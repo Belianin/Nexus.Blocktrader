@@ -10,22 +10,19 @@ import TableBody from "@material-ui/core/TableBody";
 import {Order} from '../Models/Timestamp'
 import Paper from '@material-ui/core/Paper'
 
-const classes = makeStyles({
-    table: {
-        minWidth: 650,
-    },
-});
+const classes = {
+    minWidth: 650
+};
 
-export class OrdersTable extends React.Component {
-    constructor(props){
-        super(props);
-    }
+interface OrdersTableProps {
+    orders: Order[]
+}
 
+export class OrdersTable extends React.Component<OrdersTableProps> {
     render() {
-
         return (
             <TableContainer component={Paper}>
-                <Table className={classes.table} size="small">
+                <Table style={classes} size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" size="small">Цена</TableCell>
@@ -44,7 +41,3 @@ export class OrdersTable extends React.Component {
         )
     }
 }
-
-OrdersTable.propTypes = {
-    orders: PropTypes.arrayOf(Order)
-};

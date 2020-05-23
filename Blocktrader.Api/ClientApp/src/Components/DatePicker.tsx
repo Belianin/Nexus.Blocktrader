@@ -14,7 +14,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function DatePickers(props) {
+interface DatePickerProps {
+    onChange: (event: any) => void,
+    defaultValue: string
+}
+
+export default function DatePickers(props: DatePickerProps) {
     const classes = useStyles();
 
     return (

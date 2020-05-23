@@ -1,5 +1,5 @@
-import React from 'react';
-import logo from './logo.png';
+import React, {ChangeEvent} from 'react';
+import logo from "./logo.png";
 import './App.css';
 import {Button} from '@material-ui/core'
 import Slider from '@material-ui/core/Slider';
@@ -8,14 +8,36 @@ import {Timestamp, TickerInfo, OrderBook, timestampFromBytes} from './Models/Tim
 import {TimestampsTable} from "./Components/TimestampsTable";
 import DatePicker from "./Components/DatePicker";
 import Container from "@material-ui/core/Container";
+import {number} from "prop-types";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
 const ticker = "BtcUsd";
 
-class App extends React.Component {
-  constructor(props) {
+interface AppProps {
+
+}
+
+interface AppState {
+  years: Years,
+  selectedTimestamp: number,
+  selectedDate: Date
+}
+
+interface Years {
+   [year: number] : {
+     [month: number] : {
+       [day: number] : {
+         [exchange: string]: Timestamp[]
+       }
+     }
+   };
+}
+
+class App extends React.Component<AppProps, AppState> {
+  constructor(props: AppProps) {
     super(props);
+
     this.state = {
       years: {},
       selectedTimestamp: 0,
@@ -23,7 +45,7 @@ class App extends React.Component {
     };
   }
 
-  getTimestamps(exchange, ticker, year, month, day) {
+  getTimestamps(exchange: string, ticker: string, year: number, month: number, day: number) {
     fetch(`${backendUrl}timestamps/exchange/${exchange}/ticker/${ticker}/year/${year}/month/${month}/day/${day}?precision=2`)
         .then(response => {
           if (response.ok) {
@@ -64,9 +86,9 @@ class App extends React.Component {
     this.loadDay()
   }
 
-  onSliderChange(value) {
+  onSliderChange(value: number | number[]) {
     this.setState({
-      selectedTimestamp: value
+      selectedTimestamp: (typeof value === "number") ? value : value[0]
     });
     console.log("Тыкнули слайдер " + value)
   }
@@ -88,7 +110,7 @@ class App extends React.Component {
     };
   }
 
-  getCurrentTimestamp(exchange) {
+  getCurrentTimestamp(exchange: string) {
     if (!this.state.selectedDate || !this.state.years[this.state.selectedDate.getFullYear()])
       return [];
 
@@ -103,7 +125,7 @@ class App extends React.Component {
     return timestamps;
   }
 
-  onDateChanged(newDate) {
+  onDateChanged(newDate: any) {
     this.setState({
       selectedDate: new Date(newDate.target.value)
     });
@@ -119,25 +141,26 @@ class App extends React.Component {
             <img src={logo} style={{height: 128, width: "auto"}} alt="logo"/>
           </header>
           <div>
-            <Button variant="contained">>>></Button>
-            <Grid item xs>
+            <Button variant="contained">&gt;&gt;&gt;</Button>
+            <Grid item xs style={{width: 300}}>
               <Slider
                   step={1}
                   min={0}
                   marks
                   max={this.getCurrentTimestamp("binance").length}
                   valueLabelDisplay="auto"
-                  onChange={(e, v) => this.onSliderChange(v)}
-                  aria-labelledby="discrete-slider-small-steps" />
-              <Container jusity={"center"}>
-                <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={"2020-05-17"}/>
-              </Container>
+                  onChange={(e: object, v: number | number[]) => this.onSliderChange(v)}
+                  aria-labelledby="discrete-slider-small-steps"
+              />
+              <DatePicker onChange={(e: any) => this.onDateChanged(e)} defaultValue={"2020-05-17"}/>
             </Grid>
             <TimestampsTable
                 pointer={this.state.selectedTimestamp}
-                bitfinex={this.getCurrentTimestamp("bitfinex")}
-                bitstamp={this.getCurrentTimestamp("bitstamp")}
-                binance={this.getCurrentTimestamp("binance")}
+                exchanges={{
+                  "bitfinex": this.getCurrentTimestamp("bitfinex"),
+                  "bitstamp": this.getCurrentTimestamp("bitstamp"),
+                  "binance": this.getCurrentTimestamp("binance")
+                }}
             />
           </div>
         </div>
