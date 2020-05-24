@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "tsc",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@types/react-virtualized": "^9.21.10",
-    "typescript": "^3.9.2"
+    "typescript": "^3.9.2",
+    "webpack-cli": "^3.3.11"
   }
 }
