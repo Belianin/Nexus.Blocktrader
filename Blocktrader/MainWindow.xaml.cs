@@ -12,6 +12,8 @@ using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Service;
 using Nexus.Blocktrader.Service.Files;
 using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
+using Nexus.Logging.Console;
 
 namespace Nexus.Blocktrader
 {
@@ -39,14 +41,10 @@ namespace Nexus.Blocktrader
         public MainWindow()
         {
             InitializeComponent();
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddConsole();
-            });
             
-            var logger = loggerFactory.CreateLogger<MainWindow>();
-            service = new BlocktraderService(logger);
-            timestampManager = new FileTimestampManager(logger);
+            var log = new ColourConsoleLog();
+            service = new BlocktraderService(log);
+            timestampManager = new FileTimestampManager(log);
 
             TicketPicker.ItemsSource = (Ticker[]) Enum.GetValues(typeof(Ticker));
             DatePicker.SelectedDate = DateTime.Now;
@@ -55,7 +53,7 @@ namespace Nexus.Blocktrader
             var timer = new Timer(updateInterval.TotalMilliseconds) {AutoReset = true};
             timer.Elapsed += (s, e) => DownloadAsync().Wait();
             timer.Start();
-            logger.LogInformation($"Blocktader initializated");
+            log.Info($"Blocktader initializated");
         }
 
         private async Task DownloadAsync()

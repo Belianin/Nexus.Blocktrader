@@ -29,6 +29,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Blocktrader.Worker\Blocktrader.Worker.csproj" />
+      <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="wwwroot" />

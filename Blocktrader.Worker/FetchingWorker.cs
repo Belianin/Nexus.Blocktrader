@@ -5,32 +5,27 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Service;
 using Nexus.Blocktrader.Service.Files;
+using Nexus.Logging;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Blocktrader.Worker
 {
     public class FetchingWorker : BackgroundService
     {
-        private readonly ILogger<FetchingWorker> logger;
+        private readonly ILog log;
         private bool isUpdating;
         private readonly TimeSpan updateInterval = TimeSpan.FromMinutes(10);
         private readonly BlocktraderService service;
         private readonly ITimestampManager timestampManager;
 
-        public FetchingWorker(ILogger<FetchingWorker> logger)
+        public FetchingWorker(ILog log)
         {
-            this.logger = logger;
+            this.log = log;
             
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddConsole().SetMinimumLevel(LogLevel.Debug);
-            });
-            
-            logger = loggerFactory.CreateLogger<FetchingWorker>();
-            
-            service = new BlocktraderService(logger);
-            timestampManager = new FileTimestampManager(logger);
+            service = new BlocktraderService(log);
+            timestampManager = new FileTimestampManager(log);
 
-            logger.LogInformation("Fetcher worker initializated");
+            log.Info("Fetcher worker initializated");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

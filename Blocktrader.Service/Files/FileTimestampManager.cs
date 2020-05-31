@@ -7,21 +7,27 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
 namespace Nexus.Blocktrader.Service.Files
 {
     public class FileTimestampManager : ITimestampManager
     {
-        private readonly ILogger log;
+        private readonly ILog log;
+        private readonly string path;
 
-        public FileTimestampManager(ILogger log)
+        public FileTimestampManager(ILog log)
         {
             this.log = log;
+
+            path = Directory.GetCurrentDirectory() + "\\Data";
+            
+            this.log.Important($"Current directory for data storage is \"{path}\"");
         }
 
         public async Task WriteAsync(CommonTimestamp commonTimestamp)
         {
-            log.LogDebug($"Writing common timestamp for {commonTimestamp.DateTime:yyyy-MM}");
+            log.Debug($"Writing common timestamp for {commonTimestamp.DateTime:yyyy-MM}");
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
                 foreach (var (ticket, info) in commonTimestamp.Exchanges[exchange].Tickets)
@@ -33,9 +39,56 @@ namespace Nexus.Blocktrader.Service.Files
             }
         }
 
+        public Result<Timestamp[]> ReadTimestampForMonth(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            var filename = GetFilename(dateTime, exchange, ticker);
+            log.Debug($"Reading timestamp for month from \"{filename}\"");
+            if (!File.Exists(filename))
+            {
+                log.Debug($"No such file \"{filename}\"");
+                return "No such file";
+            }
+
+            var file = File.ReadAllBytes(filename);
+
+            log.Debug($"Read a file with length {file.Length}");
+            return Timestamp.FromBytes(file).ToArray();
+        }
+
+        public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            var readResult = ReadTimestampForMonth(dateTime, exchange, ticker);
+            if (readResult.IsFail)
+                return readResult;
+            
+            return readResult.Value.Where(t => t.Date.Day == dateTime.Day).ToArray();
+
+        }
+
+        private string GetFilename(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            if (!Directory.Exists($"{path}\\{exchange.ToString()}"))
+            {
+                log.Debug($"Creating folder for exchange {exchange.ToString()}");
+                Directory.CreateDirectory($"{this.path}\\{exchange.ToString()}");
+            }
+            
+            return $"{path}\\{exchange.ToString()}\\{exchange.ToString()}_{ticker}_{dateTime:MM_yyyy}";
+
+        }
+
+        private FileStream GetWriter(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            var filename = GetFilename(dateTime, exchange, ticker);
+            
+            log.Debug($"Writing to file \"{filename}\"");
+            
+            return File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+        }
+
         public OldMonthTimestamp ReadTimestampsFromMonthOld(DateTime dateTime, Ticker ticker)
         {
-            log.LogDebug($"Reading timestamps for {dateTime:yyyy-MM}");
+            log.Debug($"Reading timestamps for {dateTime:yyyy-MM}");
             var result = new OldMonthTimestamp(dateTime, ticker);
             foreach (var exchange in (ExchangeTitle[]) Enum.GetValues(typeof(ExchangeTitle)))
             {
@@ -51,39 +104,7 @@ namespace Nexus.Blocktrader.Service.Files
             return result;
         }
 
-        public Result<Timestamp[]> ReadTimestampForMonth(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
-        {
-            var fileName = GetFilename(dateTime, exchange, ticker);
-            if (!File.Exists(fileName))
-                return "No such file";
-
-            var file = File.ReadAllBytes(fileName);
-
-            return Timestamp.FromBytes(file).ToArray();
-        }
-
-        public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
-        {
-            var fileName = GetFilename(dateTime, exchange, ticker);
-            if (!File.Exists(fileName))
-                return "No such file";
-
-            var file = File.ReadAllBytes(fileName);
-            Console.WriteLine(file.Length);
-
-            var timestamps = Timestamp.FromBytes(file).ToArray();
-            Console.WriteLine(timestamps.Length);
-            Console.WriteLine(dateTime.Day);
-
-            Console.WriteLine(string.Join(", ", timestamps.Select(t => t.Date.Day)));
-            var result = timestamps.Where(t => t.Date.Day == dateTime.Day).ToArray();
-            Console.WriteLine(result.Length);
-
-            return result;
-
-        }
-
-        private static Dictionary<DateTime, TickerInfo> ReadTicketInfo(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        private Dictionary<DateTime, TickerInfo> ReadTicketInfo(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
             var filename = GetFilename(dateTime, exchange, ticker);
             if (!File.Exists(filename))
@@ -91,23 +112,6 @@ namespace Nexus.Blocktrader.Service.Files
             
             var rawData = File.ReadAllBytes(filename);
             return Timestamp.FromBytes(rawData).ToDictionary(k => k.Date, v => v.TickerInfo);
-        }
-
-        private static string GetFilename(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
-        {
-            Console.WriteLine(Directory.GetCurrentDirectory());
-            if (!Directory.Exists($"Data/{exchange.ToString()}"))
-                Directory.CreateDirectory($"Data/{exchange.ToString()}");
-            
-            var path = $"Data/{exchange.ToString()}/{exchange.ToString()}_{ticker}_{dateTime:MM_yyyy}";
-            Console.WriteLine(path);
-            return path;
-
-        }
-
-        private static FileStream GetWriter(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
-        {
-            return File.Open(GetFilename(dateTime, exchange, ticker), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
         }
     }
 }

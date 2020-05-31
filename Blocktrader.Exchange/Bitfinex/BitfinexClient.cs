@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Exchange.Bitfinex.Models;
 using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
 namespace Nexus.Blocktrader.Exchange.Bitfinex
 {
@@ -20,7 +21,7 @@ namespace Nexus.Blocktrader.Exchange.Bitfinex
             {Ticker.XrpUsd, "tXRPUSD"}
         };
         
-        public BitfinexClient(ILogger log) : base(log)
+        public BitfinexClient(ILog log) : base(log)
         {
         }
 

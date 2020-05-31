@@ -4,15 +4,16 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
 namespace Nexus.Blocktrader.Exchange
 {
     public abstract class BaseClient
     {
-        protected readonly ILogger Log;
+        protected readonly ILog Log;
         private readonly HttpClient httpClient;
 
-        protected BaseClient(ILogger log)
+        protected BaseClient(ILog log)
         {
             Log = log;
             httpClient = new HttpClient();
@@ -34,7 +35,7 @@ namespace Nexus.Blocktrader.Exchange
             
             // Для вывода в логи
             var contentMessage = content.IsSuccess ? content.Value : content.Error; 
-            Log.LogError($"Request failed {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()} {contentMessage}");
+            Log.Error($"Request failed {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()} {contentMessage}");
             return $"{response.StatusCode.ToString()}: {contentMessage}";
         }
 
@@ -43,17 +44,17 @@ namespace Nexus.Blocktrader.Exchange
             if (uri == null)
                 return "NULL URI";
             
-            Log.LogDebug($"Sending request {uri}");
+            Log.Debug($"Sending request {uri}");
             try
             {
                 var response = await httpClient.GetAsync(uri).ConfigureAwait(false);
-                Log.LogDebug($"Got response from {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()}");
+                Log.Debug($"Got response from {uri}: {(int) response.StatusCode} {response.StatusCode.ToString()}");
 
                 return response;
             }
             catch (HttpRequestException e)
             {
-                Log.LogError($"Failed to get response from {uri}: {e.Message}");
+                Log.Debug($"Failed to get response from {uri}: {e.Message}");
                 return e.Message;
             }
         }

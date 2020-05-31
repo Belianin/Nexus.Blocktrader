@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Blocktrader.Domain\Blocktrader.Domain.csproj" />
       <ProjectReference Include="..\Blocktrader.Utils\Blocktrader.Utils.csproj" />
+      <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />
     </ItemGroup>
 
     <ItemGroup>

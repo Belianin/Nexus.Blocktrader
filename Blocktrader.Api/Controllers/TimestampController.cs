@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Service;
 using Nexus.Blocktrader.Service.Files;
+using Nexus.Logging;
+using Nexus.Blocktrader.Utils;
 
 namespace Nexus.Blocktrader.Api.Controllers
 {
@@ -13,10 +15,12 @@ namespace Nexus.Blocktrader.Api.Controllers
     public class TimestampController : Controller
     {
         private readonly ITimestampManager timestampManager;
+        private readonly ILog log;
 
-        public TimestampController(ITimestampManager timestampManager)
+        public TimestampController(ITimestampManager timestampManager, ILog log)
         {
             this.timestampManager = timestampManager;
+            this.log = log;
         }
 
         [HttpGet("exchange/{exchange}/ticker/{ticker}/year/{year}/month/{month}/day/{day}")]
@@ -28,15 +32,21 @@ namespace Nexus.Blocktrader.Api.Controllers
             [FromRoute] ExchangeTitle exchange,
             [FromQuery] int precision = -1)
         {
-            Console.WriteLine($"Received a request {year}/{month}/{day}");
-            var selectedDate = new DateTime(year, month, day);
+            log.Info($"Received a request \"{Request.Path}\"");
+
+            if (!DateTimeExtensions.TryParse(year, month, day, out var selectedDate))
+            {
+                log.Warn($"Invalid date {year}/{month}/{day}");
+                return BadRequest($"Invalid date {year}/{month}/{day}");
+            }
+                
 
             var timestamp = timestampManager.ReadTimestampForDay(selectedDate, exchange, ticker);
 
             if (timestamp.IsFail)
             {
-                Console.WriteLine($"Received a request {year}/{month}/{day}: NOT FOUND");
-                return NotFound("Нет такого файла");
+                log.Info($"No timestamps for {year}/{month}/{day}");
+                return NotFound($"No timestamps for {year}/{month}/{day}");
             }
 
             // if precision == 0 skip
@@ -48,17 +58,10 @@ namespace Nexus.Blocktrader.Api.Controllers
                     t.TickerInfo.DateTime)))
                 .Select(t => t.ToBytes2()).SelectMany(t => t).ToArray();
             
-            Console.WriteLine($"Received a request {year}/{month}/{day}: FOUND. Data length: {byteData.Length}");
-
-
+            log.Info($"Found timestamps for {year}/{month}/{day}: " +
+                     $"Timestamps count \"{timestamp.Value.Length}\". Byte data length: {byteData.Length}");
+            
             return File(byteData, "application/btd", "data.btd");
-        }
-
-        [HttpGet("me")]
-        public IActionResult Test()
-        {
-            Console.WriteLine("test");
-            return Ok(new {Hello = "привет"});
         }
     }
     
