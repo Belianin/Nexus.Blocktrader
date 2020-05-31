@@ -22,30 +22,6 @@ namespace Nexus.Blocktrader.Api
                         config.ClearProviders();
                     })
                     .UseStartup<Startup>()
-                    .UseUrls("http://*:777"))
-                .ConfigureServices(services => 
-                    services.AddHostedService<FetchingWorker>())
-                .ConfigureLogging(config => {
-                    config.ClearProviders();
-                });
-    }
-    
-    public class NexusLogger : ILogger
-    {
-        private readonly HashSet<LogLevel> disabledLogLevels = new HashSet<LogLevel>();
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return !disabledLogLevels.Contains(logLevel);
-        }
-
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            throw new NotImplementedException();
-        }
+                    .UseUrls("http://*:777"));
     }
 }

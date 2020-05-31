@@ -10,7 +10,7 @@ import DatePicker from "./Components/DatePicker";
 import Container from "@material-ui/core/Container";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
-const backendUrl = "/api/v1/";
+const backendUrl = "http://localhost:777/api/v1/";
 const ticker = "BtcUsd";
 
 class App extends React.Component {

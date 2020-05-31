@@ -25,7 +25,6 @@ export class TimestampsTable extends React.Component {
 
     renderOrders(exchange, ordersType) {
         const data = this.props[exchange];
-        console.log(data);
         if (!data)
             return <Paper style={{ height: 400, width: 400 }}><h4>Нет биржи</h4></Paper>;
 
@@ -52,27 +51,30 @@ export class TimestampsTable extends React.Component {
         let date = "Нет времени на раскачку";// this.props.bitfinex[this.props.pointer].date;
         if (this.props.binance && this.props.binance[this.props.pointer]) {
             const dateTime = this.props.binance[this.props.pointer].date;
-            date = `${dateTime.getFullYear()}/${dateTime.getMonth() + 1}/${dateTime.getDate()}`
+            date = dateTime.toLocaleString('ru-RU')// `${dateTime.getFullYear()}/${dateTime.getMonth() + 1}/${dateTime.getDate()}`
         }
 
         return (
-            <Container>
-                    <Typography variant="h6" id="tableTitle" component="div">
-                        Аски {date}
+            <Container jusity={"center"} style={{textAlign: 'center'}}>
+                <Typography variant="h2"component="div">
+                    {date}
+                </Typography>
+                    <Typography variant="h4" id="tableTitle" component="div">
+                        ASKS
                     </Typography>
                     <Grid item xs={12}>
                         <Grid container spacing={12}>
                             {exchanges.map(e => this.renderAsks(e))}
                         </Grid>
                     </Grid>
-                    <Typography variant="h6" id="tableTitle" component="div">
-                        Биды
-                    </Typography>
                     <Grid item xs={12}>
                         <Grid container spacing={12}>
                             {exchanges.map(e => this.renderOrders(e, "bids"))}
                         </Grid>
                     </Grid>
+                <Typography variant="h4" id="tableTitle" component="div">
+                    BIDS
+                </Typography>
             </Container>
         )
     }

@@ -26,6 +26,13 @@ export class Order {
     }
 }
 
+
+function addHours(date, hours) {
+    const copy = new Date(Number(date));
+    copy.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+    return copy;
+}
+
 export function timestampFromBytes(buffer) {
     const result = [];
 
@@ -34,7 +41,7 @@ export function timestampFromBytes(buffer) {
 
     console.log(buffer.byteLength);
     while (index < buffer.byteLength) {
-        const date = new Date(Number(dataView.getBigInt64(index, true)));
+        const date = addHours(new Date(Number(dataView.getBigInt64(index, true))), -5);
         index += 8;
         const averagePrice = dataView.getFloat32(index, true);
         index += 4;
