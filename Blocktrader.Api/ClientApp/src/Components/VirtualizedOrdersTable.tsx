@@ -1,19 +1,79 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import TableCell from '@material-ui/core/TableCell';
 import Paper from '@material-ui/core/Paper';
-import {AutoSizer, Column, RowMouseEventHandlerParams, Table} from 'react-virtualized';
+import { AutoSizer, Column, Table, TableCellRenderer, TableHeaderProps } from 'react-virtualized';
 import {Order} from "../Models/Timestamp";
+
+declare module '@material-ui/core/styles/withStyles' {
+    // Augment the BaseCSSProperties so that we can control jss-rtl
+    interface BaseCSSProperties {
+        /*
+         * Used to control if the rule-set should be affected by rtl transformation
+         */
+        flip?: boolean;
+    }
+}
+
+const styles = (theme: Theme) =>
+    createStyles({
+        flexContainer: {
+            display: 'flex',
+            alignItems: 'center',
+            boxSizing: 'border-box',
+        },
+        table: {
+            // temporary right-to-left patch, waiting for
+            // https://github.com/bvaughn/react-virtualized/issues/454
+            '& .ReactVirtualized__Table__headerRow': {
+                flip: false,
+                paddingRight: theme.direction === 'rtl' ? '0px !important' : undefined,
+            },
+        },
+        tableRow: {
+            cursor: 'pointer',
+        },
+        tableRowHover: {
+            '&:hover': {
+                backgroundColor: theme.palette.grey[200],
+            },
+        },
+        tableCell: {
+            flex: 1,
+        },
+        noClick: {
+            cursor: 'initial',
+        },
+    });
+
+interface ColumnData {
+    dataKey: string;
+    label: string;
+    numeric?: boolean;
+    width: number;
+}
+
+interface Row {
+    index: number;
+}
+
+interface MuiVirtualizedTableProps extends WithStyles<typeof styles> {
+    columns: ColumnData[];
+    headerHeight?: number;
+    onRowClick?: () => void;
+    rowCount: number;
+    rowGetter: (row: Row) => Order;
+    rowHeight?: number;
+}
 
 class MuiVirtualizedTable extends React.PureComponent<MuiVirtualizedTableProps> {
     static defaultProps = {
         headerHeight: 48,
-        rowHeight: 24
+        rowHeight: 24,
     };
 
-    getRowClassName = ({ index }: {index: number}) => {
+    getRowClassName = ({ index }: Row) => {
         const { classes, onRowClick } = this.props;
 
         return clsx(classes.tableRow, classes.flexContainer, {
@@ -21,7 +81,7 @@ class MuiVirtualizedTable extends React.PureComponent<MuiVirtualizedTableProps> 
         });
     };
 
-    cellRenderer = ({ cellData, columnIndex }: any) => {
+    cellRenderer: TableCellRenderer = ({ cellData, columnIndex }) => {
         const { columns, classes, rowHeight, onRowClick } = this.props;
         return (
             <TableCell
@@ -32,14 +92,13 @@ class MuiVirtualizedTable extends React.PureComponent<MuiVirtualizedTableProps> 
                 variant="body"
                 style={{ height: rowHeight }}
                 align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
-                sortDirection={"asc"}
             >
                 {cellData}
             </TableCell>
         );
     };
 
-    headerRenderer = ({ label, columnIndex }: {label: string, columnIndex: number}) => {
+    headerRenderer = ({ label, columnIndex }: TableHeaderProps & { columnIndex: number }) => {
         const { headerHeight, columns, classes } = this.props;
 
         return (
@@ -55,35 +114,28 @@ class MuiVirtualizedTable extends React.PureComponent<MuiVirtualizedTableProps> 
         );
     };
 
-    onRowClick(info: RowMouseEventHandlerParams){
-        console.log(info.event)
-    }
-
     render() {
         const { classes, columns, rowHeight, headerHeight, ...tableProps } = this.props;
         return (
             <AutoSizer>
-                {({ height, width }: {height: number, width: number}) => (
+                {({ height, width }) => (
                     <Table
-                        //onRowClick={this.onRowClick}
-                        rowCount={columns.length}
                         height={height}
                         width={width}
-                        rowHeight={rowHeight}
-                        headerHeight={headerHeight}
-                        // gridStyle={{
-                        //     direction: 'inherit'
-                        // }}
-                        // headerHeight={headerHeight}
-                        // // className={classes.table}
-                        // {...tableProps}
-                        //rowClassName={this.getRowClassName}
+                        rowHeight={rowHeight!}
+                        gridStyle={{
+                            direction: 'inherit',
+                        }}
+                        headerHeight={headerHeight!}
+                        className={classes.table}
+                        {...tableProps}
+                        rowClassName={this.getRowClassName}
                     >
                         {columns.map(({ dataKey, ...other }, index) => {
                             return (
                                 <Column
                                     key={dataKey}
-                                    headerRenderer={(headerProps: any) =>
+                                    headerRenderer={(headerProps) =>
                                         this.headerRenderer({
                                             ...headerProps,
                                             columnIndex: index,
@@ -103,62 +155,29 @@ class MuiVirtualizedTable extends React.PureComponent<MuiVirtualizedTableProps> 
     }
 }
 
-interface MuiVirtualizedTableProps {
-    classes: any,
-    columns: {
-        dataKey: string,
-        label: string,
-        numeric: boolean | null,
-        width: number,
-    }[],
-    headerHeight: number,
-    onRowClick: ((x: RowMouseEventHandlerParams) => void) | undefined,
-    rowHeight: number,
+const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
+
+interface VirtualizedOrdersTableProps{
+    orders: Order[]
 }
 
-const VirtualizedTable = withStyles({
-    flexContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        boxSizing: 'border-box',
-    },
-    tableRow: {
-        cursor: 'pointer',
-    },
-    // tableRowHover: {
-    //     '&:hover': {
-    //         backgroundColor: theme.palette.grey[200],
-    //     },
-    // },
-    tableCell: {
-        flex: 1
-    },
-    noClick: {
-        cursor: 'initial',
-    }
-})(MuiVirtualizedTable);
-
-// ---
-
-export default function VirtualizedOrdersTable(props: {orders: Order[]}) {
+export default function VirtualizedOrdersTable(orders: Order[]) {
     return (
         <Paper style={{ height: 400, width: 400 }}>
             <VirtualizedTable
-                //rowCount={props.orders.length}
-                //rowGetter={({ index }: any) => props.orders[index]}
-                onRowClick={undefined}
+                rowCount={orders.length}
+                rowGetter={({ index }) => orders[index]}
                 columns={[
                     {
                         width: 200,
-                        label: 'Цена',
+                        label: 'Price',
                         dataKey: 'price',
-                        numeric: true
                     },
                     {
                         width: 200,
-                        label: 'Обьем',
+                        label: 'Amount',
                         dataKey: 'amount',
-                        numeric: true
+                        numeric: true,
                     }
                 ]}
             />

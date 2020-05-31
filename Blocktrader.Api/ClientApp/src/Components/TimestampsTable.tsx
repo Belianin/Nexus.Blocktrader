@@ -7,6 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import {OrdersTable} from "./OrdersTable";
 import Container from "@material-ui/core/Container";
 import VirtualizedOrdersTable from "./VirtualizedOrdersTable";
+import {NexusOrdersTable} from "./NexusOrdersTable";
 
 const exchanges = ["binance", "bitfinex", "bitstamp"];
 
@@ -35,11 +36,12 @@ export class TimestampsTable extends React.Component<TimestampsTableProps, Times
     }
 
     renderOrders(exchange: string, isBids: boolean) {
+        console.log(this.props.pointer);
         const data = this.props.exchanges[exchange];
-        console.log(data);
         if (!data)
             return <h4>Нет биржи</h4>;
 
+        console.log("Data: " + this.props.exchanges[exchange]);
         const day = data[this.props.pointer];
         if (!day)
             return <h4>Нет дня</h4>;
@@ -56,7 +58,7 @@ export class TimestampsTable extends React.Component<TimestampsTableProps, Times
 
         return (
             <Grid key={exchange} item>
-                <VirtualizedOrdersTable orders={orders}/>
+                {VirtualizedOrdersTable(orders)}
             </Grid>
         )
     }
