@@ -13,7 +13,7 @@ namespace Nexus.Logging.Console
 
         private static ConsoleColor GetColor(LogLevel level) => level switch
         {
-            LogLevel.Debug => ConsoleColor.Gray,
+            LogLevel.Debug => ConsoleColor.DarkGray,
             LogLevel.Info => ConsoleColor.White,
             LogLevel.Warn => ConsoleColor.Yellow,
             LogLevel.Error => ConsoleColor.Red,
