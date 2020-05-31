@@ -30,8 +30,14 @@ namespace Nexus.Blocktrader.Exchange
             // Да и не всегда неуспешный ответ означает отсутствия кода (400 например) 
             var content = await GetContentAsync(response).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode && content.IsSuccess) 
-                return content.Value.TryDeserialize<T>();
+            if (response.IsSuccessStatusCode && content.IsSuccess)
+            {
+                var deserializationResult = content.Value.TryDeserialize<T>();
+                if (deserializationResult.IsFail) 
+                    Log.Error($"Deserialization error: {deserializationResult.Error}");
+
+                return deserializationResult;
+            }
             
             // Для вывода в логи
             var contentMessage = content.IsSuccess ? content.Value : content.Error; 
@@ -52,9 +58,9 @@ namespace Nexus.Blocktrader.Exchange
 
                 return response;
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
-                Log.Debug($"Failed to get response from {uri}: {e.Message}");
+                Log.Error($"Failed to get response from {uri}: {e.Message}");
                 return e.Message;
             }
         }

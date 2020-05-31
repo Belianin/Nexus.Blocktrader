@@ -13,7 +13,7 @@ namespace Nexus.Blocktrader.Utils
             }
             catch (Exception e)
             {
-                return "Deserialization error";
+                return e.Message;
             }
         }
     }

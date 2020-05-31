@@ -70,7 +70,7 @@ namespace Nexus.Blocktrader.Service.Files
             if (!Directory.Exists($"{path}\\{exchange.ToString()}"))
             {
                 log.Debug($"Creating folder for exchange {exchange.ToString()}");
-                Directory.CreateDirectory($"{this.path}\\{exchange.ToString()}");
+                Directory.CreateDirectory($"{path}\\{exchange.ToString()}");
             }
             
             return $"{path}\\{exchange.ToString()}\\{exchange.ToString()}_{ticker}_{dateTime:MM_yyyy}";

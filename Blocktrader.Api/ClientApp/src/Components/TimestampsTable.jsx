@@ -27,19 +27,19 @@ export class TimestampsTable extends React.Component {
         const data = this.props[exchange];
         console.log(data);
         if (!data)
-            return <h4>Нет биржи</h4>;
+            return <Paper style={{ height: 400, width: 400 }}><h4>Нет биржи</h4></Paper>;
 
         const day = data[this.props.pointer];
         if (!day)
-            return <h4>Нет дня</h4>;
+            return <Paper style={{ height: 400, width: 400 }}><h4>Нет дня</h4></Paper>;
 
         const tickerInfo = day.tickerInfo;
         if (!tickerInfo)
-            return <h4>Нет тикер инфо</h4>;
+            return <Paper style={{ height: 400, width: 400 }}><h4>Нет тикер инфо</h4></Paper>;
 
         const orderBook = tickerInfo.orderBook;
         if (!orderBook)
-            return <h4>Нет ордер бука</h4>;
+            return <Paper style={{ height: 400, width: 400 }}><h4>Нет ордер бука</h4></Paper>;
 
         return (
             <Grid key={exchange} item>
