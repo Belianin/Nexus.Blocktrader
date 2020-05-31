@@ -22,6 +22,11 @@ namespace Nexus.Blocktrader.Api
                         config.ClearProviders();
                     })
                     .UseStartup<Startup>()
-                    .UseUrls("http://*:777"));
+                    .UseUrls("http://*:777"))
+                .ConfigureServices(services => 
+                    services.AddHostedService<FetchingWorker>())
+                .ConfigureLogging(config => {
+                    config.ClearProviders();
+                });
     }
 }
