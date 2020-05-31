@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Nexus.Logging.Utils
@@ -8,27 +9,18 @@ namespace Nexus.Logging.Utils
     {
         public static string Format(LogEvent logEvent)
         {
-            return $"{logEvent.DateTime.ToString("yyyy-MM-dd HH:mm:ss,fff", CultureInfo.CurrentCulture)}" +
-                   $"{TagToString(logEvent.Level.ToString())}" +
+            return $"{logEvent.DateTime.ToString("yyyy-MM-dd HH:mm:ss,fff", CultureInfo.CurrentCulture)} " +
+                   $"{TagsToString(logEvent)} " +
                    $"{logEvent.Message}";
         }
-        
-        private static string TagToString(string tag)
-        {
-            return TagsToString(new[] {tag});
-        }
-        
-        private static string TagsToString(ICollection<string> tags)
-        {
-            if (tags == null || tags.Count == 0)
-                return " ";
 
-            var sb = new StringBuilder();
-            sb.Append(" ");
-            foreach (var tag in tags)
-                sb.Append($"[{tag}] ");
+        private static string TagsToString(LogEvent logEvent)
+        {
+            var tags = logEvent.Context != null
+                ? new[] {logEvent.Level.ToString(), logEvent.Context}
+                : new[] {logEvent.Level.ToString()};
 
-            return sb.ToString();
+            return string.Join(" ", tags.Select(t => $"[{t}]"));
         }
     }
 }
