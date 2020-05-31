@@ -114,7 +114,7 @@ namespace Nexus.Blocktrader
 
             if (needToCache && (selectedDate.Month == DateTime.Now.Month || selectedTimestamp == null))
             {
-                selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicker);
+                selectedTimestamp = timestampManager.ReadTimestampsFromMonthOld(selectedDate, currentTicker);
                 needToCache = false;
             }
             

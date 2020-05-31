@@ -33,7 +33,7 @@ namespace Nexus.Blocktrader.Service.Files
             }
         }
 
-        public OldMonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
+        public OldMonthTimestamp ReadTimestampsFromMonthOld(DateTime dateTime, Ticker ticker)
         {
             log.LogDebug($"Reading timestamps for {dateTime:yyyy-MM}");
             var result = new OldMonthTimestamp(dateTime, ticker);
@@ -51,7 +51,7 @@ namespace Nexus.Blocktrader.Service.Files
             return result;
         }
 
-        public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        public Result<Timestamp[]> ReadTimestampForMonth(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
             var fileName = GetFilename(dateTime, exchange, ticker);
             if (!File.Exists(fileName))
@@ -60,6 +60,26 @@ namespace Nexus.Blocktrader.Service.Files
             var file = File.ReadAllBytes(fileName);
 
             return Timestamp.FromBytes(file).ToArray();
+        }
+
+        public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            var fileName = GetFilename(dateTime, exchange, ticker);
+            if (!File.Exists(fileName))
+                return "No such file";
+
+            var file = File.ReadAllBytes(fileName);
+            Console.WriteLine(file.Length);
+
+            var timestamps = Timestamp.FromBytes(file).ToArray();
+            Console.WriteLine(timestamps.Length);
+            Console.WriteLine(dateTime.Day);
+
+            Console.WriteLine(string.Join(", ", timestamps.Select(t => t.Date.Day)));
+            var result = timestamps.Where(t => t.Date.Day == dateTime.Day).ToArray();
+            Console.WriteLine(result.Length);
+
+            return result;
 
         }
 

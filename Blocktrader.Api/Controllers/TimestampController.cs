@@ -29,15 +29,15 @@ namespace Nexus.Blocktrader.Api.Controllers
             [FromQuery] int precision = -1)
         {
             Console.WriteLine($"Received a request {year}/{month}/{day}");
-            
             var selectedDate = new DateTime(year, month, day);
 
             var timestamp = timestampManager.ReadTimestampForDay(selectedDate, exchange, ticker);
 
             if (timestamp.IsFail)
+            {
+                Console.WriteLine($"Received a request {year}/{month}/{day}: NOT FOUND");
                 return NotFound("Нет такого файла");
-
-            Console.WriteLine("Нашёл файл");
+            }
 
             // if precision == 0 skip
             var byteData = timestamp.Value
@@ -47,6 +47,8 @@ namespace Nexus.Blocktrader.Api.Controllers
                         t.TickerInfo.OrderBook.Asks.Flat(precision, false).ToArray()), 
                     t.TickerInfo.DateTime)))
                 .Select(t => t.ToBytes2()).SelectMany(t => t).ToArray();
+            
+            Console.WriteLine($"Received a request {year}/{month}/{day}: FOUND. Data length: {byteData.Length}");
 
 
             return File(byteData, "application/btd", "data.btd");

@@ -16,6 +16,7 @@ const ticker = "BtcUsd";
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       years: {},
       selectedTimestamp: 0,
@@ -33,20 +34,20 @@ class App extends React.Component {
           throw Error(response.status.toString());})
         .then(response => response.arrayBuffer())
         .then(result => {
-            let years = this.state.years;
+            this.setState((state) => {
+                let years = state.years;
 
-            if (!years[year])
-              years[year] = this.createYear();
+                if (!years[year])
+                  years[year] = this.createYear();
 
-            const selectedMonth = years[year][month];
-            if (!selectedMonth[day])
-              selectedMonth[day] = {};
-          selectedMonth[day][exchange.toLowerCase()] = timestampFromBytes(result);
+                const selectedMonth = years[year][month];
+                if (!selectedMonth[day])
+                  selectedMonth[day] = {};
+                selectedMonth[day][exchange.toLowerCase()] = timestampFromBytes(result);
 
-            this.setState({
-              years: years
+                return {years: years};
+              })
             })
-          })
         .catch(error => console.log(error))
   }
 
@@ -104,11 +105,10 @@ class App extends React.Component {
   }
 
   onDateChanged(newDate) {
+    console.log(newDate);
     this.setState({
-      selectedDate: new Date(newDate.target.value)
-    });
-
-    this.loadDay();
+      selectedDate: newDate
+    }, this.loadDay);
   }
 
   render() {
@@ -130,7 +130,7 @@ class App extends React.Component {
                   onChange={(e, v) => this.onSliderChange(v)}
                   aria-labelledby="discrete-slider-small-steps" />
               <Container jusity={"center"}>
-                <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={"2020-05-17"}/>
+                <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={this.state.selectedDate}/>
               </Container>
             </Grid>
             <TimestampsTable

@@ -22,9 +22,9 @@ namespace Nexus.Blocktrader.Service.Files
             return innerManager.WriteAsync(commonTimestamp);
         }
 
-        public OldMonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker)
+        public OldMonthTimestamp ReadTimestampsFromMonthOld(DateTime dateTime, Ticker ticker)
         {
-            return innerManager.ReadTimestampsFromMonth(dateTime, ticker);
+            return innerManager.ReadTimestampsFromMonthOld(dateTime, ticker);
         }
 
         public Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
@@ -32,14 +32,19 @@ namespace Nexus.Blocktrader.Service.Files
             var key = new TimestampKey{Year = dateTime.Year, Month = dateTime.Month, Exchange = exchange, Ticker = ticker};
             if (dateTime.Date != DateTime.Today && buffer.TryGetValue(key, out var buffered))
                 return buffered.GetForDay(dateTime.Day);
-
-            var timestamp = innerManager.ReadTimestampForDay(dateTime, exchange, ticker);
+            
+            var timestamp = innerManager.ReadTimestampForMonth(dateTime, exchange, ticker);
             if (timestamp.IsFail)
                 return "No timestamp";
             
             var monthTimestamp = new MonthTimestamp(dateTime, exchange, ticker, timestamp.Value);
             buffer[key] = monthTimestamp;
             return monthTimestamp.GetForDay(dateTime.Day);
+        }
+
+        public Result<Timestamp[]> ReadTimestampForMonth(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
+        {
+            throw new NotImplementedException();
         }
 
         private class TimestampKey

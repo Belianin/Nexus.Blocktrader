@@ -9,7 +9,8 @@ namespace Nexus.Blocktrader.Service.Files
     {
         Task WriteAsync(CommonTimestamp commonTimestamp);
 
-        OldMonthTimestamp ReadTimestampsFromMonth(DateTime dateTime, Ticker ticker);
+        OldMonthTimestamp ReadTimestampsFromMonthOld(DateTime dateTime, Ticker ticker);
         Result<Timestamp[]> ReadTimestampForDay(DateTime dateTime, ExchangeTitle exchange, Ticker ticker);
+        Result<Timestamp[]> ReadTimestampForMonth(DateTime dateTime, ExchangeTitle exchange, Ticker ticker);
     }
 }
