@@ -18,10 +18,16 @@ namespace Nexus.Blocktrader.Api
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
+                    .ConfigureLogging(config => {
+                        config.ClearProviders();
+                    })
                     .UseStartup<Startup>()
-                    .UseUrls("http://*:777")
-                    .ConfigureLogging(l => l.AddConsole().SetMinimumLevel(LogLevel.Debug)))
-                .ConfigureServices(services => services.AddHostedService<FetchingWorker>().AddLogging(l => l.AddConsole().SetMinimumLevel(LogLevel.Debug)));
+                    .UseUrls("http://*:777"))
+                .ConfigureServices(services => 
+                    services.AddHostedService<FetchingWorker>())
+                .ConfigureLogging(config => {
+                    config.ClearProviders();
+                });
     }
     
     public class NexusLogger : ILogger

@@ -32,18 +32,17 @@ namespace Blocktrader.Worker
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await DownloadAsync().ConfigureAwait(false);
-                
                 var sleepTime = GetSleepInterval();
                 log.Debug($"Next download scheduled at {DateTime.Now.AddMilliseconds(sleepTime):yyyy-MM-dd HH:mm:ss,fff}");
                 await Task.Delay(updateInterval, stoppingToken);
+                
+                await DownloadAsync().ConfigureAwait(false);
             }
         }
 
         private double GetSleepInterval()
         {
-            return updateInterval.TotalMilliseconds -
-                   (DateTime.Now.TimeOfDay.TotalMilliseconds % updateInterval.TotalMilliseconds);
+            return updateInterval.TotalMilliseconds - DateTime.Now.TimeOfDay.TotalMilliseconds % updateInterval.TotalMilliseconds;
         }
         
         private async Task DownloadAsync()

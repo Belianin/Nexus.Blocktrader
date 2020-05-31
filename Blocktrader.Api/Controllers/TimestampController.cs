@@ -20,7 +20,7 @@ namespace Nexus.Blocktrader.Api.Controllers
         public TimestampController(ITimestampManager timestampManager, ILog log)
         {
             this.timestampManager = timestampManager;
-            this.log = log;
+            this.log = log.ForContext("API");
         }
 
         [HttpGet("exchange/{exchange}/ticker/{ticker}/year/{year}/month/{month}/day/{day}")]
