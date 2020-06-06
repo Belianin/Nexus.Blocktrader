@@ -21,6 +21,18 @@ namespace Nexus.Logging
             => log.Log(FormLogEvent(LogLevel.Important, message, parameters));
 
         public static ILog ForContext(this ILog log, string context) => new ContextLog(log, context);
+
+        public static ILog OnlyErrors(this ILog log)
+        {
+            log.SetEnabled(LogLevel.Debug, false);
+            log.SetEnabled(LogLevel.Info, false);
+            log.SetEnabled(LogLevel.Warn, true);
+            log.SetEnabled(LogLevel.Error, true);
+            log.SetEnabled(LogLevel.Fatal, true);
+            log.SetEnabled(LogLevel.Important, true);
+
+            return log;
+        }
         
         private static LogEvent FormLogEvent(LogLevel logLevel, string message, params object[] parameters)
         {

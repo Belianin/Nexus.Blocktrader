@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocktrader.Worker", "Block
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexus.Logging", "Nexus.Logging\Nexus.Logging.csproj", "{92278DE5-BCC7-43D2-873B-E5048329EF5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexus.Logging.Telegram", "Nexus.Logging.Telegram\Nexus.Logging.Telegram.csproj", "{B686BCCF-5A2D-483D-BCAE-AF934BEC8773}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{92278DE5-BCC7-43D2-873B-E5048329EF5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92278DE5-BCC7-43D2-873B-E5048329EF5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92278DE5-BCC7-43D2-873B-E5048329EF5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B686BCCF-5A2D-483D-BCAE-AF934BEC8773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B686BCCF-5A2D-483D-BCAE-AF934BEC8773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B686BCCF-5A2D-483D-BCAE-AF934BEC8773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B686BCCF-5A2D-483D-BCAE-AF934BEC8773}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

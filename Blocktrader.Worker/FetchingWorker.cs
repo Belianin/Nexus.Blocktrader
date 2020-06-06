@@ -2,11 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Service;
 using Nexus.Blocktrader.Service.Files;
 using Nexus.Logging;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Blocktrader.Worker
 {
@@ -32,9 +30,9 @@ namespace Blocktrader.Worker
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var sleepTime = GetSleepInterval();
+                var sleepTime = (int) GetSleepInterval();
                 log.Debug($"Next download scheduled at {DateTime.Now.AddMilliseconds(sleepTime):yyyy-MM-dd HH:mm:ss,fff}");
-                await Task.Delay(updateInterval, stoppingToken);
+                await Task.Delay(sleepTime, stoppingToken);
                 
                 await DownloadAsync().ConfigureAwait(false);
             }

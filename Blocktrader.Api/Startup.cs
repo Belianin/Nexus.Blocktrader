@@ -5,10 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Api.DI;
 using Nexus.Blocktrader.Service.Files;
 using Nexus.Logging;
 using Nexus.Logging.Console;
 using Nexus.Logging.File;
+using Nexus.Logging.Telegram;
 
 namespace Nexus.Blocktrader.Api
 {
@@ -23,6 +25,8 @@ namespace Nexus.Blocktrader.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogs();
+            
             services.AddCors();
             services.AddMvc(options => options.EnableEndpointRouting = false).AddJsonOptions(options =>
             {
@@ -31,8 +35,6 @@ namespace Nexus.Blocktrader.Api
                 options.JsonSerializerOptions.Converters.Add(new ExchangeTitleJsonConverter());
             });
 
-            services.AddSingleton<ILog>(sp => 
-                new AggregationLog(new FileLog(), new ColourConsoleLog()));
             services.AddSingleton<ITimestampManager>(sp => 
                 new BufferedTimestampManager(new FileTimestampManager(sp.GetRequiredService<ILog>())));
         }

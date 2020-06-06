@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Nexus.Logging.Utils
 {
-    public static class LogFormatter
+    internal static class LogFormatter
     {
         public static string Format(LogEvent logEvent)
         {
@@ -17,8 +17,8 @@ namespace Nexus.Logging.Utils
         private static string TagsToString(LogEvent logEvent)
         {
             var tags = logEvent.Context != null
-                ? new[] {logEvent.Level.ToString(), logEvent.Context}
-                : new[] {logEvent.Level.ToString()};
+                ? new[] {logEvent.Level.ToString().ToUpper(), logEvent.Context}
+                : new[] {logEvent.Level.ToString().ToUpper()};
 
             return string.Join(" ", tags.Select(t => $"[{t}]"));
         }
