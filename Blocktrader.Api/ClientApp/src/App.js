@@ -13,6 +13,8 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
@@ -29,10 +31,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.sliderFocus = React.createRef();
     this.state = {
       years: {},
       selectedTimestamp: 0,
       selectedDate: new Date(),
+      isLoading: false
     };
   }
 
@@ -86,10 +90,14 @@ class App extends React.Component {
     const day = this.state.selectedDate.getDate();
     console.log(`Скачиваем данные за ${day}/${month}/${year}`)
 
-    Promise.all(exchanges.map(e => this.getTimestamps(e, "BtcUsd", year, month, day))
-    ).then(() => {
-      console.log("Обновляем выбранный timestamp")
-      this.setState({selectedTimestamp: setSliderMax ? this.getSliderLength() - 1 : 0})
+    this.setState(state => {return {isLoading: true}}, () => {
+      Promise.all(exchanges.map(e => this.getTimestamps(e, "BtcUsd", year, month, day))
+      ).then(() => {
+        console.log("Обновляем выбранный timestamp")
+        this.setState({
+          selectedTimestamp: setSliderMax ? this.getSliderLength() - 1 : 0,
+          isLoading: false})
+      });
     });
   }
 
@@ -98,11 +106,11 @@ class App extends React.Component {
   }
 
   nextDay() {
-    if (this.state.selectedTimestamp === this.getSliderLength())
+    if (this.state.selectedTimestamp === this.getSliderLength()) {
       this.setState((state) => {
         return {selectedDate: addDays(state.selectedDate, 1)}
       }, this.loadDay);
-    else if (this.state.selectedTimestamp === -1) {
+    } else if (this.state.selectedTimestamp === -1) {
       this.setState((state) => {
         return {selectedDate: addDays(state.selectedDate, -1)}
       }, () => this.loadDay(true))
@@ -110,6 +118,9 @@ class App extends React.Component {
   }
 
   onSliderChange(value) {
+    if (this.state.isLoading)
+      return;
+
     this.setState({
       selectedTimestamp: value
     }, this.nextDay);
@@ -190,13 +201,16 @@ class App extends React.Component {
                   </Typography>
                 </Container>
                 <Slider
+                    disabled={this.state.isLoading}
                     style={{width: 256}}
                     step={1}
                     min={-1}
                     marks
                     max={3}
                     value={1}
-                    valueLabelDisplay="auto"/>
+                    valueLabelDisplay="auto"
+                    key={'timestamp-slider'}
+                />
               </Grid>
               <Grid item>
                 <FormControl>
@@ -206,6 +220,7 @@ class App extends React.Component {
                       id="demo-simple-select"
                       value={10}
                       onChange={console.log}
+                      disabled={this.state.isLoading}
                   >
                     <MenuItem value={10}>BtcUsd</MenuItem>
                     <MenuItem value={20}>EthBtc</MenuItem>
@@ -214,7 +229,7 @@ class App extends React.Component {
                 </FormControl>
               </Grid>
             <Grid item>
-              <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={this.state.selectedDate}/>
+              <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={this.state.selectedDate} disabled={this.state.isLoading}/>
             </Grid>
           </Grid>
         </Container>
@@ -275,6 +290,7 @@ class App extends React.Component {
                     min={-1}
                     marks
                     max={this.getSliderLength()}
+                    //disabled={this.state.isLoading}
                     value={this.state.selectedTimestamp}
                     valueLabelDisplay="auto"
                     onChange={(e, v) => this.onSliderChange(v)}
@@ -299,12 +315,23 @@ class App extends React.Component {
     )
   }
 
+  renderLoader() {
+    return (
+        <div>
+          <div style={{backgroundColor: "rgba(0, 0, 0, 0.1)", width: '100%', height: '100%', position: "fixed", top: 0, left: 0}}>
+          </div>
+            <LinearProgress style={{position: 'fixed', width: '80%', marginLeft: '10%', bottom: '10%'}} variant={'query'}/>
+        </div>
+    )
+  }
+
   render() {
     return (
         <>
           {this.renderHeader()}
           {this.renderControlPanel()}
           {this.renderTable()}
+          {this.state.isLoading && this.renderLoader()}
         </>
     );
   }

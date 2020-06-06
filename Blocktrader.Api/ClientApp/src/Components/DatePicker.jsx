@@ -15,6 +15,7 @@ export default function DatePicker(props) {
                     margin="normal"
                     id="date-picker"
                     label="Выбор даты"
+                    disabled={props.disabled}
                     value={props.defaultValue}
                     onChange={props.onChange}
                     KeyboardButtonProps={{
