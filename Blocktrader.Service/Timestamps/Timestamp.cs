@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Nexus.Blocktrader.Domain;
 
-namespace Nexus.Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Timestamps
 {
     public class Timestamp
     {

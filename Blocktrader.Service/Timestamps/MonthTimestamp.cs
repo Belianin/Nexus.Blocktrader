@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Nexus.Blocktrader.Domain;
 
-namespace Nexus.Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Timestamps
 {
     public class MonthTimestamp
     {

@@ -15,7 +15,7 @@ namespace Nexus.Logging
 
         public void Log(LogEvent logEvent)
         {
-            logEvent.Context = context;
+            logEvent.Context.Push(context);
             innerLog.Log(logEvent);
         }
 

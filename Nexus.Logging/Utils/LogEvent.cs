@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Nexus.Logging.Utils
 {
@@ -7,16 +8,14 @@ namespace Nexus.Logging.Utils
         public LogLevel Level { get; }
         public DateTime DateTime { get; }
         public string Message { get; }
-        public string Context { get; set; }
-        public object[] Parameters { get; }
+        public Stack<string> Context { get; set; }
 
-        public LogEvent(LogLevel level, string message, string context = null, params object[] parameters)
+        public LogEvent(LogLevel level, string message, params string[] context)
         {
             Level = level;
             Message = message;
-            Context = context;
+            Context = new Stack<string>(context);
             DateTime = DateTime.Now;
-            Parameters = parameters;
         }
     }
 }

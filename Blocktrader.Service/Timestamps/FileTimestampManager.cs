@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Utils;
 using Nexus.Logging;
 
-namespace Nexus.Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Timestamps
 {
     public class FileTimestampManager : ITimestampManager
     {

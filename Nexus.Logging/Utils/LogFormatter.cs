@@ -17,7 +17,7 @@ namespace Nexus.Logging.Utils
         private static string TagsToString(LogEvent logEvent)
         {
             var tags = logEvent.Context != null
-                ? new[] {logEvent.Level.ToString().ToUpper(), logEvent.Context}
+                ? new[] {logEvent.Level.ToString().ToUpper()}.Concat(logEvent.Context)
                 : new[] {logEvent.Level.ToString().ToUpper()};
 
             return string.Join(" ", tags.Select(t => $"[{t}]"));

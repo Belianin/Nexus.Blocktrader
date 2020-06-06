@@ -27,6 +27,11 @@ namespace Nexus.Blocktrader.Api
                     services.AddHostedService<FetchingWorker>())
                 .ConfigureLogging(config => {
                     config.ClearProviders();
+                })
+                .ConfigureServices(services => 
+                    services.AddHostedService<TradesFetchingWorker>())
+                .ConfigureLogging(config => {
+                    config.ClearProviders();
                 });
     }
 }

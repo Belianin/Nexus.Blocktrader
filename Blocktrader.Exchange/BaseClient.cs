@@ -8,7 +8,7 @@ using Nexus.Logging;
 
 namespace Nexus.Blocktrader.Exchange
 {
-    public abstract class BaseClient
+    public abstract class BaseClient : IDisposable
     {
         protected readonly ILog Log;
         private readonly HttpClient httpClient;
@@ -77,6 +77,12 @@ namespace Nexus.Blocktrader.Exchange
             {
                 return Result<string>.Fail($"Couldn't get response body: {e.Message}");
             }
+        }
+
+        public void Dispose()
+        {
+            Log?.Dispose();
+            httpClient?.Dispose();
         }
     }
 }

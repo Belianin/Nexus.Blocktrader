@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nexus.Logging.Utils;
 using Telegram.Bot;
 
@@ -51,7 +52,7 @@ namespace Nexus.Logging.Telegram
         private string FormatLogEvent(LogEvent logEvent)
         {
             return $"{FormatLogLevel(logEvent.Level)} " +
-                   $"{(logEvent.Context != null ? $"[{logEvent.Context}] " : string.Empty)}" +
+                   $"{(logEvent.Context.Count > 0 ? string.Join("", logEvent.Context.Select(c => $"[{c}] ")) : string.Empty)}" +
                    $"{logEvent.Message}"; 
         }
         
@@ -63,7 +64,7 @@ namespace Nexus.Logging.Telegram
             LogLevel.Error => $"⛔#error",
             LogLevel.Fatal => $"💀#fatal",
             LogLevel.Important => $"‼️#important",
-            _ => $"#wtf"
+            _ => "#wtf"
         };
     }
 }

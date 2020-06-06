@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Utils;
 
-namespace Nexus.Blocktrader.Service.Files
+namespace Nexus.Blocktrader.Service.Timestamps
 {
     public class BufferedTimestampManager : ITimestampManager
     {

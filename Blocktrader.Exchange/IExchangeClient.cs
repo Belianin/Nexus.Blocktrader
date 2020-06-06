@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Utils;
@@ -9,5 +10,7 @@ namespace Nexus.Blocktrader.Exchange
         Task<Result<OrderBook>> GetOrderBookAsync(Ticker ticker);
         
         Task<Result<float>> GetCurrentAveragePriceAsync(Ticker ticker);
+
+        Task<Result<Trade[]>> GetLastTradesAsync(Ticker ticker);
     }
 }

@@ -10,7 +10,7 @@ using System.Windows.Controls.Primitives;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Domain;
 using Nexus.Blocktrader.Service;
-using Nexus.Blocktrader.Service.Files;
+using Nexus.Blocktrader.Service.Timestamps;
 using Nexus.Blocktrader.Utils;
 using Nexus.Logging;
 using Nexus.Logging.Console;
