@@ -146,18 +146,18 @@ const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
 export default function VirtualizedOrdersTable(props) {
     return (
-        <Paper style={{ height: 400, width: 400 }}>
+        <Paper style={{ height: 400, width: 256 }}>
             <VirtualizedTable
                 rowCount={props.orders.length}
                 rowGetter={({ index }) => props.orders[index]}
                 columns={[
                     {
-                        width: 200,
+                        width: 128,
                         label: 'Цена',
                         dataKey: 'price',
                     },
                     {
-                        width: 200,
+                        width: 128,
                         label: 'Обьем',
                         dataKey: 'amount',
                     }

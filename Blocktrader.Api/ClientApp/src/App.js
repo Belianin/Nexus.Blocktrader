@@ -1,13 +1,18 @@
 import React from 'react';
 import logo from './logo.png';
 import './App.css';
-import {Button} from '@material-ui/core'
 import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
 import {Timestamp, TickerInfo, OrderBook, Order, timestampFromBytes} from './Models/Timestamp'
-import {TimestampsTable} from "./Components/TimestampsTable";
 import DatePicker from "./Components/DatePicker";
 import Container from "@material-ui/core/Container";
+import {ExchangeTable} from "./Components/ExchangeTable";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
@@ -27,22 +32,34 @@ class App extends React.Component {
     this.state = {
       years: {},
       selectedTimestamp: 0,
-      selectedDate: new Date()
+      selectedDate: new Date(),
     };
   }
 
-  getTimestamps(exchange, ticker, year, month, day, setSliderMax) {
-    console.log(setSliderMax);
-    fetch(`${backendUrl}timestamps/exchange/${exchange}/ticker/${ticker}/year/${year}/month/${month}/day/${day}?precision=2`)
+  getTimestamps(exchange, ticker, year, month, day) {
+    return fetch(`${backendUrl}timestamps/exchange/${exchange}/ticker/${ticker}/year/${year}/month/${month}/day/${day}?precision=2`)
         .then(response => {
           if (response.ok) {
             return response;
           }
 
-          throw Error(response.status.toString());})
+          this.setState((state) => {
+            let years = state.years;
+
+            if (!years[year])
+              years[year] = this.createYear();
+
+            const selectedMonth = years[year][month];
+            if (!selectedMonth[day])
+              selectedMonth[day] = {};
+            selectedMonth[day][exchange.toLowerCase()] = [];
+          });
+
+          throw Error(response.status.toString());
+        })
         .then(response => response.arrayBuffer())
         .then(result => {
-          this.setState((state) => {
+          return this.setState((state) => {
             let years = state.years;
 
             if (!years[year])
@@ -54,21 +71,26 @@ class App extends React.Component {
             selectedMonth[day][exchange.toLowerCase()] = timestampFromBytes(result);
 
             return {years: years};
-          }, () => {
-              this.setState({selectedTimestamp: setSliderMax ? this.getCurrentTimestamp("binance").length - 1 : 0})
-          })
+          }, () => 0)
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          console.log(error);
+
+          return error;
+        })
   }
 
   loadDay(setSliderMax) {
-    for (let exchange of exchanges) {
-      const year = this.state.selectedDate.getFullYear();
-      const month = this.state.selectedDate.getMonth() + 1;
-      const day = this.state.selectedDate.getDate();
+    const year = this.state.selectedDate.getFullYear();
+    const month = this.state.selectedDate.getMonth() + 1;
+    const day = this.state.selectedDate.getDate();
+    console.log(`Скачиваем данные за ${day}/${month}/${year}`)
 
-      this.getTimestamps(exchange, "BtcUsd", year, month, day, setSliderMax);
-    }
+    Promise.all(exchanges.map(e => this.getTimestamps(e, "BtcUsd", year, month, day))
+    ).then(() => {
+      console.log("Обновляем выбранный timestamp")
+      this.setState({selectedTimestamp: setSliderMax ? this.getSliderLength() - 1 : 0})
+    });
   }
 
   componentDidMount() {
@@ -76,7 +98,7 @@ class App extends React.Component {
   }
 
   nextDay() {
-    if (this.state.selectedTimestamp === this.getCurrentTimestamp("binance").length)
+    if (this.state.selectedTimestamp === this.getSliderLength())
       this.setState((state) => {
         return {selectedDate: addDays(state.selectedDate, 1)}
       }, this.loadDay);
@@ -111,25 +133,34 @@ class App extends React.Component {
     };
   }
 
-  getCurrentTimestamp(exchange) {
+  getTimestampsFor(exchange) {
     if (!this.state.selectedDate || !this.state.years[this.state.selectedDate.getFullYear()])
-      return [];
+      return undefined;
 
     const day = this.state.years[this.state.selectedDate.getFullYear()][this.state.selectedDate.getMonth() + 1][this.state.selectedDate.getDate()];
     if (!day)
-      return [];
+      return undefined;
 
     const timestamps = day[exchange];
     if (!timestamps)
-      return [];
+      return undefined;
 
     return timestamps.map(t =>
         new Timestamp(t.date,
             new TickerInfo(
                 new OrderBook(t.tickerInfo.orderBook.bids.map(b =>
-                    new Order(b.price, Number(b.amount.toFixed(0)))),
+                        new Order(b.price, Number(b.amount.toFixed(0)))),
                     t.tickerInfo.orderBook.asks.map(a =>
                         new Order(a.price, Number(a.amount.toFixed(0))))))))
+  }
+
+  getCurrentTimestamp(exchange) {
+    const timestamps = this.getTimestampsFor(exchange)
+
+    if (!timestamps)
+      return undefined;
+
+    return timestamps[this.state.selectedTimestamp]
   }
 
   onDateChanged(newDate) {
@@ -139,37 +170,142 @@ class App extends React.Component {
     }, this.loadDay);
   }
 
+  getSliderLength() {
+    const timestamps = this.getTimestampsFor("binance");
+
+    if (!timestamps)
+      return 0;
+
+    return timestamps.length;
+  }
+
+  renderControlPanel() {
+    return (
+        <Container style={{width: 320, display: 'inline-block'}}>
+          <Grid container direction={"column"}>
+              <Grid item style={{width: 'auto'}}>
+                <Container>
+                  <Typography id="range-slider" gutterBottom>
+                  Пресижн
+                  </Typography>
+                </Container>
+                <Slider
+                    style={{width: 256}}
+                    step={1}
+                    min={-1}
+                    marks
+                    max={3}
+                    value={1}
+                    valueLabelDisplay="auto"/>
+              </Grid>
+              <Grid item>
+                <FormControl>
+                  <InputLabel id="demo-simple-select-label">Тикер</InputLabel>
+                  <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={10}
+                      onChange={console.log}
+                  >
+                    <MenuItem value={10}>BtcUsd</MenuItem>
+                    <MenuItem value={20}>EthBtc</MenuItem>
+                    <MenuItem value={30}>BtcXrp</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            <Grid item>
+              <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={this.state.selectedDate}/>
+            </Grid>
+          </Grid>
+        </Container>
+    )
+  }
+
+  renderHeader() {
+    return (
+        <header>
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+          <img src={logo} style={{height: 128, width: "auto"}} alt="logo"/>
+        </header>)
+  }
+
+  renderBlockTrades() {
+    return (
+        <Container justify={"center"} style={{width: 256, height: 'auto'}}>
+          <Paper style={{width: 256, height: 640}}>
+            <Typography gutterBottom>
+              Blocktrades
+            </Typography>
+          </Paper>
+        </Container>
+    )
+  }
+
+  renderExchange(exchange) {
+    const timestamp = this.getCurrentTimestamp(exchange);
+
+    return <ExchangeTable
+        title={exchange}
+        loading={timestamp === undefined}
+        bids={timestamp === undefined ? [] : timestamp.tickerInfo.orderBook.bids}
+        asks={timestamp === undefined ? [] : timestamp.tickerInfo.orderBook.asks}
+        width={256}
+    />
+  }
+
+  getTimestampDate() {
+    const timestamp = this.getCurrentTimestamp('binance')
+    if (timestamp)
+      return timestamp.date.toLocaleString('ru-RU')
+
+    return "Нет времени на раскачку";
+  }
+
+  renderTable() {
+    return (
+        <Container style={{width: 256 * 3, display: 'inline-block'}}>
+          <Grid container direction={'column'}>
+            <Grid item>
+              <Container justify={'center'}>
+                <Typography>
+                  {this.getTimestampDate()}
+                </Typography>
+                <Slider
+                    step={1}
+                    min={-1}
+                    marks
+                    max={this.getSliderLength()}
+                    value={this.state.selectedTimestamp}
+                    valueLabelDisplay="auto"
+                    onChange={(e, v) => this.onSliderChange(v)}
+                    aria-labelledby="discrete-slider-small-steps" />
+              </Container>
+            </Grid>
+            <Grid item>
+                <Grid container direction={'row'}>
+                  <Grid item xs={4}>
+                    {this.renderExchange('binance')}
+                  </Grid>
+                  <Grid item xs={4}>
+                    {this.renderExchange('bitfinex')}
+                  </Grid>
+                  <Grid item xs={4}>
+                    {this.renderExchange('bitstamp')}
+                  </Grid>
+                </Grid>
+            </Grid>
+          </Grid>
+        </Container>
+    )
+  }
+
   render() {
     return (
-        <div>
-          <header>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-            <img src={logo} style={{height: 128, width: "auto"}} alt="logo"/>
-            <Container jusity={"center"} style={{display: 'inline'}}>
-              <DatePicker onChange={(e) => this.onDateChanged(e)} defaultValue={this.state.selectedDate}/>
-            </Container>
-          </header>
-          <div>
-            <Container jusity={"center"}>
-              <Slider
-                style={{width: '90%'}}
-                step={1}
-                min={-1}
-                marks
-                max={this.getCurrentTimestamp("binance").length}
-                value={this.state.selectedTimestamp}
-                valueLabelDisplay="auto"
-                onChange={(e, v) => this.onSliderChange(v)}
-                aria-labelledby="discrete-slider-small-steps" />
-            </Container>
-            <TimestampsTable
-                pointer={this.state.selectedTimestamp}
-                bitfinex={this.getCurrentTimestamp("bitfinex")}
-                bitstamp={this.getCurrentTimestamp("bitstamp")}
-                binance={this.getCurrentTimestamp("binance")}
-            />
-          </div>
-        </div>
+        <>
+          {this.renderHeader()}
+          {this.renderControlPanel()}
+          {this.renderTable()}
+        </>
     );
   }
 }

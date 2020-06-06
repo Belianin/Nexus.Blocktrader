@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {OrdersTable} from "./OrdersTable";
 import Container from "@material-ui/core/Container";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import VirtualizedOrdersTable from "./VirtualizedOrdersTable";
 
 const exchanges = ["binance", "bitfinex", "bitstamp"];
@@ -13,35 +14,40 @@ const exchanges = ["binance", "bitfinex", "bitstamp"];
 export class TimestampsTable extends React.Component {
 
     renderAsks(exchange) {
+        if (exchange === undefined)
+            return <Paper style={{ height: 400, width: 400 }}><CircularProgress /></Paper>;
         return (
             <div>
-                <Grid key={exchange + 1} item>
-                    <h1>{exchange.toUpperCase()}</h1>
+                <Grid key={exchange.title + 1} item>
+                    <h1>{exchange.title}</h1>
                 </Grid>
-                {this.renderOrders(exchange, "asks")}
+                {this.renderOrders(exchange.orders, "asks")}
             </div>
         )
     }
 
     renderOrders(exchange, ordersType) {
-        const data = this.props[exchange];
+        if (exchange === undefined)
+            return <Paper style={{ height: 400, width: 400 }}><CircularProgress /></Paper>;
+
+        const data = exchange.orders;
         if (!data)
-            return <Paper style={{ height: 400, width: 400 }}><h4>Нет биржи</h4></Paper>;
+            return <Paper style={{ height: 400, width: 400 }}><CircularProgress /><h4>Нет биржи</h4></Paper>;
 
         const day = data[this.props.pointer];
         if (!day)
-            return <Paper style={{ height: 400, width: 400 }}><h4>Нет дня</h4></Paper>;
+            return <Paper style={{ height: 400, width: 400 }}><CircularProgress /><h4>Нет дня</h4></Paper>;
 
         const tickerInfo = day.tickerInfo;
         if (!tickerInfo)
-            return <Paper style={{ height: 400, width: 400 }}><h4>Нет тикер инфо</h4></Paper>;
+            return <Paper style={{ height: 400, width: 400 }}><CircularProgress /><h4>Нет тикер инфо</h4></Paper>;
 
         const orderBook = tickerInfo.orderBook;
         if (!orderBook)
-            return <Paper style={{ height: 400, width: 400 }}><h4>Нет ордер бука</h4></Paper>;
+            return <Paper style={{ height: 400, width: 400 }}><CircularProgress /><h4>Нет ордер бука</h4></Paper>;
 
         return (
-            <Grid key={exchange} item>
+            <Grid key={exchange.title} item>
                 <VirtualizedOrdersTable orders={orderBook[ordersType]}/>
             </Grid>
         )
@@ -56,7 +62,7 @@ export class TimestampsTable extends React.Component {
 
         return (
             <Container jusity={"center"} style={{textAlign: 'center'}}>
-                <Typography variant="h2"component="div">
+                <Typography variant="h2" component="div">
                     {date}
                 </Typography>
                     <Typography variant="h4" id="tableTitle" component="div">
@@ -64,12 +70,12 @@ export class TimestampsTable extends React.Component {
                     </Typography>
                     <Grid item xs={12}>
                         <Grid container spacing={12}>
-                            {exchanges.map(e => this.renderAsks(e))}
+                            {this.props.exchanges.map(e => this.renderAsks(e))}
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container spacing={12}>
-                            {exchanges.map(e => this.renderOrders(e, "bids"))}
+                            {this.props.exchanges.map(e => this.renderOrders(e, "bids"))}
                         </Grid>
                     </Grid>
                 <Typography variant="h4" id="tableTitle" component="div">
@@ -82,7 +88,5 @@ export class TimestampsTable extends React.Component {
 
 TimestampsTable.propTypes = {
     pointer: PropTypes.number,
-    binance: PropTypes.arrayOf(Timestamp),
-    bitfinex: PropTypes.arrayOf(Timestamp),
-    bitstamp: PropTypes.arrayOf(Timestamp)
+    exchanges: PropTypes.arrayOf(PropTypes.object)
 };
