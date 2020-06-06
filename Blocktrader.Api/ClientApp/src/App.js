@@ -15,6 +15,8 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import GlobalLoader from "./Components/GlobalLoader";
+import Header from "./Components/Header";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
@@ -236,14 +238,6 @@ class App extends React.Component {
     )
   }
 
-  renderHeader() {
-    return (
-        <header>
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-          <img src={logo} style={{height: 128, width: "auto"}} alt="logo"/>
-        </header>)
-  }
-
   renderBlockTrades() {
     return (
         <Container justify={"center"} style={{width: 256, height: 'auto'}}>
@@ -315,23 +309,13 @@ class App extends React.Component {
     )
   }
 
-  renderLoader() {
-    return (
-        <div>
-          <div style={{backgroundColor: "rgba(0, 0, 0, 0.1)", width: '100%', height: '100%', position: "fixed", top: 0, left: 0}}>
-          </div>
-            <LinearProgress style={{position: 'fixed', width: '80%', marginLeft: '10%', bottom: '10%'}} variant={'query'}/>
-        </div>
-    )
-  }
-
   render() {
     return (
         <>
-          {this.renderHeader()}
+          <Header/>
           {this.renderControlPanel()}
           {this.renderTable()}
-          {this.state.isLoading && this.renderLoader()}
+          {this.state.isLoading && <GlobalLoader/>}
         </>
     );
   }
