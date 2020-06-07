@@ -7,6 +7,7 @@ using Nexus.Blocktrader.Exchange;
 using Nexus.Blocktrader.Exchange.Binance;
 using Nexus.Blocktrader.Exchange.Bitfinex;
 using Nexus.Blocktrader.Exchange.Bitstamp;
+using Nexus.Blocktrader.Service.Trades;
 using Nexus.Logging;
 
 namespace Nexus.Blocktrader.Service
@@ -43,6 +44,26 @@ namespace Nexus.Blocktrader.Service
                     [ExchangeTitle.Bitstamp] = bitstampTask.Result,
                 },
                 DateTime = DateTime.Now
+            };
+
+            return result;
+        }
+
+        public async Task<Dictionary<ExchangeTitle, Trade[]>> GetCurrentTradeListsAsync()
+        {
+            var binanceTask = Task.Run(async () => await binance.GetLastTradesAsync(Ticker.BtcUsd));
+            var bitfinexTask = Task.Run(async () => await bitfinex.GetLastTradesAsync(Ticker.BtcUsd));
+            var bitstampTask = Task.Run(async () => await bitstamp.GetLastTradesAsync(Ticker.BtcUsd));
+
+            var tasks = new[] {binanceTask, bitfinexTask, bitstampTask };
+            Task.WaitAll(tasks); // or WhenAll ?
+
+
+            var result = new Dictionary<ExchangeTitle, Trade[]>
+            {
+                [ExchangeTitle.Binance] = binanceTask.Result.IsSuccess ? binanceTask.Result.Value : new Trade[0],
+                [ExchangeTitle.Bitfinex] = bitfinexTask.Result.IsSuccess ? bitfinexTask.Result.Value : new Trade[0],
+                [ExchangeTitle.Bitstamp] = bitstampTask.Result.IsSuccess ? bitstampTask.Result.Value : new Trade[0],
             };
 
             return result;

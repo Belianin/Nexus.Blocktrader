@@ -61,7 +61,7 @@ namespace Nexus.Blocktrader.Exchange.Binance
         {
             var symbol = symbols[ticker];
 
-            var result = await GetAsync<TradeResponse[]>($"{BaseUrl}/trades?symbol={symbol}&limit={1000}")
+            var result = await GetAsync<TradeResponse[]>($"{BaseUrl}trades?symbol={symbol}&limit={1000}")
                 .ConfigureAwait(false);
 
             if (result.IsFail)

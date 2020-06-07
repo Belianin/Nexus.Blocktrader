@@ -56,7 +56,7 @@ namespace Nexus.Blocktrader.Exchange.Bitstamp
         {
             var symbol = symbols[ticker];
 
-            var result = await GetAsync<TradeResponse[]>($"{BaseUrl}/transactions/{symbol}")
+            var result = await GetAsync<TradeResponse[]>($"{BaseUrl}transactions/{symbol}")
                 .ConfigureAwait(false);
 
             if (result.IsFail)
@@ -73,7 +73,7 @@ namespace Nexus.Blocktrader.Exchange.Bitstamp
                 response.Amount,
                 response.Type == 1,
                 new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                    .AddMilliseconds(response.Date));
+                    .AddSeconds(response.Date));
         }
 
         private static OrderBook ParseOrderBook(OrderBookResponse response)

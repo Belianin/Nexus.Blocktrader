@@ -17,5 +17,11 @@ namespace Nexus.Blocktrader.Utils
                 return false;
             }
         }
+
+        public static long ToUnixTime(this DateTime dateTime)
+        { 
+            var unixTimestamp = (long) dateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds; 
+            return unixTimestamp * 1000;
+        }
     }
 }

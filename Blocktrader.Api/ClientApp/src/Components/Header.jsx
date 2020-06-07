@@ -3,7 +3,7 @@ import logo from "../logo.png";
 
 export default function Header() {
     return (
-        <header>
+        <header style={{width: '100%'}}>
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
             <img src={logo} style={{height: 128, width: "auto"}} alt="logo"/>
         </header>

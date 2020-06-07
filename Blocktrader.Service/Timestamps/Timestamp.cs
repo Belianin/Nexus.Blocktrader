@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils;
 
 namespace Nexus.Blocktrader.Service.Timestamps
 {
@@ -31,10 +32,7 @@ namespace Nexus.Blocktrader.Service.Timestamps
         
         public byte[] ToBytes2()
         {
-            var unixTimestamp = (long)(Date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            unixTimestamp = unixTimestamp * 1000;
-            
-            return BitConverter.GetBytes(unixTimestamp)
+            return BitConverter.GetBytes(Date.ToUnixTime())
                 .Concat(BitConverter.GetBytes(TickerInfo.AveragePrice))
                 .Concat(BitConverter.GetBytes(TickerInfo.OrderBook.Bids.Length))
                 .Concat(TickerInfo.OrderBook.Bids.SelectMany(b => b.ToBytes()))

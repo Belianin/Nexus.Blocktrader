@@ -35,9 +35,9 @@ namespace Nexus.Blocktrader.Service.Trades
         }
 
         [Obsolete("ToDo period")]
-        public async Task<Result<Trade[]>> ReadAsync(ExchangeTitle exchange, Ticker ticker, DateTime @from, TimeSpan period)
+        public async Task<Result<Trade[]>> ReadForDayAsync(ExchangeTitle exchange, Ticker ticker, DateTime day)
         {
-            var filename = GetFilename(@from, exchange, ticker);
+            var filename = GetFilename(day, exchange, ticker);
             log.Debug($"Reading trades for month from \"{filename}\"");
             if (!File.Exists(filename))
             {
@@ -48,7 +48,7 @@ namespace Nexus.Blocktrader.Service.Trades
             var file = await File.ReadAllBytesAsync(filename).ConfigureAwait(false);
 
             log.Debug($"Read a file with length {file.Length}");
-            return Trade.FromBytes(file).ToArray();
+            return Trade.FromBytes(file).Where(t => t.Time.Day == day.Day).ToArray();
         }
         
         private FileStream GetWriter(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)

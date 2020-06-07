@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Api.DI;
 using Nexus.Blocktrader.Service.Timestamps;
+using Nexus.Blocktrader.Service.Trades;
 using Nexus.Logging;
 using Nexus.Logging.Console;
 using Nexus.Logging.File;
@@ -37,6 +38,8 @@ namespace Nexus.Blocktrader.Api
 
             services.AddSingleton<ITimestampManager>(sp => 
                 new BufferedTimestampManager(new FileTimestampManager(sp.GetRequiredService<ILog>())));
+            services.AddSingleton<ITradesManager>(sp =>
+                new FileTradesManager(sp.GetRequiredService<ILog>()));
         }
 
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, IWebHostEnvironment env, ILog log)

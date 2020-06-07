@@ -11,18 +11,10 @@ using Nexus.Logging;
 
 namespace Blocktrader.Worker
 {
-    public class TradesFetchingWorker : BackgroundService
+    public class TradesFetchingWorker : StatefulWorker<TradesFetcherState>
     {
         private readonly ILog log;
         private readonly AlignedScheduler scheduler;
-        private readonly Dictionary<ExchangeTitle, int> lastIds = new Dictionary<ExchangeTitle, int>
-        {
-            [ExchangeTitle.Binance] = 0,
-            [ExchangeTitle.Bitfinex] = 0,
-            [ExchangeTitle.Bitstamp] = 0
-        };
-
-        private readonly int minimumAmount = 10;
 
         public TradesFetchingWorker(ILog log)
         {
@@ -47,27 +39,27 @@ namespace Blocktrader.Worker
 
             log.Info("TradesFetcher initializated");
         }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        
+        protected override async Task RunAsync(CancellationToken token)
         {
-            await scheduler.RunAsync(stoppingToken).ConfigureAwait(false);
+            await scheduler.RunAsync(token).ConfigureAwait(false);
         }
 
         private Trade[] FilterTrades(ExchangeTitle exchange, Trade[] trades)
         {
             var log = this.log.ForContext(exchange.ToString());
             
-            var newTrades = trades.Where(t => t.Id > lastIds[exchange]).ToArray();
-            log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastIds[exchange]})");
+            var newTrades = trades.Where(t => t.Id > State.LastIds[exchange][Ticker.BtcUsd]).ToArray();
+            log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {State.LastIds[exchange][Ticker.BtcUsd]})");
             
-            var result = newTrades.Where(t => t.Amount > minimumAmount).ToArray();
-            log.Debug($"Got {result.Length}/{newTrades.Length} with amount bigger than {minimumAmount}");
+            var result = newTrades.Where(t => t.Amount > State.MinimumAmount).ToArray();
+            log.Debug($"Got {result.Length}/{newTrades.Length} with amount bigger than {State.MinimumAmount}");
 
             if (newTrades.Length > 0)
             {
                 var maxId = newTrades.Max(t => t.Id);
                 log.Debug($"New last id is {maxId}");
-                lastIds[exchange] = maxId;
+                State.LastIds[exchange][Ticker.BtcUsd] = maxId;
             }
 
             return result;

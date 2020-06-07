@@ -39,7 +39,6 @@ namespace Nexus.Blocktrader.Api.Controllers
                 log.Warn($"Invalid date {year}/{month}/{day}");
                 return BadRequest($"Invalid date {year}/{month}/{day}");
             }
-                
 
             var timestamp = timestampManager.ReadTimestampForDay(selectedDate, exchange, ticker);
 

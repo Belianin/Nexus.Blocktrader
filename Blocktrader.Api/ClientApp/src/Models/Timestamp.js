@@ -27,7 +27,7 @@ export class Order {
 }
 
 
-function addHours(date, hours) {
+export function addHours(date, hours) {
     const copy = new Date(Number(date));
     copy.setTime(date.getTime() + (hours * 60 * 60 * 1000));
     return copy;

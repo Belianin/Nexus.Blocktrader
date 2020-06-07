@@ -17,6 +17,7 @@ import CircularProgress from "@material-ui/core/CircularProgress/CircularProgres
 import LinearProgress from "@material-ui/core/LinearProgress";
 import GlobalLoader from "./Components/GlobalLoader";
 import Header from "./Components/Header";
+import {BlocktradesTable} from "./Components/BlocktradesTable";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
@@ -33,13 +34,46 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.sliderFocus = React.createRef();
     this.state = {
       years: {},
       selectedTimestamp: 0,
       selectedDate: new Date(),
-      isLoading: false
+      isLoading: false,
+      trades: {},
+      isLoadingTrades: false
     };
+  }
+
+  getBlocktrades(exchange, ticker, year, month, day) {
+    return fetch(`${backendUrl}trades/exchange/${exchange}/ticker/${ticker}/year/${year}/month/${month}/day/${day}`)
+        .then(response => {
+          if (response.ok) {
+            return response
+          }
+
+          throw Error(response.status.toString())
+        })
+        .then(r => r.json())
+        .then(t => {
+          return this.setState((state) => {
+            let trades = state.trades;
+
+            if (!trades[year])
+              trades[year] = this.createYear();
+
+            const selectedMonth = trades[year][month];
+            if (!selectedMonth[day])
+              selectedMonth[day] = {};
+            selectedMonth[day][exchange.toLowerCase()] = t;
+
+            return {trades: trades};
+          }, () => 0)
+        })
+        .catch(error => {
+          console.log(error);
+
+          return error;
+        })
   }
 
   getTimestamps(exchange, ticker, year, month, day) {
@@ -48,18 +82,6 @@ class App extends React.Component {
           if (response.ok) {
             return response;
           }
-
-          this.setState((state) => {
-            let years = state.years;
-
-            if (!years[year])
-              years[year] = this.createYear();
-
-            const selectedMonth = years[year][month];
-            if (!selectedMonth[day])
-              selectedMonth[day] = {};
-            selectedMonth[day][exchange.toLowerCase()] = [];
-          });
 
           throw Error(response.status.toString());
         })
@@ -92,19 +114,26 @@ class App extends React.Component {
     const day = this.state.selectedDate.getDate();
     console.log(`Скачиваем данные за ${day}/${month}/${year}`)
 
-    this.setState(state => {return {isLoading: true}}, () => {
-      Promise.all(exchanges.map(e => this.getTimestamps(e, "BtcUsd", year, month, day))
-      ).then(() => {
+    this.setState({isLoading: true}, () => {
+      Promise.all(exchanges.map(e => this.getTimestamps(e, "BtcUsd", year, month, day)))
+          .then(() => {
         console.log("Обновляем выбранный timestamp")
         this.setState({
           selectedTimestamp: setSliderMax ? this.getSliderLength() - 1 : 0,
           isLoading: false})
       });
     });
+
+    this.setState({isLoadingTrades: true}, () => {
+      Promise.all(exchanges.map(e => this.getBlocktrades(e, "BtcUsd", year, month, day)))
+          .then(() => {
+            this.setState({isLoadingTrades: false})
+          })
+    })
   }
 
   componentDidMount() {
-    this.loadDay()
+    this.loadDay();
   }
 
   nextDay() {
@@ -144,6 +173,17 @@ class App extends React.Component {
       11: {},
       12: {}
     };
+  }
+
+  getTradesFor(exchange) {
+    if (!this.state.selectedDate || !this.state.trades[this.state.selectedDate.getFullYear()])
+      return undefined;
+
+    const day = this.state.trades[this.state.selectedDate.getFullYear()][this.state.selectedDate.getMonth() + 1][this.state.selectedDate.getDate()];
+    if (!day)
+      return undefined;
+
+    return day[exchange];
   }
 
   getTimestampsFor(exchange) {
@@ -239,15 +279,10 @@ class App extends React.Component {
   }
 
   renderBlockTrades() {
-    return (
-        <Container justify={"center"} style={{width: 256, height: 'auto'}}>
-          <Paper style={{width: 256, height: 640}}>
-            <Typography gutterBottom>
-              Blocktrades
-            </Typography>
-          </Paper>
-        </Container>
-    )
+    const exchanges = ['binance', 'bitfinex', 'bitstamp']
+        .map(e => {return {title: e, trades: this.getTradesFor(e)}})
+
+    return <BlocktradesTable exchanges={exchanges} isLoading={this.state.isLoadingTrades}/>
   }
 
   renderExchange(exchange) {
@@ -313,8 +348,17 @@ class App extends React.Component {
     return (
         <>
           <Header/>
-          {this.renderControlPanel()}
-          {this.renderTable()}
+          <Grid container>
+            <Grid item>
+              {this.renderControlPanel()}
+            </Grid>
+            <Grid item>
+              {this.renderTable()}
+            </Grid>
+            <Grid item>
+              {this.renderBlockTrades()}
+            </Grid>
+          </Grid>
           {this.state.isLoading && <GlobalLoader/>}
         </>
     );
