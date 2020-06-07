@@ -7,13 +7,15 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Blocktrader.Domain;
-using Blocktrader.Service;
-using Blocktrader.Service.Files;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Service;
+using Nexus.Blocktrader.Service.Timestamps;
+using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
+using Nexus.Logging.Console;
 
-namespace Blocktrader
+namespace Nexus.Blocktrader
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -29,7 +31,7 @@ namespace Blocktrader
         private Ticker currentTicker = Ticker.BtcUsd;
         private DateTime selectedDate = DateTime.Now;
         private int selectedTick = 0;
-        private MonthTimestamp selectedTimestamp;
+        private OldMonthTimestamp selectedTimestamp;
         private int precision = -1;
         
         private bool isUpdating = false;
@@ -39,7 +41,8 @@ namespace Blocktrader
         public MainWindow()
         {
             InitializeComponent();
-            var log = new ColorConsoleLog();
+            
+            var log = new ColourConsoleLog();
             service = new BlocktraderService(log);
             timestampManager = new FileTimestampManager(log);
 
@@ -109,7 +112,7 @@ namespace Blocktrader
 
             if (needToCache && (selectedDate.Month == DateTime.Now.Month || selectedTimestamp == null))
             {
-                selectedTimestamp = timestampManager.ReadTimestampsFromMonth(selectedDate, currentTicker);
+                selectedTimestamp = timestampManager.ReadTimestampsFromMonthOld(selectedDate, currentTicker);
                 needToCache = false;
             }
             

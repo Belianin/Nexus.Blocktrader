@@ -1,13 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange.Binance.Models;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange.Binance.Models;
+using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
-namespace Blocktrader.Exchange.Binance
+namespace Nexus.Blocktrader.Exchange.Binance
 {
     public class BinanceClient : BaseClient, IExchangeClient
     {
@@ -53,6 +55,30 @@ namespace Blocktrader.Exchange.Binance
                 return $"Couldn't parse average price";
 
             return price;
+        }
+
+        public async Task<Result<Trade[]>> GetLastTradesAsync(Ticker ticker)
+        {
+            var symbol = symbols[ticker];
+
+            var result = await GetAsync<TradeResponse[]>($"{BaseUrl}trades?symbol={symbol}&limit={1000}")
+                .ConfigureAwait(false);
+
+            if (result.IsFail)
+                return $"Couldn't get trades list: {result.Error}";
+
+            return result.Value.Select(ParseTrade).ToArray();
+        }
+
+        private static Trade ParseTrade(TradeResponse response)
+        {
+            return new Trade(
+                response.Id,
+                response.Price,
+                float.Parse(response.Qty, CultureInfo.InvariantCulture),
+                !response.IsBuyerMaker,
+                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(response.Time));
         }
 
         private static OrderBook ParseOrderBook(OrderBookResponse response)

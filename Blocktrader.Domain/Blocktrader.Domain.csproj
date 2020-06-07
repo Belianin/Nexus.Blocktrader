@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>Nexus.Blocktrader.Domain</AssemblyName>
+        <RootNamespace>Nexus.Blocktrader.Domain</RootNamespace>
     </PropertyGroup>
 
 </Project>

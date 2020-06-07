@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange;
 
-namespace Blocktrader.Service
+namespace Nexus.Blocktrader.Service
 {
     public static class ExchangeClientExtensions
     {

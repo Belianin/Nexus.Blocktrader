@@ -2,12 +2,13 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
-namespace Blocktrader.Exchange
+namespace Nexus.Blocktrader.Exchange
 {
-    public abstract class BaseClient
+    public abstract class BaseClient : IDisposable
     {
         protected readonly ILog Log;
         private readonly HttpClient httpClient;
@@ -29,8 +30,14 @@ namespace Blocktrader.Exchange
             // Да и не всегда неуспешный ответ означает отсутствия кода (400 например) 
             var content = await GetContentAsync(response).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode && content.IsSuccess) 
-                return content.Value.TryDeserialize<T>();
+            if (response.IsSuccessStatusCode && content.IsSuccess)
+            {
+                var deserializationResult = content.Value.TryDeserialize<T>();
+                if (deserializationResult.IsFail) 
+                    Log.Error($"Deserialization error: {deserializationResult.Error}");
+
+                return deserializationResult;
+            }
             
             // Для вывода в логи
             var contentMessage = content.IsSuccess ? content.Value : content.Error; 
@@ -51,7 +58,7 @@ namespace Blocktrader.Exchange
 
                 return response;
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
                 Log.Error($"Failed to get response from {uri}: {e.Message}");
                 return e.Message;
@@ -70,6 +77,12 @@ namespace Blocktrader.Exchange
             {
                 return Result<string>.Fail($"Couldn't get response body: {e.Message}");
             }
+        }
+
+        public void Dispose()
+        {
+            Log?.Dispose();
+            httpClient?.Dispose();
         }
     }
 }

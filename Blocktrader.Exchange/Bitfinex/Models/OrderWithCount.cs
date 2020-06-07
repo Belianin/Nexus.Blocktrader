@@ -1,7 +1,7 @@
 using System.Globalization;
-using Blocktrader.Domain;
+using Nexus.Blocktrader.Domain;
 
-namespace Blocktrader.Exchange.Bitfinex.Models
+namespace Nexus.Blocktrader.Exchange.Bitfinex.Models
 {
     internal class OrderWithCount : Order
     {

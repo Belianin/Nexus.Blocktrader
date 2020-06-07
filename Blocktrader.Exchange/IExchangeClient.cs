@@ -1,13 +1,16 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Utils;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Utils;
 
-namespace Blocktrader.Exchange
+namespace Nexus.Blocktrader.Exchange
 {
     public interface IExchangeClient
     {
         Task<Result<OrderBook>> GetOrderBookAsync(Ticker ticker);
         
         Task<Result<float>> GetCurrentAveragePriceAsync(Ticker ticker);
+
+        Task<Result<Trade[]>> GetLastTradesAsync(Ticker ticker);
     }
 }

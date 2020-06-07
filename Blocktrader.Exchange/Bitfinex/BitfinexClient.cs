@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange.Bitfinex.Models;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange.Bitfinex.Models;
+using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
-namespace Blocktrader.Exchange.Bitfinex
+namespace Nexus.Blocktrader.Exchange.Bitfinex
 {
     public class BitfinexClient : BaseClient, IExchangeClient
     {
@@ -65,6 +66,29 @@ namespace Blocktrader.Exchange.Bitfinex
                 return result.Error;
             
             return result.Value[6];
+        }
+
+        public async Task<Result<Trade[]>> GetLastTradesAsync(Ticker ticker)
+        {
+            var symbol = symbols[ticker];
+
+            var result = await GetAsync<float[][]>($"{BaseUrl}trades/{symbol}/hist?limit=1000")
+                .ConfigureAwait(false);
+
+            if (result.IsFail)
+                return result.Error;
+
+            return result.Value.Select(ParseTrade).ToArray();
+        }
+
+        private Trade ParseTrade(float[] numbers)
+        {
+            var isSale = numbers[2] > 0;
+            var amount = isSale ? numbers[2] : numbers[2] * -1;
+            
+            return new Trade((int) numbers[0], numbers[3], amount, isSale, 
+                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(numbers[1]));
         }
 
         private OrderBook ParseOrderBook(string[][] response)

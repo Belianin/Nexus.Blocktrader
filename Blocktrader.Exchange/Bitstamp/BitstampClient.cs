@@ -1,13 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Blocktrader.Domain;
-using Blocktrader.Exchange.Bitstamp.Models;
-using Blocktrader.Utils;
-using Blocktrader.Utils.Logging;
+using Microsoft.Extensions.Logging;
+using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Exchange.Bitstamp.Models;
+using Nexus.Blocktrader.Utils;
+using Nexus.Logging;
 
-namespace Blocktrader.Exchange.Bitstamp
+namespace Nexus.Blocktrader.Exchange.Bitstamp
 {
     public class BitstampClient : BaseClient, IExchangeClient
     {
@@ -48,6 +50,30 @@ namespace Blocktrader.Exchange.Bitstamp
             
             
             return float.Parse((string) result.Value["last"], CultureInfo.InvariantCulture);
+        }
+
+        public async Task<Result<Trade[]>> GetLastTradesAsync(Ticker ticker)
+        {
+            var symbol = symbols[ticker];
+
+            var result = await GetAsync<TradeResponse[]>($"{BaseUrl}transactions/{symbol}")
+                .ConfigureAwait(false);
+
+            if (result.IsFail)
+                return result.Error;
+
+            return result.Value.Select(ParseTrade).ToArray();
+        }
+
+        private Trade ParseTrade(TradeResponse response)
+        {
+            return new Trade(
+                response.Tid,
+                response.Price,
+                response.Amount,
+                response.Type == 1,
+                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddSeconds(response.Date));
         }
 
         private static OrderBook ParseOrderBook(OrderBookResponse response)

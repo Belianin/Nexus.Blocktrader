@@ -1,4 +1,4 @@
-namespace Blocktrader.Domain
+namespace Nexus.Blocktrader.Domain
 {
     public enum Ticker
     {

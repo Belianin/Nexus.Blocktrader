@@ -1,4 +1,4 @@
-namespace Blocktrader.Utils
+namespace Nexus.Blocktrader.Utils
 {
     public class Result<T>
     {
