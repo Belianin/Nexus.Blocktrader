@@ -21,7 +21,13 @@ export class BlocktradesTable extends React.Component {
             return <CircularProgress />
 
         const filtered = this.props.exchanges.filter(e => e.trades)
-            .flatMap(e => e.trades.map(t => {return {exchange: e.title, ...t}}));
+            .flatMap(e => e.trades.map(t => {return {
+                exchange: e.title,
+                amount: t.amount,
+                price: t.price,
+                isSale: t.isSale,
+                time: t.time}}))
+            .sort((a, b) => a.time - b.time);
 
         if (filtered.length === 0)
             return <p>Крупных сделок не было</p>
@@ -32,7 +38,7 @@ export class BlocktradesTable extends React.Component {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" size="small">Цена</TableCell>
-                            <TableCell align="right" size="small" >Колличество</TableCell>
+                            <TableCell align="right" size="small" >Количество</TableCell>
                             <TableCell align="right" size="small" >Время</TableCell>
                             <TableCell align="right" size="small" >Биржа</TableCell>
                         </TableRow>
@@ -40,9 +46,9 @@ export class BlocktradesTable extends React.Component {
                     <TableBody>
                         {filtered.map(t => (
                             <TableRow >
-                                <TableCell align="left" size="small" >{t.price}</TableCell>
-                                <TableCell align="right" size="small" style={{color: t.isSale ? '#DC143C' : '#228B22'}}><b>{t.amount}</b></TableCell>
-                                <TableCell align="right" size="small" >{addHours(new Date(t.time), -5).toLocaleTimeString('ru-RU')}</TableCell>
+                                <TableCell align="left" size="small" >{t.price.toFixed(0)}</TableCell>
+                                <TableCell align="right" size="small" style={{color: t.isSale ? '#DC143C' : '#228B22'}}><b title={t.amount}>{t.amount.toFixed(0)}</b></TableCell>
+                                <TableCell align="right" size="small" >{new Date(t.time).toLocaleTimeString('ru-RU')}</TableCell>
                                 <TableCell align="right" size="small" >{t.exchange.toUpperCase()}</TableCell>
                             </TableRow>))}
                     </TableBody>
