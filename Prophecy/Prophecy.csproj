@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Nexus.Prophecy</AssemblyName>
+        <RootNamespace>Nexus.Prophecy</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nexus.Core\Nexus.Core.csproj" />
+      <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />
+    </ItemGroup>
+
+
+</Project>

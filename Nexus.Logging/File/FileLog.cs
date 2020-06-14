@@ -10,17 +10,14 @@ namespace Nexus.Logging.File
 {
     public class FileLog : BaseLog
     {
-        private readonly string fileName;
         private readonly ConcurrentQueue<LogEvent> eventsQueue = new ConcurrentQueue<LogEvent>();
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         
-        public FileLog(string fileName = null)
+        public FileLog()
         {
-            this.fileName = fileName ?? GetFileName(DateTime.Now);
-
-            if (!System.IO.File.Exists(this.fileName))
-                System.IO.File.Create(this.fileName);
-
+            if (!Directory.Exists("Logs"))
+                Directory.CreateDirectory("Logs");
+            
             Task.Run(() => WriteLogsAsync(cts.Token), cts.Token);
         }
 
@@ -35,7 +32,7 @@ namespace Nexus.Logging.File
         }
         
         public static string GetFileName(DateTime dateTime) =>
-            $"log_{dateTime.ToString("yyyy-MM", CultureInfo.InvariantCulture)}.txt";
+            $"Logs/log_{dateTime.ToString("yyyy-MM", CultureInfo.InvariantCulture)}.txt";
 
         private async Task WriteLogsAsync(CancellationToken token)
         {
@@ -45,6 +42,11 @@ namespace Nexus.Logging.File
                     await Task.Delay(1000, token).ConfigureAwait(false);
                 else
                 {
+                    var fileName = GetFileName(DateTime.Now);
+
+                    if (!System.IO.File.Exists(fileName))
+                        System.IO.File.Create(fileName);
+                    
                     await using var writer = new StreamWriter(fileName, true);
                     {
                         while (eventsQueue.TryDequeue(out var logEvent))
