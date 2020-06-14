@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.png';
 import './App.css';
 import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
@@ -13,10 +12,9 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import GlobalLoader from "./Components/GlobalLoader";
 import Header from "./Components/Header";
+import TradingViewWidget from 'react-tradingview-widget'
 import {BlocktradesTable} from "./Components/BlocktradesTable";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
@@ -357,6 +355,15 @@ class App extends React.Component {
             </Grid>
             <Grid item>
               {this.renderBlockTrades()}
+            </Grid>
+            <Grid item>
+              <Paper style={{width: 256, height: 800}}>
+                <TradingViewWidget
+                    symbol={"BTCUSDT"}
+                    locale={"ru"}
+                    autosize
+                />
+              </Paper>
             </Grid>
           </Grid>
           {this.state.isLoading && <GlobalLoader/>}
