@@ -21,6 +21,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "move build ../bin/Release/netcoreapp3.1 && cd ../bin/Release/netcoreapp3.1 && (IF EXIST wwwroot rmdir /Q /S wwwroot) && rename build wwwroot",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
