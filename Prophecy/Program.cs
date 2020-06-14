@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Nexus.Prophecy
 {
@@ -12,6 +13,9 @@ namespace Nexus.Prophecy
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder => webBuilder
+                    .ConfigureLogging(config => { config.ClearProviders(); })
+                    .UseStartup<Startup>()
+                    .UseUrls("http://*:5080"));
     }
 }
