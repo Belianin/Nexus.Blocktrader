@@ -1,7 +1,7 @@
 
 using Nexus.Logging.Utils;
 
-namespace Nexus.Prophecy
+namespace Nexus.Prophecy.Logs
 {
     public class LogFilterParameters
     {

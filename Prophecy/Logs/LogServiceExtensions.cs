@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Nexus.Core;
 using Nexus.Logging.Utils;
 
-namespace Nexus.Prophecy
+namespace Nexus.Prophecy.Logs
 {
     public static class LogServiceExtensions
     {

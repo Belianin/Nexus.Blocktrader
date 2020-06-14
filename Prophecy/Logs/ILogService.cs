@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Nexus.Core;
 
-namespace Nexus.Prophecy
+namespace Nexus.Prophecy.Logs
 {
     public interface ILogService
     {

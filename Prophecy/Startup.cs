@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Nexus.Logging;
 using Nexus.Logging.Console;
+using Nexus.Prophecy.DI;
+using Nexus.Prophecy.Logs;
 
 namespace Nexus.Prophecy
 {
@@ -26,8 +28,14 @@ namespace Nexus.Prophecy
             
             services.AddSingleton<ILog, ColourConsoleLog>();
             services.AddSingleton<ILogService>(sp => new LogService(settings.Services));
+            services.AddNotificatorService();
             services.AddControllers();
-            services.AddMvc(o => o.EnableEndpointRouting = false);
+            
+            services.AddMvc(options => options.EnableEndpointRouting = false).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                options.JsonSerializerOptions.Converters.Add(new LogLevelJsonConverter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
