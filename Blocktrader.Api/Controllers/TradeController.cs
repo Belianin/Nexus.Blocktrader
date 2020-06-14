@@ -1,12 +1,10 @@
-using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nexus.Blocktrader.Api.Models.Responses;
-using Nexus.Blocktrader.Domain;
-using Nexus.Blocktrader.Service.Trades;
-using Nexus.Blocktrader.Utils;
+using Nexus.Blocktrader.Models;
+using Nexus.Blocktrader.Trades;
+using Nexus.Core;
 using Nexus.Logging;
 
 namespace Nexus.Blocktrader.Api.Controllers
@@ -21,12 +19,6 @@ namespace Nexus.Blocktrader.Api.Controllers
         {
             this.log = log;
             this.manager = manager;
-        }
-
-        [HttpGet()]
-        public async Task<IActionResult> Wtf()
-        {
-            return Ok("втф");
         }
 
         [HttpGet("exchange/{exchange}/ticker/{ticker}/year/{year}/month/{month}/day/{day}")]

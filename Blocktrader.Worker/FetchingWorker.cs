@@ -2,11 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Nexus.Blocktrader.Service;
-using Nexus.Blocktrader.Service.Timestamps;
+using Nexus.Blocktrader.Timestamps;
 using Nexus.Logging;
 
-namespace Blocktrader.Worker
+namespace Nexus.Blocktrader.Worker
 {
     public class FetchingWorker : BackgroundService
     {

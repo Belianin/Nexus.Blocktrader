@@ -1,17 +1,12 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Nexus.Blocktrader.Api.DI;
-using Nexus.Blocktrader.Service.Timestamps;
-using Nexus.Blocktrader.Service.Trades;
+using Nexus.Blocktrader.Timestamps;
+using Nexus.Blocktrader.Trades;
 using Nexus.Logging;
-using Nexus.Logging.Console;
-using Nexus.Logging.File;
-using Nexus.Logging.Telegram;
 
 namespace Nexus.Blocktrader.Api
 {
@@ -44,7 +39,7 @@ namespace Nexus.Blocktrader.Api
 
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, IWebHostEnvironment env, ILog log)
         {
-            log.Info("Starting Blocktrader.API");
+            log.Info("Starting Blocktrader.Explorer.API");
             lifetime.ApplicationStopping.Register(l => ((ILog) l)?.Dispose(), log);
             
             app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

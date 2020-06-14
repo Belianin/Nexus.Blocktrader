@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using Nexus.Blocktrader.Domain;
-using Nexus.Blocktrader.Service;
-using Nexus.Blocktrader.Service.Trades;
+using Nexus.Blocktrader.Models;
+using Nexus.Blocktrader.Trades;
 using Nexus.Logging;
 
-namespace Blocktrader.Worker
+namespace Nexus.Blocktrader.Worker
 {
     public class TradesFetchingWorker : StatefulWorker<TradesFetcherState>
     {

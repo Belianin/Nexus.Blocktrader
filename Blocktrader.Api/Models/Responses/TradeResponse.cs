@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
-using Nexus.Blocktrader.Domain;
-using Nexus.Blocktrader.Utils;
+using Nexus.Blocktrader.Models;
+using Nexus.Core;
 
 namespace Nexus.Blocktrader.Api.Models.Responses
 {

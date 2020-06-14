@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nexus.Logging;
 
-namespace Blocktrader.Worker
+namespace Nexus.Blocktrader.Worker
 {
     public class AlignedScheduler
     {

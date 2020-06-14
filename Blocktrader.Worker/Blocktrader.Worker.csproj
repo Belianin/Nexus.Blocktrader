@@ -4,10 +4,13 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <UserSecretsId>dotnet-Blocktrader.Worker-24159B00-DE06-427E-A8BA-41EF6B14A5E6</UserSecretsId>
         <OutputType>Library</OutputType>
+        <RootNamespace>Nexus.Blocktrader.Worker</RootNamespace>
+        <AssemblyName>Nexus.Blocktrader.Worker</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -15,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Blocktrader.Service\Blocktrader.Service.csproj" />
+      <ProjectReference Include="..\Blocktrader\Blocktrader.csproj" />
+      <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />
     </ItemGroup>
 </Project>
