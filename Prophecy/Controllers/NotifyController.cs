@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Nexus.Logging;
 using Nexus.Prophecy.Notifications;
 
 namespace Nexus.Prophecy.Controllers
@@ -7,17 +8,21 @@ namespace Nexus.Prophecy.Controllers
     public class NotifyController : Controller
     {
         private readonly INotificationService service;
+        private readonly ILog log;
 
-        public NotifyController(INotificationService service)
+        public NotifyController(INotificationService service, ILog log)
         {
             this.service = service;
+            this.log = log;
         }
 
         [HttpPost("notify")]
-        public IActionResult Error([FromBody] NotificationRequest request)
+        public IActionResult Notify([FromBody] NotificationRequest request)
         {
+            log.Info($"Received a request {Request.Path}");
             var notification = new Notification(request.LogLevel, request.Message);
             
+            log.Info("Notification sending");
             service.Notify(notification);
 
             return Ok();

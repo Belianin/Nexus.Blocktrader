@@ -15,7 +15,8 @@ namespace Nexus.Logging.Utils
 
         public static bool IsLogLevel(string log, LogLevel level) => log.Contains($"[{level.ToString().ToUpper()}]");
 
-        public static DateTime GetLogTime(string log) => DateTime.Parse(log.Split(" ")[0]);
+        public static DateTime GetLogTime(string log) => DateTime.ParseExact(
+            log.Substring(0, 23), "yyyy-MM-dd HH:mm:ss,fff", CultureInfo.InvariantCulture);
 
         private static string TagsToString(LogEvent logEvent)
         {

@@ -23,15 +23,17 @@ namespace Nexus.Logging.Prophecy
         {
             var request = new Request
             {
-                LogLevel = logEvent.Level,
+                LogLevel = logEvent.Level.ToString(),
                 Message = logEvent.Message
             };
             
             try
             {
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "text/json");
-                client.PostAsync($"{url}/api/v1/notify", content)
+                var result = client.PostAsync($"{url}/api/v1/notify", content)
                     .GetAwaiter().GetResult();
+                
+                outerLog.Info(result.StatusCode.ToString());
             }
             catch (Exception e)
             {
@@ -46,7 +48,7 @@ namespace Nexus.Logging.Prophecy
 
         private class Request
         {
-            public LogLevel LogLevel { get; set; }
+            public string LogLevel { get; set; }
             public string Message { get; set; }
         }
     }

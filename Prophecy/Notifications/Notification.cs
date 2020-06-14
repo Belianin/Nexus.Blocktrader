@@ -9,7 +9,7 @@ namespace Nexus.Prophecy.Notifications
 
         public string Message { get; }
         
-        public string[] Context { get; set; }
+        public string[] Context { get; set; } = new string[0];
 
         public Notification(LogLevel logLevel, string message)
         {

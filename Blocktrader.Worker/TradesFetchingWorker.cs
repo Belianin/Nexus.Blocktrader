@@ -32,7 +32,7 @@ namespace Nexus.Blocktrader.Worker
                 }
             }
             
-            scheduler = new AlignedScheduler(DownloadTradeListsAsync, TimeSpan.FromSeconds(30), this.log);
+            scheduler = new AlignedScheduler(DownloadTradeListsAsync, TimeSpan.FromSeconds(10), this.log);
 
             log.Info("TradesFetcher initializated");
         }
@@ -47,7 +47,11 @@ namespace Nexus.Blocktrader.Worker
             var log = this.log.ForContext(exchange.ToString());
             
             var newTrades = trades.Where(t => t.Id > State.LastIds[exchange][Ticker.BtcUsd]).ToArray();
-            log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {State.LastIds[exchange][Ticker.BtcUsd]})");
+            
+            if (newTrades.Length == trades.Length)
+                log.Warn($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {State.LastIds[exchange][Ticker.BtcUsd]})");
+            else
+                log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {State.LastIds[exchange][Ticker.BtcUsd]})");
             
             var result = newTrades.Where(t => t.Amount > State.MinimumAmount).ToArray();
             log.Debug($"Got {result.Length}/{newTrades.Length} with amount bigger than {State.MinimumAmount}");
