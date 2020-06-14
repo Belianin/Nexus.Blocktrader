@@ -1,5 +1,3 @@
-using System;
-
 namespace Nexus.Blocktrader.Exchanges.Bitstamp.Models
 {
     internal class OrderBookResponse

@@ -60,6 +60,9 @@ namespace Nexus.Blocktrader.Exchanges
             catch (Exception e)
             {
                 Log.Error($"Failed to get response from {uri}: {e.Message}");
+                if (e.InnerException != null)
+                    Log.Error($"Inner exception: {e.InnerException.Message}");
+                
                 return e.Message;
             }
         }

@@ -1,9 +1,10 @@
+using System;
 using System.Globalization;
 using System.Linq;
 
 namespace Nexus.Logging.Utils
 {
-    internal static class LogFormatter
+    public static class LogFormatter
     {
         public static string Format(LogEvent logEvent)
         {
@@ -11,6 +12,11 @@ namespace Nexus.Logging.Utils
                    $"{TagsToString(logEvent)} " +
                    $"{logEvent.Message}";
         }
+
+        public static bool IsLogLevel(string log, LogLevel level) => log.Contains($"[{level.ToString().ToUpper()}]");
+
+        public static DateTime GetLogTime(string log) => DateTime.ParseExact(
+            log.Substring(0, 23), "yyyy-MM-dd HH:mm:ss,fff", CultureInfo.InvariantCulture);
 
         private static string TagsToString(LogEvent logEvent)
         {

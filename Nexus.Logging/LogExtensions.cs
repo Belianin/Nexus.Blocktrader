@@ -26,7 +26,7 @@ namespace Nexus.Logging
         {
             log.SetEnabled(LogLevel.Debug, false);
             log.SetEnabled(LogLevel.Info, false);
-            log.SetEnabled(LogLevel.Warn, true);
+            log.SetEnabled(LogLevel.Warn, false);
             log.SetEnabled(LogLevel.Error, true);
             log.SetEnabled(LogLevel.Fatal, true);
             log.SetEnabled(LogLevel.Important, true);

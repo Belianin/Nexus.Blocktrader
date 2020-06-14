@@ -39,7 +39,7 @@ namespace Nexus.Blocktrader.Api
 
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, IWebHostEnvironment env, ILog log)
         {
-            log.Info("Starting Blocktrader.Explorer.API");
+            log.Info("Starting Blocktrader.API");
             lifetime.ApplicationStopping.Register(l => ((ILog) l)?.Dispose(), log);
             
             app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

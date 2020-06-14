@@ -26,6 +26,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Blocktrader.Worker\Blocktrader.Worker.csproj" />
+      <ProjectReference Include="..\Nexus.Logging.Prophecy\Nexus.Logging.Prophecy.csproj" />
       <ProjectReference Include="..\Nexus.Logging.Telegram\Nexus.Logging.Telegram.csproj" />
       <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />
     </ItemGroup>
