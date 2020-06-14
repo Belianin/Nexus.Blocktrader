@@ -9,7 +9,7 @@ using Nexus.Prophecy.Notifications.Telegram;
 
 namespace Nexus.Prophecy.DI
 {
-    public static class NotificatorDIExtensions
+    public static class NotificatorDiExtensions
     {
         public static IServiceCollection AddNotificatorService(this IServiceCollection services)
         {
