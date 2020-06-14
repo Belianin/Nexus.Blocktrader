@@ -357,7 +357,7 @@ class App extends React.Component {
               {this.renderBlockTrades()}
             </Grid>
             <Grid item>
-              <Paper style={{width: 256, height: 800}}>
+              <Paper style={{width: 256 * 3, height: 800}}>
                 <TradingViewWidget
                     symbol={"BTCUSDT"}
                     locale={"ru"}
