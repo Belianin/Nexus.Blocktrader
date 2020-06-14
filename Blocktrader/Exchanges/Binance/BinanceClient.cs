@@ -75,7 +75,7 @@ namespace Nexus.Blocktrader.Exchanges.Binance
                 response.Id,
                 response.Price,
                 float.Parse(response.Qty, CultureInfo.InvariantCulture),
-                !response.IsBuyerMaker,
+                response.IsBuyerMaker,
                 new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                     .AddMilliseconds(response.Time));
         }
