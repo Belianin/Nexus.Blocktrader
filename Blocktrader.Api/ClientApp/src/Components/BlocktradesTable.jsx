@@ -26,7 +26,7 @@ export class BlocktradesTable extends React.Component {
                 amount: t.amount,
                 price: t.price,
                 isSale: t.isSale,
-                time: t.time}}))
+                time: addHours(t.time, -5)}}))
             .sort((a, b) => a.time - b.time);
 
         if (filtered.length === 0)

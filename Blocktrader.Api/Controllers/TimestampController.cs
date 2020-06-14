@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Nexus.Blocktrader.Domain;
-using Nexus.Blocktrader.Service;
-using Nexus.Blocktrader.Service.Timestamps;
+using Nexus.Blocktrader.Models;
+using Nexus.Blocktrader.Timestamps;
+using Nexus.Core;
 using Nexus.Logging;
-using Nexus.Blocktrader.Utils;
 
 namespace Nexus.Blocktrader.Api.Controllers
 {
@@ -84,11 +82,7 @@ namespace Nexus.Blocktrader.Api.Controllers
                 }
                 else
                 {
-                    yield return new Order
-                    {
-                        Amount = currentAmount,
-                        Price = price
-                    };
+                    yield return new Order(price, currentAmount);
                     price = priceGetter(order);
                     currentAmount = order.Amount;
                 }

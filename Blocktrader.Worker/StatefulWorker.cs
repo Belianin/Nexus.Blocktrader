@@ -3,10 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using Nexus.Logging;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Blocktrader.Worker
+namespace Nexus.Blocktrader.Worker
 {
     public abstract class StatefulWorker<T> : BackgroundService where T : class
     {
@@ -39,9 +37,11 @@ namespace Blocktrader.Worker
             return JsonConvert.DeserializeObject<T>(text);
         }
 
-        public override async Task StopAsync(CancellationToken cancellationToken)
+        public override Task StopAsync(CancellationToken cancellationToken)
         {
             SaveState(State);
+
+            return Task.CompletedTask;
         }
 
         private void SaveState(T state)

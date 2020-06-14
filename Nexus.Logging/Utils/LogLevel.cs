@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Nexus.Logging.Utils
 {
     public enum LogLevel

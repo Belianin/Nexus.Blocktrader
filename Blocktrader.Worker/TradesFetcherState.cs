@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Nexus.Blocktrader.Domain;
+using Nexus.Blocktrader.Models;
 
-namespace Blocktrader.Worker
+namespace Nexus.Blocktrader.Worker
 {
     public class TradesFetcherState
     {
