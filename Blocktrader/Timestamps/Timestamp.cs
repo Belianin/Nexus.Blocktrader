@@ -32,7 +32,7 @@ namespace Nexus.Blocktrader.Timestamps
         
         public byte[] ToBytes2()
         {
-            return BitConverter.GetBytes(Date.ToUnixTime())
+            return BitConverter.GetBytes(Date.ToUnixTimeMilliseconds())
                 .Concat(BitConverter.GetBytes(TickerInfo.AveragePrice))
                 .Concat(BitConverter.GetBytes(TickerInfo.OrderBook.Bids.Length))
                 .Concat(TickerInfo.OrderBook.Bids.SelectMany(b => b.ToBytes()))

@@ -71,8 +71,7 @@ namespace Nexus.Blocktrader.Exchanges.Bitstamp
                 response.Price,
                 response.Amount,
                 response.Type == 1,
-                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                    .AddSeconds(response.Date));
+                response.Date.ToDateTimeFromSeconds());
         }
 
         private static OrderBook ParseOrderBook(OrderBookResponse response)
@@ -85,11 +84,9 @@ namespace Nexus.Blocktrader.Exchanges.Bitstamp
 
         private static Order ParseOrder(string[] parameters)
         {
-            return new Order
-            {
-                Price = float.Parse(parameters[0], CultureInfo.InvariantCulture),
-                Amount = float.Parse(parameters[1], CultureInfo.InvariantCulture)
-            };
+            return new Order(
+                float.Parse(parameters[0], CultureInfo.InvariantCulture),
+                float.Parse(parameters[1], CultureInfo.InvariantCulture));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Nexus.Blocktrader.Api.Models.Responses
                 Amount = trade.Amount,
                 Price = trade.Price,
                 IsSale = trade.IsSale,
-                Time = trade.Time.ToUnixTime()
+                Time = trade.Time.ToUnixTimeMilliseconds()
             };
         }
     }

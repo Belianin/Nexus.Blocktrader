@@ -84,10 +84,8 @@ namespace Nexus.Blocktrader.Exchanges.Bitfinex
         {
             var isSale = numbers[2] > 0;
             var amount = isSale ? numbers[2] : numbers[2] * -1;
-            
-            return new Trade((int) numbers[0], numbers[3], amount, isSale, 
-                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                    .AddMilliseconds(numbers[1]));
+
+            return new Trade((int) numbers[0], numbers[3], amount, isSale, ((long) numbers[1]).ToDateTimeFromMilliseconds());
         }
 
         private OrderBook ParseOrderBook(string[][] response)
@@ -95,7 +93,8 @@ namespace Nexus.Blocktrader.Exchanges.Bitfinex
             var orders = response.Select(r => (OrderWithCount) r).ToArray();
 
             var bids = orders.Where(o => o.Amount > 0);
-            var asks = orders.Where(o => o.Amount < 0).ForEach(o => o.Amount = -o.Amount);
+            var asks = orders.Where(o => o.Amount < 0).Select(
+                o => new OrderWithCount(o.Price, -o.Amount, o.Count));
 
             return new OrderBook(bids.Cast<Order>().ToArray(), asks.Cast<Order>().ToArray());
         }

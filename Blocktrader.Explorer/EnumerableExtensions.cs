@@ -25,11 +25,7 @@ namespace Nexus.Blocktrader.Explorer
                 }
                 else
                 {
-                    yield return new Order
-                    {
-                        Amount = currentAmount,
-                        Price = price
-                    };
+                    yield return new Order(price, currentAmount);
                     price = priceGetter(order);
                     currentAmount = order.Amount;
                 }

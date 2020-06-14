@@ -76,8 +76,7 @@ namespace Nexus.Blocktrader.Exchanges.Binance
                 response.Price,
                 float.Parse(response.Qty, CultureInfo.InvariantCulture),
                 response.IsBuyerMaker,
-                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                    .AddMilliseconds(response.Time));
+                response.Time.ToDateTimeFromMilliseconds());
         }
 
         private static OrderBook ParseOrderBook(OrderBookResponse response)
@@ -90,11 +89,9 @@ namespace Nexus.Blocktrader.Exchanges.Binance
 
         private static Order ParseOrder(string[] parameters)
         {
-            return new Order
-            {
-                Price = float.Parse(parameters[0], CultureInfo.InvariantCulture),
-                Amount = float.Parse(parameters[1], CultureInfo.InvariantCulture)
-            };
+            return new Order(
+                float.Parse(parameters[0], CultureInfo.InvariantCulture),
+                float.Parse(parameters[1], CultureInfo.InvariantCulture));
         }
     }
 }

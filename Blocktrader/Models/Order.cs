@@ -6,9 +6,15 @@ namespace Nexus.Blocktrader.Models
 {
     public class Order
     {
-        public float Price { get; set; }
-        
-        public float Amount { get; set; }
+        public float Price { get; }
+
+        public float Amount { get; }
+
+        public Order(float price, float amount)
+        {
+            Price = price;
+            Amount = amount;
+        }
 
         public IEnumerable<byte> ToBytes()
         {
@@ -18,11 +24,9 @@ namespace Nexus.Blocktrader.Models
 
         public static Order FromBytes(byte[] bytes, int index)
         {
-            return new Order
-            {
-                Price = BitConverter.ToSingle(bytes, index),
-                Amount = BitConverter.ToSingle(bytes, index + 4),
-            };
+            return new Order(
+                BitConverter.ToSingle(bytes, index),
+                BitConverter.ToSingle(bytes, index + 4));
         }
     }
 }
