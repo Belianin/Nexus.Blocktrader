@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Nexus.Logging.Utils;
 
-namespace Nexus.Prophecy.Logs
+namespace Nexus.Prophecy.Services.Logs
 {
     public class LogLevelJsonConverter : JsonConverter<LogLevel>
     {

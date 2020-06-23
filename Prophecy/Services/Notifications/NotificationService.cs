@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nexus.Prophecy.Notifications
+namespace Nexus.Prophecy.Services.Notifications
 {
     public class NotificationService : INotificationService, IDisposable
     {

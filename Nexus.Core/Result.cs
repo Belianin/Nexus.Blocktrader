@@ -28,6 +28,16 @@ namespace Nexus.Core
             };
         }
 
+        public static implicit operator Result(Result<T> result)
+        {
+            return result.IsSuccess ? Result.Ok() : Result.Fail(result.Error);
+        }
+
+        public static implicit operator T(Result<T> result)
+        {
+            return result.Value;
+        }
+        
         public static implicit operator Result<T>(T value)
         {
             return Ok(value);

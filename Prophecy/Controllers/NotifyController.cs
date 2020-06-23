@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Nexus.Logging;
-using Nexus.Prophecy.Notifications;
+using Nexus.Prophecy.Services.Notifications;
 
 namespace Nexus.Prophecy.Controllers
 {

@@ -1,7 +1,7 @@
 
 using Nexus.Logging.Utils;
 
-namespace Nexus.Prophecy.Notifications
+namespace Nexus.Prophecy.Services.Notifications
 {
     public class Notification
     {

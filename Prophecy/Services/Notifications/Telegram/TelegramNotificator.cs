@@ -7,7 +7,7 @@ using Nexus.Logging;
 using Nexus.Logging.Utils;
 using Telegram.Bot;
 
-namespace Nexus.Prophecy.Notifications.Telegram
+namespace Nexus.Prophecy.Services.Notifications.Telegram
 {
     public class TelegramNotificator : INotificator, IDisposable
     {
@@ -15,15 +15,19 @@ namespace Nexus.Prophecy.Notifications.Telegram
         private readonly ITelegramBotClient client;
         private readonly ILog log;
 
-        public TelegramNotificator(string token, ILog log, params long[] channels)
+        public TelegramNotificator(string token, IEnumerable<long> channels, ILog log)
+            : this(new TelegramBotClient(token), channels, log) {}
+        
+        public TelegramNotificator(ITelegramBotClient client, IEnumerable<long> channels, ILog log)
         {
             this.log = log;
             this.channels = new HashSet<long>(channels);
-            client = new TelegramBotClient(token);
+            this.client = client;
             
             try
             {
-                client.StartReceiving();
+                if (!client.IsReceiving)
+                    client.StartReceiving();
             }
             catch (Exception e)
             {

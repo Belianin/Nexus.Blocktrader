@@ -7,6 +7,11 @@
         <RootNamespace>Nexus.Prophecy</RootNamespace>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
+      <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\Nexus.Core\Nexus.Core.csproj" />
       <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />

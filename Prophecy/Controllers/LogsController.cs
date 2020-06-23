@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Nexus.Logging;
 using Nexus.Logging.Utils;
-using Nexus.Prophecy.Logs;
+using Nexus.Prophecy.Services.Logs;
 
 namespace Nexus.Prophecy.Controllers
 {

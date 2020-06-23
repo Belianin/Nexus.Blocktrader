@@ -4,7 +4,7 @@ using System.Linq;
 using Nexus.Core;
 using Nexus.Logging.Utils;
 
-namespace Nexus.Prophecy.Logs
+namespace Nexus.Prophecy.Services.Logs
 {
     public static class LogServiceExtensions
     {

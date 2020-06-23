@@ -1,4 +1,4 @@
-namespace Nexus.Prophecy.Notifications
+namespace Nexus.Prophecy.Services.Notifications
 {
     public interface INotificationService
     {

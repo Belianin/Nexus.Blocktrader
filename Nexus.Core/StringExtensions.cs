@@ -16,5 +16,8 @@ namespace Nexus.Core
                 return e.Message;
             }
         }
+
+        public static bool EqualsIgnoreCase(this string str, string other) =>
+            str.Equals(other, StringComparison.InvariantCultureIgnoreCase);
     }
 }

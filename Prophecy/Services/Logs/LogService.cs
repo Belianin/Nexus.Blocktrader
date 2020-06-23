@@ -6,7 +6,7 @@ using Nexus.Core;
 using Nexus.Logging.File;
 using Nexus.Logging.Utils;
 
-namespace Nexus.Prophecy.Logs
+namespace Nexus.Prophecy.Services.Logs
 {
     public class LogService : ILogService
     {

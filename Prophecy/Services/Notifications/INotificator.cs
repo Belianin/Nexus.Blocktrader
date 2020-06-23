@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Nexus.Core;
 
-namespace Nexus.Prophecy.Notifications
+namespace Nexus.Prophecy.Services.Notifications
 {
     public interface INotificator
     {

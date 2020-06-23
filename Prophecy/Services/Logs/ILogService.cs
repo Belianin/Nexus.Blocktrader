@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nexus.Core;
 
-namespace Nexus.Prophecy.Logs
+namespace Nexus.Prophecy.Services.Logs
 {
     public interface ILogService
     {

@@ -1,14 +1,15 @@
-using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using Nexus.Logging;
 using Nexus.Logging.Console;
+using Nexus.Prophecy.Configuration;
 using Nexus.Prophecy.DI;
-using Nexus.Prophecy.Logs;
+using Nexus.Prophecy.Services.Control;
+using Nexus.Prophecy.Services.Logs;
+using Telegram.Bot;
 
 namespace Nexus.Prophecy
 {
@@ -24,12 +25,16 @@ namespace Nexus.Prophecy
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var settings = JsonConvert.DeserializeObject<ProphecySettings>(File.ReadAllText("prophecy.settings.json"));
-            
-            services.AddSingleton<ILog, ColourConsoleLog>();
-            services.AddSingleton<ILogService>(sp => new LogService(settings.Services));
-            services.AddNotificatorService();
-            services.AddControllers();
+            var settings = SettingsManager.GetSettings();
+
+            services
+                .AddSingleton(settings)
+                .AddSingleton<ILog, ColourConsoleLog>()
+                .AddSingleton<ITelegramBotClient>(new TelegramBotClient(settings.Interface.Telegram.Token))
+                .AddSingleton<ILogService>(new LogService(settings.GetLogPaths()))
+                .AddSingleton<IControlService, ControlService>()
+                .AddNotificatorService()
+                .AddControllers();
             
             services.AddMvc(options => options.EnableEndpointRouting = false).AddJsonOptions(options =>
             {
@@ -39,9 +44,16 @@ namespace Nexus.Prophecy
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILog log)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostApplicationLifetime lifetime,
+            IWebHostEnvironment env,
+            ILog log)
         {
             log.Info("Starting Prophecy");
+            
+            lifetime.ApplicationStopping.Register(SettingsManager.SaveSettings);
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
