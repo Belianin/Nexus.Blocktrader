@@ -13,11 +13,11 @@
       <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.3" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="Nexus.Core" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Blocktrader\Blocktrader.csproj" />
-      <ProjectReference Include="..\Nexus.Core\Nexus.Core.csproj" />
     </ItemGroup>
 
 </Project>

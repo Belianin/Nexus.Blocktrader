@@ -7,13 +7,13 @@
     <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="5.10.3" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+      <PackageReference Include="Nexus.Core" Version="1.0.0" />
       <PackageReference Include="NUnit" Version="3.12.0" />
       <PackageReference Include="NUnit3TestAdapter" Version="3.17.0-beta.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Blocktrader\Blocktrader.csproj" />
-      <ProjectReference Include="..\Nexus.Core\Nexus.Core.csproj" />
     </ItemGroup>
 
 </Project>

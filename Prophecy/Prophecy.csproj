@@ -13,11 +13,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nexus.Core\Nexus.Core.csproj" />
-      <ProjectReference Include="..\Nexus.Logging\Nexus.Logging.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <PackageReference Include="Nexus.Core" Version="1.0.0" />
+      <PackageReference Include="Nexus.Logging" Version="1.0.2" />
       <PackageReference Include="Telegram.Bot" Version="15.6.0" />
     </ItemGroup>
 
