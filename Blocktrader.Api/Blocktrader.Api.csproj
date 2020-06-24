@@ -7,7 +7,7 @@
         <IsPackable>false</IsPackable>
         <SpaRoot>ClientApp\</SpaRoot>
         <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-        <AssemblyName>Nexus.Blocktrader.Api</AssemblyName>
+        <AssemblyName>Blocktrader</AssemblyName>
         <RootNamespace>Nexus.Blocktrader.Api</RootNamespace>
     </PropertyGroup>
 
