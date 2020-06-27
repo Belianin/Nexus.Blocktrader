@@ -16,12 +16,56 @@ const classes = makeStyles({
     },
 });
 
+const width = 256;
+const height = 600;
+
+function OrderRow(order) {
+    return (
+        <div style={{width: "auto", height: 24}}>
+            <span style={{float: "left"}}>{order.price}</span>
+            <span style={{float: "right"}}>{order.amount}</span>
+        </div>
+    )
+}
+
 export class OrdersTable extends React.Component {
     constructor(props){
         super(props);
     }
 
+    renderRows() {
+        const style = this.props.alignBottom
+            ? {bottom: 0, position: "absolute", width: width, backgroundColor: "#42f5aa"}
+            : {position: "absolute", width: width, backgroundColor: "#f54242"};
+
+        return (
+            <div className={"OrdersContent"} style={{height: height, maxHeight: height, overflow: "scroll", position: "relative", width: width}}>
+                <div style={style}>
+                    {this.props.orders.map(o => OrderRow(o))}
+                </div>
+            </div>
+        )
+    }
+
     render() {
+        const style = this.props.alignBottom ? {
+            backgroundColor: "red",
+            //position: "absolute",
+            height: height,
+            width: 300
+        } : {
+            backgroundColor: "blue",
+            height: height,
+            width: 300
+        };
+
+        //return this.renderRows()
+
+        return (
+            <Paper>
+                {this.renderRows()}
+            </Paper>
+        )
 
         return (
             <TableContainer component={Paper}>
@@ -32,7 +76,7 @@ export class OrdersTable extends React.Component {
                             <TableCell align="right" size="small" >Колличество</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody style={style}>
                         {this.props.orders.map(o => (
                             <TableRow>
                                 <TableCell align="left" size="small" >{o.price}</TableCell>
@@ -46,5 +90,6 @@ export class OrdersTable extends React.Component {
 }
 
 OrdersTable.propTypes = {
-    orders: PropTypes.arrayOf(Order)
+    orders: PropTypes.arrayOf(Order),
+    alignBottom: PropTypes.bool
 };

@@ -18,7 +18,7 @@ import TradingViewWidget from 'react-tradingview-widget'
 import {BlocktradesTable} from "./Components/BlocktradesTable";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
-const backendUrl = "/api/v1/";
+const backendUrl = "http://192.168.1.69:777/api/v1/";
 const ticker = "BtcUsd";
 
 function addDays(date, days) {
@@ -290,7 +290,7 @@ class App extends React.Component {
         title={exchange}
         loading={timestamp === undefined}
         bids={timestamp === undefined ? [] : timestamp.tickerInfo.orderBook.bids}
-        asks={timestamp === undefined ? [] : timestamp.tickerInfo.orderBook.asks}
+        asks={timestamp === undefined ? [] : timestamp.tickerInfo.orderBook.asks.sort((a, b) => b.price - a.price)}
         width={256}
     />
   }
@@ -305,7 +305,7 @@ class App extends React.Component {
 
   renderTable() {
     return (
-        <Container style={{width: 256 * 3, display: 'inline-block'}}>
+        <Container style={{width: 256 * 4, display: 'inline-block'}}>
           <Grid container direction={'column'}>
             <Grid item>
               <Container justify={'center'}>

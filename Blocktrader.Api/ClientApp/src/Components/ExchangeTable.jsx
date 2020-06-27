@@ -5,6 +5,7 @@ import {Order} from "../Models/Timestamp";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import Container from "@material-ui/core/Container";
 import VirtualizedOrdersTable from "./VirtualizedOrdersTable";
+import {OrdersTable} from "./OrdersTable";
 
 const height = 800;
 
@@ -17,8 +18,8 @@ export class ExchangeTable extends React.Component {
 
        return (
            <div>
-               <VirtualizedOrdersTable orders={this.props.asks}/>
-               <VirtualizedOrdersTable orders={this.props.bids}/>
+               <OrdersTable orders={this.props.asks} alignBottom={true}/>
+               <OrdersTable orders={this.props.bids} alignBottom={false}/>
            </div>
        )
    }
