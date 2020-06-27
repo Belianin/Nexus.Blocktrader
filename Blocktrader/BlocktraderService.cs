@@ -16,11 +16,11 @@ namespace Nexus.Blocktrader
         private readonly BitfinexClient bitfinex;
         private readonly BitstampClient bitstamp;
 
-        public BlocktraderService(ILog log)
+        public BlocktraderService(ILog log, ExchangeProxySettings settings)
         {
             binance = new BinanceClient(log);
             bitfinex = new BitfinexClient(log);
-            bitstamp = new BitstampClient(log);
+            bitstamp = new BitstampClient(log, settings.Host, settings.Port);
         }
         
         public async Task<CommonTimestamp> GetCurrentTimestampAsync()

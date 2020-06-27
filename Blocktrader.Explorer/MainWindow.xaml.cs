@@ -41,7 +41,7 @@ namespace Nexus.Blocktrader.Explorer
             InitializeComponent();
             
             var log = new ColourConsoleLog();
-            service = new BlocktraderService(log);
+            service = new BlocktraderService(log, new ExchangeProxySettings());
             timestampManager = new FileTimestampManager(log);
 
             TicketPicker.ItemsSource = (Ticker[]) Enum.GetValues(typeof(Ticker));

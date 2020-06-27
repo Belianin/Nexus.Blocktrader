@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Nexus.Blocktrader.Timestamps;
 using Nexus.Logging;
 
@@ -13,9 +15,12 @@ namespace Nexus.Blocktrader.Worker
 
         public FetchingWorker(ILog log)
         {
+            var proxySettings = File.Exists("proxy.settings.json")
+                ? JsonConvert.DeserializeObject<ExchangeProxySettings>(File.ReadAllText("proxy.settings.json"))
+                : new ExchangeProxySettings();
             log = log.ForContext("FetchingWorker");
             
-            var service = new BlocktraderService(log);
+            var service = new BlocktraderService(log, proxySettings);
             var manager = new FileTimestampManager(log);
             
             async Task DownloadTimestampsAsync()

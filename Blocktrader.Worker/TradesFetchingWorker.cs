@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Nexus.Blocktrader.Models;
 using Nexus.Blocktrader.Trades;
 using Nexus.Logging;
@@ -15,9 +17,12 @@ namespace Nexus.Blocktrader.Worker
 
         public TradesFetchingWorker(ILog log)
         {
+            var proxySettings = File.Exists("proxy.settings.json")
+                ? JsonConvert.DeserializeObject<ExchangeProxySettings>(File.ReadAllText("proxy.settings.json"))
+                : new ExchangeProxySettings();
             this.log = log.ForContext("TradesFetcher");
             
-            var service = new BlocktraderService(this.log);
+            var service = new BlocktraderService(this.log, proxySettings);
             var manager = new FileTradesManager(this.log);
             
             async Task DownloadTradeListsAsync()

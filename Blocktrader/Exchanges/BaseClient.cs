@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Nexus.Core;
@@ -12,10 +13,18 @@ namespace Nexus.Blocktrader.Exchanges
         protected readonly ILog Log;
         private readonly HttpClient httpClient;
 
-        protected BaseClient(ILog log)
+        protected BaseClient(ILog log, string proxy = null, int port = 80)
         {
             Log = log;
-            httpClient = new HttpClient();
+            if (proxy == null)
+                httpClient = new HttpClient();
+            else
+            {
+                httpClient = new HttpClient(new HttpClientHandler
+                {
+                    Proxy = new WebProxy(proxy, port)
+                });
+            }
         }
 
         protected async Task<Result<T>> GetAsync<T>(string uri)
