@@ -354,10 +354,7 @@ class App extends React.Component {
               {this.renderTable()}
             </Grid>
             <Grid item>
-              {this.renderBlockTrades()}
-            </Grid>
-            <Grid item>
-              <Paper style={{width: 256 * 3, height: 800}}>
+              <Paper style={{width: 256 * 5, height: 800}}>
                 <TradingViewWidget
                     symbol={"BTCUSDT"}
                     locale={"ru"}
@@ -366,6 +363,9 @@ class App extends React.Component {
               </Paper>
             </Grid>
           </Grid>
+          <div style={{position: "fixed", right: 24, top: 128}}>
+            {this.renderBlockTrades()}
+          </div>
           {this.state.isLoading && <GlobalLoader/>}
         </>
     );
