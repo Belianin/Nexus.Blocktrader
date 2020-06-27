@@ -1,10 +1,8 @@
 import React from "react";
-import Paper from "@material-ui/core/Paper/Paper";
 import PropTypes from 'prop-types';
 import {Order} from "../Models/Timestamp";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import Container from "@material-ui/core/Container";
-import VirtualizedOrdersTable from "./VirtualizedOrdersTable";
 import {OrdersTable} from "./OrdersTable";
 
 const height = 800;
@@ -19,6 +17,7 @@ export class ExchangeTable extends React.Component {
        return (
            <div>
                <OrdersTable orders={this.props.asks} alignBottom={true}/>
+               <br />
                <OrdersTable orders={this.props.bids} alignBottom={false}/>
            </div>
        )

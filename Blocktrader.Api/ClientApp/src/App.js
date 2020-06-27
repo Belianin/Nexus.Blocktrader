@@ -18,7 +18,7 @@ import TradingViewWidget from 'react-tradingview-widget'
 import {BlocktradesTable} from "./Components/BlocktradesTable";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
-const backendUrl = "http://192.168.1.69:777/api/v1/";
+const backendUrl = "/api/v1/";
 const ticker = "BtcUsd";
 
 function addDays(date, days) {
