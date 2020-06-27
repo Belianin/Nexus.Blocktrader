@@ -17,7 +17,7 @@ const classes = makeStyles({
 });
 
 const width = 256 + 64;
-const height = 512;
+const height = 256 + 128;
 
 function OrderRow(order) {
     return (
@@ -39,6 +39,11 @@ export class OrdersTable extends React.Component {
             this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight //.scrollIntoView({ behavior: 'smooth' })
     }
 
+    componentDidUpdate() {
+        if (this.props.alignBottom)
+            this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight //.scrollIntoView({ behavior: 'smooth' })
+    }
+
     renderRows() {
         const style = this.props.alignBottom
             ? {position: "absolute", width: width} //bottom: 0, backgroundColor: "#42f5aa"
@@ -47,9 +52,9 @@ export class OrdersTable extends React.Component {
         const spacerHeight = height - this.props.orders.length * 24
 
         return (
-            <div ref={this.scrollRef} className={"OrdersContent"} style={{height: height, minHeight: height, maxHeight: height, overflowY: "scroll", overflowX: "hidden", position: "relative", width: width}}>
+            <div ref={this.scrollRef} className={"OrdersContent"} style={{height: height, minHeight: height, maxHeight: height, overflowY: "auto", overflowX: "hidden", position: "relative", width: width}}>
                 <div>
-                    {this.props.alignBottom && spacerHeight > 0 && <div style={{width: width, height: spacerHeight - 1}}> </div>}
+                    {this.props.alignBottom && spacerHeight > 0 && <div style={{width: width, height: spacerHeight - 3}}> </div>}
                     <div style={style}>
                         {this.props.orders.map(o => OrderRow(o))}
                     </div>
