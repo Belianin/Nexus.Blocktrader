@@ -50,13 +50,16 @@ namespace Nexus.Blocktrader.Worker
         private Trade[] FilterTrades(ExchangeTitle exchange, Trade[] trades)
         {
             var log = this.log.ForContext(exchange.ToString());
+            var lastId = State.LastIds[exchange][Ticker.BtcUsd];
+            var newTrades = trades.Where(t => t.Id > lastId).ToArray();
             
-            var newTrades = trades.Where(t => t.Id > State.LastIds[exchange][Ticker.BtcUsd]).ToArray();
-            
-            if (newTrades.Length == trades.Length)
-                log.Warn($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {State.LastIds[exchange][Ticker.BtcUsd]})");
+            if (trades.Length != 0 && newTrades.Length == trades.Length)
+            {
+                var lostTradersCount = newTrades[0].Id - lastId;
+                log.Warn($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastId}). {lostTradersCount} trades are lost");
+            }
             else
-                log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {State.LastIds[exchange][Ticker.BtcUsd]})");
+                log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastId})");
             
             var result = newTrades.Where(t => t.Amount > State.MinimumAmount).ToArray();
             log.Debug($"Got {result.Length}/{newTrades.Length} with amount bigger than {State.MinimumAmount}");
