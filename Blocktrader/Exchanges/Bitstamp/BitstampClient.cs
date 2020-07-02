@@ -63,6 +63,8 @@ namespace Nexus.Blocktrader.Exchanges.Bitstamp
             return result.Value.Select(ParseTrade).ToArray();
         }
 
+        public ExchangeTitle Title => ExchangeTitle.Bitstamp;
+
         private Trade ParseTrade(TradeResponse response)
         {
             return new Trade(

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace Nexus.Blocktrader.Worker
     public class TradesFetchingWorker : StatefulWorker<TradesFetcherState>
     {
         private readonly ILog log;
-        private readonly AlignedScheduler scheduler;
+        private readonly ICollection<FlexScheduler> schedulers = new List<FlexScheduler>();
 
         public TradesFetchingWorker(ILog log)
         {
@@ -24,39 +25,43 @@ namespace Nexus.Blocktrader.Worker
             
             var service = new BlocktraderService(this.log, proxySettings);
             var manager = new FileTradesManager(this.log);
-            
-            async Task DownloadTradeListsAsync()
-            {
-                var tradeLists = await service.GetCurrentTradeListsAsync().ConfigureAwait(false);
 
-                foreach (var (exchange, trades) in tradeLists)
+            foreach (var exchange in new [] {ExchangeTitle.Binance, ExchangeTitle.Bitfinex, ExchangeTitle.Bitstamp})
+            {
+                async Task<TimeSpan> DownloadTradesAsync()
                 {
-                    var filtered = FilterTrades(exchange, trades);
+                    var trades = await service.GetCurrentTradeListsAsync(exchange, Ticker.BtcUsd)
+                        .ConfigureAwait(false);
+
+                    var (filtered, timeSpan) = FilterTrades(exchange, trades);
 
                     await manager.WriteAsync(exchange, filtered, Ticker.BtcUsd).ConfigureAwait(false);
+
+                    return timeSpan;
                 }
+                
+                schedulers.Add(new FlexScheduler(DownloadTradesAsync, log));
             }
-            
-            scheduler = new AlignedScheduler(DownloadTradeListsAsync, TimeSpan.FromSeconds(10), this.log);
 
             log.Info("TradesFetcher initializated");
         }
         
         protected override async Task RunAsync(CancellationToken token)
         {
-            await scheduler.RunAsync(token).ConfigureAwait(false);
+            await Task.WhenAny(schedulers.Select(s => s.RunAsync(token))).ConfigureAwait(false);
         }
 
-        private Trade[] FilterTrades(ExchangeTitle exchange, Trade[] trades)
+        private (Trade[], TimeSpan) FilterTrades(ExchangeTitle exchange, Trade[] trades)
         {
             var log = this.log.ForContext(exchange.ToString());
             var lastId = State.LastIds[exchange][Ticker.BtcUsd];
             var newTrades = trades.Where(t => t.Id > lastId).ToArray();
-            
+
+            var lostTradesCount = 0;
             if (trades.Length != 0 && newTrades.Length == trades.Length)
             {
-                var lostTradersCount = newTrades[0].Id - lastId;
-                log.Warn($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastId}). {lostTradersCount} trades are lost");
+                lostTradesCount = newTrades[0].Id - lastId;
+                log.Warn($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastId}). {lostTradesCount} trades are lost");
             }
             else
                 log.Debug($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastId})");
@@ -71,7 +76,9 @@ namespace Nexus.Blocktrader.Worker
                 State.LastIds[exchange][Ticker.BtcUsd] = maxId;
             }
 
-            return result;
+            if (trades.Length == 0)
+                return (result, TimeSpan.FromSeconds(10));
+            return (result, TimeSpan.FromSeconds(10 * ((trades.Length - newTrades.Length) / (double) trades.Length)));
         }
     }
 }

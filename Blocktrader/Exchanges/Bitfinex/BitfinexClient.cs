@@ -79,6 +79,8 @@ namespace Nexus.Blocktrader.Exchanges.Bitfinex
             return result.Value.Select(ParseTrade).ToArray();
         }
 
+        public ExchangeTitle Title => ExchangeTitle.Bitfinex;
+
         private Trade ParseTrade(float[] numbers)
         {
             var isSale = numbers[2] > 0;

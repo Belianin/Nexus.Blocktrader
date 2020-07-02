@@ -15,12 +15,20 @@ namespace Nexus.Blocktrader
         private readonly BinanceClient binance;
         private readonly BitfinexClient bitfinex;
         private readonly BitstampClient bitstamp;
+        private readonly Dictionary<ExchangeTitle, IExchangeClient> exchangeClients;
 
         public BlocktraderService(ILog log, ExchangeProxySettings settings)
         {
             binance = new BinanceClient(log);
             bitfinex = new BitfinexClient(log);
             bitstamp = new BitstampClient(log, settings.Host, settings.Port);
+            
+            exchangeClients = new Dictionary<ExchangeTitle, IExchangeClient>
+            {
+                [ExchangeTitle.Binance] = binance,
+                [ExchangeTitle.Bitfinex] = bitfinex,
+                [ExchangeTitle.Bitstamp] = bitstamp
+            };
         }
         
         public async Task<CommonTimestamp> GetCurrentTimestampAsync()
@@ -48,6 +56,13 @@ namespace Nexus.Blocktrader
             return result;
         }
 
+        public async Task<Trade[]> GetCurrentTradeListsAsync(ExchangeTitle exchange, Ticker ticker)
+        {
+            var result = await exchangeClients[exchange].GetLastTradesAsync(ticker).ConfigureAwait(false);
+
+            return result.IsSuccess ? result.Value : new Trade[0];
+        }
+        
         public async Task<Dictionary<ExchangeTitle, Trade[]>> GetCurrentTradeListsAsync()
         {
             var binanceTask = Task.Run(async () => await binance.GetLastTradesAsync(Ticker.BtcUsd));

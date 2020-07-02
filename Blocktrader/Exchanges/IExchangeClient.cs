@@ -11,5 +11,6 @@ namespace Nexus.Blocktrader.Exchanges
         Task<Result<float>> GetCurrentAveragePriceAsync(Ticker ticker);
 
         Task<Result<Trade[]>> GetLastTradesAsync(Ticker ticker);
+        public ExchangeTitle Title { get; }
     }
 }

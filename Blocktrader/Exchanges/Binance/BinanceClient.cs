@@ -68,6 +68,8 @@ namespace Nexus.Blocktrader.Exchanges.Binance
             return result.Value.Select(ParseTrade).ToArray();
         }
 
+        public ExchangeTitle Title => ExchangeTitle.Binance;
+
         private static Trade ParseTrade(TradeResponse response)
         {
             return new Trade(
