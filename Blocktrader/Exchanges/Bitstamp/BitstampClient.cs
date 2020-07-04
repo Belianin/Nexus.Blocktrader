@@ -21,7 +21,7 @@ namespace Nexus.Blocktrader.Exchanges.Bitstamp
             {Ticker.XrpUsd, "xrpusd"}
         };
         
-        public BitstampClient(ILog log, string proxy = null, int port = 80) : base(log, proxy, port)
+        public BitstampClient(ILog log, ExchangeProxySettings settings = null) : base(log, settings)
         {
         }
 

@@ -21,7 +21,7 @@ namespace Nexus.Blocktrader
         {
             binance = new BinanceClient(log);
             bitfinex = new BitfinexClient(log);
-            bitstamp = new BitstampClient(log, settings.Host, settings.Port);
+            bitstamp = new BitstampClient(log, settings);
             
             exchangeClients = new Dictionary<ExchangeTitle, IExchangeClient>
             {
