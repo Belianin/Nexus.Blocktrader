@@ -57,10 +57,9 @@ namespace Nexus.Blocktrader.Worker
             var lastId = State.LastIds[exchange][Ticker.BtcUsd];
             var newTrades = trades.Where(t => t.Id > lastId).ToArray();
 
-            var lostTradesCount = 0;
             if (trades.Length != 0 && newTrades.Length == trades.Length)
             {
-                lostTradesCount = newTrades[0].Id - lastId;
+                var lostTradesCount = newTrades[0].Id - lastId;
                 log.Warn($"Got {newTrades.Length}/{trades.Length} new trades (with id bigger than {lastId}). {lostTradesCount} trades are lost");
             }
             else
