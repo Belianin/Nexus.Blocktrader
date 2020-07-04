@@ -8,9 +8,9 @@ namespace Nexus.Blocktrader.Worker
     public class FlexScheduler
     {
         private readonly ILog log;
-        private readonly Func<Task<TimeSpan>> action;
+        private readonly Func<ILog, Task<TimeSpan>> action;
 
-        public FlexScheduler(Func<Task<TimeSpan>> action, ILog log)
+        public FlexScheduler(Func<ILog, Task<TimeSpan>> action, ILog log)
         {
             this.action = action;
             this.log = log;
@@ -20,8 +20,8 @@ namespace Nexus.Blocktrader.Worker
         {
             while (!token.IsCancellationRequested)
             {
-                var sleepTime = await action().ConfigureAwait(false);
-                log.Debug($"Sleep time: {sleepTime:G}.Next action scheduled at {DateTime.Now.Add(sleepTime):yyyy-MM-dd HH:mm:ss,fff}");
+                var sleepTime = await action(log).ConfigureAwait(false);
+                log.Debug($"Sleep time: {sleepTime:g}. Next action scheduled at {DateTime.Now.Add(sleepTime):yyyy-MM-dd HH:mm:ss,fff}");
                 await Task.Delay(sleepTime, token);
             }
         }

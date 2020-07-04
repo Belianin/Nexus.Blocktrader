@@ -28,19 +28,19 @@ namespace Nexus.Blocktrader.Worker
 
             foreach (var exchange in new [] {ExchangeTitle.Binance, ExchangeTitle.Bitfinex, ExchangeTitle.Bitstamp})
             {
-                async Task<TimeSpan> DownloadTradesAsync()
+                async Task<TimeSpan> DownloadTradesAsync(ILog log)
                 {
                     var trades = await service.GetCurrentTradeListsAsync(exchange, Ticker.BtcUsd)
                         .ConfigureAwait(false);
 
-                    var (filtered, timeSpan) = FilterTrades(exchange, trades);
+                    var (filtered, timeSpan) = FilterTrades(exchange, trades, log);
 
                     await manager.WriteAsync(exchange, filtered, Ticker.BtcUsd).ConfigureAwait(false);
 
                     return timeSpan;
                 }
                 
-                schedulers.Add(new FlexScheduler(DownloadTradesAsync, log));
+                schedulers.Add(new FlexScheduler(DownloadTradesAsync, this.log.ForContext(exchange.ToString())));
             }
 
             log.Info("TradesFetcher initializated");
@@ -51,9 +51,8 @@ namespace Nexus.Blocktrader.Worker
             await Task.WhenAny(schedulers.Select(s => s.RunAsync(token))).ConfigureAwait(false);
         }
 
-        private (Trade[], TimeSpan) FilterTrades(ExchangeTitle exchange, Trade[] trades)
+        private (Trade[], TimeSpan) FilterTrades(ExchangeTitle exchange, Trade[] trades, ILog log)
         {
-            var log = this.log.ForContext(exchange.ToString());
             var lastId = State.LastIds[exchange][Ticker.BtcUsd];
             var newTrades = trades.Where(t => t.Id > lastId).ToArray();
 
