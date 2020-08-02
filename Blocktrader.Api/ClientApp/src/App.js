@@ -16,6 +16,7 @@ import GlobalLoader from "./Components/GlobalLoader";
 import Header from "./Components/Header";
 import TradingViewWidget from 'react-tradingview-widget'
 import {BlocktradesTable} from "./Components/BlocktradesTable";
+import {BlocktradesChart} from "./Components/BlocktradesChart";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
@@ -40,6 +41,23 @@ class App extends React.Component {
       trades: {},
       isLoadingTrades: false
     };
+  }
+
+  getBlocktradesForMonth(ticker, year, month) {
+    return fetch(`${backendUrl}trades/ticker/${ticker}/year/${year}/month/${month}/statistics`)
+        .then(response => {
+          if (response.ok) {
+            return response
+          }
+
+          throw Error(response.status.toString())
+        })
+        .then(r => r.json())
+        .catch(error => {
+          console.log(error);
+
+          return error;
+        })
   }
 
   getBlocktrades(exchange, ticker, year, month, day) {
@@ -278,9 +296,19 @@ class App extends React.Component {
 
   renderBlockTrades() {
     const exchanges = ['binance', 'bitfinex', 'bitstamp']
-        .map(e => {return {title: e, trades: this.getTradesFor(e)}})
+        .map(e => {return {title: e, trades: this.getTradesFor(e)}});
 
-    return <BlocktradesTable exchanges={exchanges} isLoading={this.state.isLoadingTrades}/>
+    console.log(exchanges.map(e => e.trades).flat());
+
+    const asks = exchanges.map(e => e.trades).flat().filter(e => e !== undefined && !e.isSale).map(e => e.amount);
+    const bids = exchanges.map(e => e.trades).flat().filter(e => e !== undefined && e.isSale).map(e => e.amount);
+
+    return (
+        <div>
+          <BlocktradesChart asks={asks} bids={bids} monthCallback={this.getBlocktradesForMonth} selectedDate={this.state.selectedDate}/>
+          <BlocktradesTable exchanges={exchanges} isLoading={this.state.isLoadingTrades}/>
+        </div>
+    );
   }
 
   renderExchange(exchange) {
@@ -354,6 +382,9 @@ class App extends React.Component {
               {this.renderTable()}
             </Grid>
             <Grid item>
+              {this.renderBlockTrades()}
+            </Grid>
+            <Grid item>
               <Paper style={{width: 256 * 5, height: 800}}>
                 <TradingViewWidget
                     symbol={"BTCUSDT"}
@@ -363,9 +394,6 @@ class App extends React.Component {
               </Paper>
             </Grid>
           </Grid>
-          <div style={{position: "fixed", right: 24, top: 128}}>
-            {this.renderBlockTrades()}
-          </div>
           {this.state.isLoading && <GlobalLoader/>}
         </>
     );
