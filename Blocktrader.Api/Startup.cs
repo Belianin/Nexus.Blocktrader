@@ -7,6 +7,10 @@ using Nexus.Blocktrader.Api.DI;
 using Nexus.Blocktrader.Timestamps;
 using Nexus.Blocktrader.Trades;
 using Nexus.Logging;
+using Nexus.Logging.Console;
+using Nexus.Logging.File;
+using Nexus.Prophecy.AspNetCore;
+using Nexus.Prophecy.AspNetCore.Logging;
 
 namespace Nexus.Blocktrader.Api
 {
@@ -21,7 +25,8 @@ namespace Nexus.Blocktrader.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLogs();
+            //services.AddLogs();
+            services.AddProphecyLogging("http://localhost:5080", new AggregationLog(new FileLog(), new ColourConsoleLog()));
             
             services.AddCors();
             services.AddMvc(options => options.EnableEndpointRouting = false).AddJsonOptions(options =>
@@ -56,6 +61,7 @@ namespace Nexus.Blocktrader.Api
             }
 
             //app.UseHttpsRedirection();
+            app.UseProphecy();
             app.UseRouting();
             app.UseMvc();
 

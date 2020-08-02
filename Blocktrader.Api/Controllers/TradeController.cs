@@ -20,6 +20,28 @@ namespace Nexus.Blocktrader.Api.Controllers
             this.log = log;
             this.manager = manager;
         }
+        
+        [HttpGet("exchange/{exchange}/ticker/{ticker}/year/{year}/month/{month}")]
+        public async Task<IActionResult> GetTrades(
+            [FromRoute] int year,
+            [FromRoute] int month,
+            [FromRoute] Ticker ticker,
+            [FromRoute] ExchangeTitle exchange)
+        {
+            log.Info($"Received a request \"{Request.Path}\"");
+
+            if (!DateTimeExtensions.TryParse(year, month, 1, out var selectedDate))
+            {
+                log.Warn($"Invalid date {year}/{month}");
+                return BadRequest($"Invalid date {year}/{month}");
+            }
+
+            var result = await manager.ReadForMonthAsync(exchange, ticker, selectedDate).ConfigureAwait(false);
+            if (result.IsFail)
+                return NotFound(result.Error);
+
+            return Ok(result.Value.Select(TradeResponse.FromTrade));
+        }
 
         [HttpGet("exchange/{exchange}/ticker/{ticker}/year/{year}/month/{month}/day/{day}")]
         public async Task<IActionResult> GetTrades(

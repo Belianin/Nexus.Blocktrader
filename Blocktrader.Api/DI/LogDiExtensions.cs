@@ -13,18 +13,7 @@ namespace Nexus.Blocktrader.Api.DI
     {
         public static IServiceCollection AddLogs(this IServiceCollection services)
         {
-            services.AddSingleton<ILog>(sp =>
-            {
-                var url = "http://localhost:5080";
-                
-                var regularLog = new AggregationLog(new FileLog(), new ColourConsoleLog());
-                var telegramLog = new ProphecyLog(url, regularLog)
-                    .OnlyErrors();
-                
-                return new AggregationLog(new AggregationLog(regularLog, telegramLog));
-            });
-
-            return services;
+            return services.AddSingleton<ILog>(sp => new AggregationLog(new FileLog(), new ColourConsoleLog()));
         }
     }
 }

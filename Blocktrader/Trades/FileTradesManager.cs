@@ -50,7 +50,23 @@ namespace Nexus.Blocktrader.Trades
             log.Debug($"Read a file with length {file.Length}");
             return Trade.FromBytes(file).Where(t => t.Time.Day == day.Day).ToArray();
         }
-        
+
+        public async Task<Result<Trade[]>> ReadForMonthAsync(ExchangeTitle exchange, Ticker ticker, DateTime month)
+        {
+            var filename = GetFilename(month, exchange, ticker);
+            log.Debug($"Reading trades for month from \"{filename}\"");
+            if (!File.Exists(filename))
+            {
+                log.Debug($"No such file \"{filename}\"");
+                return "No such file";
+            }
+
+            var file = await File.ReadAllBytesAsync(filename).ConfigureAwait(false);
+
+            log.Debug($"Read a file with length {file.Length}");
+            return Trade.FromBytes(file).ToArray();
+        }
+
         private FileStream GetWriter(DateTime dateTime, ExchangeTitle exchange, Ticker ticker)
         {
             var filename = GetFilename(dateTime, exchange, ticker);

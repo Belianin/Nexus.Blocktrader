@@ -10,5 +10,6 @@ namespace Nexus.Blocktrader.Trades
     {
         Task WriteAsync(ExchangeTitle exchange, IEnumerable<Trade> trades, Ticker ticker);
         Task<Result<Trade[]>> ReadForDayAsync(ExchangeTitle exchange, Ticker ticker, DateTime day);
+        Task<Result<Trade[]>> ReadForMonthAsync(ExchangeTitle exchange, Ticker ticker, DateTime month);
     }
 }
