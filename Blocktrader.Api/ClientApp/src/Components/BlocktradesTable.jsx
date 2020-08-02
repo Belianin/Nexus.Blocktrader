@@ -71,8 +71,7 @@ export class BlocktradesTable extends React.Component {
                 this.setState({
                     minAmount: newValue
                 })}}
-                       type={"number"}
-                value={this.state.minAmount}/>
+                       type={"number"}/>
             {this.getContent()}
         </Container>
     }
