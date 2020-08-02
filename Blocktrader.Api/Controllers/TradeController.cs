@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,38 @@ namespace Nexus.Blocktrader.Api.Controllers
         {
             this.log = log;
             this.manager = manager;
+        }
+        
+        [HttpGet("ticker/{ticker}/year/{year}/month/{month}/statistics")]
+        public async Task<IActionResult> GetMonthStatistics(
+            [FromRoute] int year,
+            [FromRoute] int month,
+            [FromRoute] Ticker ticker)
+        {
+            log.Info($"Received a request \"{Request.Path}\"");
+
+            if (!DateTimeExtensions.TryParse(year, month, 1, out var selectedDate))
+            {
+                log.Warn($"Invalid date {year}/{month}");
+                return BadRequest($"Invalid date {year}/{month}");
+            }
+
+            var months = new List<Trade[]>();
+            foreach (var exchange in new[] {ExchangeTitle.Binance, ExchangeTitle.Bitfinex, ExchangeTitle.Bitstamp})
+            {
+                var result = await manager.ReadForMonthAsync(exchange, ticker, selectedDate).ConfigureAwait(false);
+                if (result.IsFail)
+                    log.Error($"Failed to read trades from {exchange.ToString()} for {year}/{month}: {result.Error}");
+                else
+                    months.Add(result);
+            }
+            
+
+            return Ok(new TradesMonthStatisticsResponse
+            {
+                AsksAmount = months.SelectMany(t => t).Where(t => t.IsSale).Sum(t => t.Amount),
+                BidsAmount = months.SelectMany(t => t).Where(t => t.IsBuy).Sum(t => t.Amount)
+            });
         }
 
         [HttpGet("exchange/{exchange}/ticker/{ticker}/year/{year}/month/{month}/statistics")]
