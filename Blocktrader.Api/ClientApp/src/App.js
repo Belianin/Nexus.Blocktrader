@@ -21,7 +21,14 @@ import TextField from "@material-ui/core/TextField";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
-const ticker = "BtcUsd";
+
+const tickerToValue = {
+    BtcUsd: 10,
+    EthUsd: 20,
+    EthBtc: 30,
+    XrpUsd: 40,
+    XrpBtc: 50
+};
 
 function addDays(date, days) {
   const copy = new Date(Number(date));
@@ -35,12 +42,19 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      years: {},
+      years: {
+          BtcUsd: {},
+          EthUsd: {},
+          EthBtc: {},
+          XrpUsd: {},
+          XrpBtc: {}
+      },
       selectedTimestamp: 0,
       selectedDate: new Date(),
       isLoading: false,
       trades: {},
-      isLoadingTrades: false
+      isLoadingTrades: false,
+      ticker: "BtcUsd"
     };
   }
 
@@ -107,10 +121,10 @@ class App extends React.Component {
           return this.setState((state) => {
             let years = state.years;
 
-            if (!years[year])
-              years[year] = this.createYear();
+            if (!years[ticker][year])
+              years[ticker][year] = this.createYear();
 
-            const selectedMonth = years[year][month];
+            const selectedMonth = years[ticker][year][month];
             if (!selectedMonth[day])
               selectedMonth[day] = {};
             selectedMonth[day][exchange.toLowerCase()] = timestampFromBytes(result);
@@ -132,7 +146,7 @@ class App extends React.Component {
     console.log(`Скачиваем данные за ${day}/${month}/${year}`)
 
     this.setState({isLoading: true}, () => {
-      Promise.all(exchanges.map(e => this.getTimestamps(e, "BtcUsd", year, month, day)))
+      Promise.all(exchanges.map(e => this.getTimestamps(e, this.state.ticker, year, month, day)))
           .then(() => {
         console.log("Обновляем выбранный timestamp")
         this.setState({
@@ -142,7 +156,7 @@ class App extends React.Component {
     });
 
     this.setState({isLoadingTrades: true}, () => {
-      Promise.all(exchanges.map(e => this.getBlocktrades(e, "BtcUsd", year, month, day)))
+      Promise.all(exchanges.map(e => this.getBlocktrades(e, this.state.ticker, year, month, day)))
           .then(() => {
             this.setState({isLoadingTrades: false})
           })
@@ -204,10 +218,10 @@ class App extends React.Component {
   }
 
   getTimestampsFor(exchange) {
-    if (!this.state.selectedDate || !this.state.years[this.state.selectedDate.getFullYear()])
+    if (!this.state.selectedDate || !this.state.years[this.state.ticker][this.state.selectedDate.getFullYear()])
       return undefined;
 
-    const day = this.state.years[this.state.selectedDate.getFullYear()][this.state.selectedDate.getMonth() + 1][this.state.selectedDate.getDate()];
+    const day = this.state.years[this.state.ticker][this.state.selectedDate.getFullYear()][this.state.selectedDate.getMonth() + 1][this.state.selectedDate.getDate()];
     if (!day)
       return undefined;
 
@@ -277,13 +291,30 @@ class App extends React.Component {
                   <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={10}
-                      onChange={console.log}
+                      value={tickerToValue[this.state.ticker]}
+                      onChange={(e) => this.setState(state => {
+                          this.loadDay();
+                          let ticker = "BtcUsd";
+                          if (e.target.value === 20)
+                              ticker = "EthUsd";
+                          if (e.target.value === 30)
+                              ticker = "EthBtc";
+                          if (e.target.value === 40)
+                              ticker = "XrpUsd";
+                          if (e.target.value === 50)
+                              ticker = "XrpBtc";
+
+                          state.ticker = ticker;
+
+                          return state;
+                      })}
                       disabled={this.state.isLoading}
                   >
                     <MenuItem value={10}>BtcUsd</MenuItem>
-                    <MenuItem value={20}>EthBtc</MenuItem>
-                    <MenuItem value={30}>BtcXrp</MenuItem>
+                    <MenuItem value={20}>EthUsd</MenuItem>
+                    <MenuItem value={30}>EthBtc</MenuItem>
+                    <MenuItem value={40}>XrpUsd</MenuItem>
+                    <MenuItem value={50}>XrpBtc</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
