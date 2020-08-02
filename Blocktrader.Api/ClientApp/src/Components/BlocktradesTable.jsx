@@ -10,10 +10,15 @@ import PropTypes, {object} from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {addHours} from "../Models/Timestamp";
 import Container from "@material-ui/core/Container";
+import {BlocktradesChart} from "./BlocktradesChart";
+import TextField from "@material-ui/core/TextField/TextField";
 
 export class BlocktradesTable extends React.Component {
     constructor(props){
         super(props);
+        this.state = {
+            minAmount: 10
+        };
     }
 
     getContent() {
@@ -27,6 +32,7 @@ export class BlocktradesTable extends React.Component {
                 price: t.price,
                 isSale: t.isSale,
                 time: t.time}}))
+            .filter(t => t.amount >= this.state.minAmount)
             .sort((a, b) => a.time - b.time);
 
         if (filtered.length === 0)
@@ -60,6 +66,13 @@ export class BlocktradesTable extends React.Component {
     render() {
         return <Container style={{textAlign: 'center', width: 128 * 4, display: 'inline-block'}}>
             <h1>BLOCKTRADES</h1>
+            <TextField onChange={e => {
+                const newValue = e.target.value > 10 ? e.target.value : 10;
+                this.setState({
+                    minAmount: newValue
+                })}}
+                       type={"number"}
+                value={this.state.minAmount}/>
             {this.getContent()}
         </Container>
     }

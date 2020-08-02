@@ -17,6 +17,7 @@ import Header from "./Components/Header";
 import TradingViewWidget from 'react-tradingview-widget'
 import {BlocktradesTable} from "./Components/BlocktradesTable";
 import {BlocktradesChart} from "./Components/BlocktradesChart";
+import TextField from "@material-ui/core/TextField";
 
 const exchanges = ["Binance", "Bitfinex", "Bitstamp"];
 const backendUrl = "/api/v1/";
