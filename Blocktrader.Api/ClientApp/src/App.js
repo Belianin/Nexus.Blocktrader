@@ -301,8 +301,8 @@ class App extends React.Component {
 
     console.log(exchanges.map(e => e.trades).flat());
 
-    const asks = exchanges.map(e => e.trades).flat().filter(e => e !== undefined && !e.isSale).map(e => e.amount);
-    const bids = exchanges.map(e => e.trades).flat().filter(e => e !== undefined && e.isSale).map(e => e.amount);
+    const asks = exchanges.map(e => e.trades).flat().filter(e => e !== undefined && e.isSale).map(e => e.amount);
+    const bids = exchanges.map(e => e.trades).flat().filter(e => e !== undefined && !e.isSale).map(e => e.amount);
 
     return (
         <div>
