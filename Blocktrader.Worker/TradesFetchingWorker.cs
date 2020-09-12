@@ -14,7 +14,13 @@ namespace Nexus.Blocktrader.Worker
     public class TradesFetchingWorker : StatefulWorker<TradesFetcherState>
     {
         private readonly ILog log;
-        private readonly ICollection<FlexScheduler> schedulers = new List<FlexScheduler>();
+        private readonly ICollection<FlexScheduler> schedulers;
+        private readonly Dictionary<ExchangeTitle, Queue<Trade[]>> queues = new Dictionary<ExchangeTitle, Queue<Trade[]>>
+        {
+            [ExchangeTitle.Binance] = new Queue<Trade[]>(),
+            [ExchangeTitle.Bitfinex] = new Queue<Trade[]>(),
+            [ExchangeTitle.Bitstamp] = new Queue<Trade[]>()
+        };
 
         public TradesFetchingWorker(ILog log)
         {
@@ -22,33 +28,56 @@ namespace Nexus.Blocktrader.Worker
                 ? JsonConvert.DeserializeObject<ExchangeProxySettings>(File.ReadAllText("proxy.settings.json"))
                 : new ExchangeProxySettings();
             this.log = log.ForContext("TradesFetcher");
-            
-            var service = new BlocktraderService(this.log, proxySettings);
-            var manager = new FileTradesManager(this.log);
 
+            schedulers = GetSchedulers(proxySettings).ToArray();
+
+            log.Info("TradesFetcher initializated");
+        }
+
+        private IEnumerable<FlexScheduler> GetSchedulers(ExchangeProxySettings proxySettings)
+        {
+            var service = new BlocktraderService(log, proxySettings);
             foreach (var exchange in new [] {ExchangeTitle.Binance, ExchangeTitle.Bitfinex, ExchangeTitle.Bitstamp})
             {
-                async Task<TimeSpan> DownloadTradesAsync(ILog log)
+                var thisLog = log.ForContext(exchange.ToString());
+                async Task<TimeSpan> DownloadTradesAsync()
                 {
                     var trades = await service.GetCurrentTradeListsAsync(exchange, Ticker.BtcUsd)
                         .ConfigureAwait(false);
 
-                    var (filtered, timeSpan) = FilterTrades(exchange, trades, log);
-
-                    await manager.WriteAsync(exchange, filtered, Ticker.BtcUsd).ConfigureAwait(false);
+                    var (filtered, timeSpan) = FilterTrades(exchange, trades, thisLog);
+                    
+                    queues[exchange].Enqueue(filtered);
 
                     return timeSpan;
                 }
                 
-                schedulers.Add(new FlexScheduler(DownloadTradesAsync, this.log.ForContext(exchange.ToString())));
+                yield return new FlexScheduler(DownloadTradesAsync, thisLog);
             }
+        }
 
-            log.Info("TradesFetcher initializated");
+        private async Task WriteAsync(CancellationToken token)
+        {
+            var manager = new FileTradesManager(log);
+            while (!token.IsCancellationRequested)
+            {
+                foreach (var exchange in new[] {ExchangeTitle.Binance, ExchangeTitle.Bitfinex, ExchangeTitle.Bitstamp})
+                {
+                    while (queues[exchange].TryDequeue(out var trades))
+                        await manager.WriteAsync(exchange, trades, Ticker.BtcUsd).ConfigureAwait(false);
+                }
+
+                await Task.Delay(5 * 1000, token).ConfigureAwait(false);
+            }
         }
         
         protected override async Task RunAsync(CancellationToken token)
         {
-            await Task.WhenAny(schedulers.Select(s => s.RunAsync(token))).ConfigureAwait(false);
+            var tasks = schedulers
+                .Select(s => s.RunAsync(token))
+                .Concat(new[] {WriteAsync(token)})
+                .ToArray();
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         private (Trade[], TimeSpan) FilterTrades(ExchangeTitle exchange, Trade[] trades, ILog log)
